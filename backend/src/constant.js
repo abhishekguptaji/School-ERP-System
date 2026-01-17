@@ -1,1 +1,1 @@
-DB_NAME =  "School-ERP-System"
+export const DB_NAME =  "School-ERP-System"

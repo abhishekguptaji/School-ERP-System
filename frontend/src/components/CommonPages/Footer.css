@@ -1,0 +1,15 @@
+.erp-footer {
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
+  color: #ffffff;
+  padding: 12px 10px;
+  font-size: 0.9rem;
+}
+
+.erp-footer a {
+  color: #ffdd57;
+  text-decoration: none;
+}
+
+.erp-footer a:hover {
+  text-decoration: underline;
+}

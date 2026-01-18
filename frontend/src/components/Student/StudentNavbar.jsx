@@ -1,7 +1,7 @@
 import React from "react";
-import "./Navbar.css";
+import "./StudentNavbar.css";
 
-function Navbar() {
+function StudentNavbar() {
   return (
     <nav className="navbar navbar-expand-lg erp-navbar">
       <div className="container-fluid">        
@@ -84,4 +84,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default StudentNavbar;

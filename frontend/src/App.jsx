@@ -1,22 +1,26 @@
-import React from "react";
-import Navbar from "./components/CommonPages/Navbar";
-import Footer from "./components/CommonPages/Footer";
+// import React from "react";
+// import LoginPage from "./components/HomePage/LoginPage";
+// import StudentNavbar from "./components/Student/StudentNavbar";
+// import StudentFooter from "./components/Student/StudentFooter";
+
 
 
 
 function App() {
   return (
-    <div className="d-flex flex-column min-vh-100">
-      <Navbar />
+       <>
+       
+       {/* <StudentNavbar />
+       <LoginPage />       
+       <StudentFooter /> */}
 
-      <main className="flex-fill container my-4">
-        <h2>Welcome to School ERP System</h2>
-      </main>
 
-      <Footer />
-    </div>
+
+
+
+
+       </> 
   );
 }
-
 
 export default App;

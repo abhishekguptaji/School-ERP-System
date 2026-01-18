@@ -1,0 +1,51 @@
+.erp-login-container {
+  background: #f8fafc;
+}
+
+/* LEFT BRAND SECTION */
+.erp-brand-section {
+  background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-content {
+  text-align: center;
+  padding: 40px;
+}
+
+.school-name {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.erp-name {
+  font-size: 1.6rem;
+  color: #2563eb;
+  margin-top: 10px;
+}
+
+.tagline {
+  color: #475569;
+  margin-top: 15px;
+  font-size: 1rem;
+}
+
+/* LOGIN CARD */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+}
+
+.login-card .form-control {
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+.login-card .btn {
+  padding: 10px;
+  font-weight: 500;
+}

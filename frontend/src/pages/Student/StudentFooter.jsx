@@ -1,5 +1,5 @@
 import React from "react";
-import "./StudentFooter.css";
+import "./css/StudentFooter.css";
 
 function StudentFooter() {
   return (

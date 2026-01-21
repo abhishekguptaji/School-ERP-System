@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./LoginPage.css";
+import "./css/LoginPage.css";
 
 function LoginPage() {
   const [role, setRole] = useState("student");

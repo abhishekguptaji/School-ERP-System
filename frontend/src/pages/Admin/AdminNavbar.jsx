@@ -1,5 +1,5 @@
 import React from "react";
-import "./AdminNavbar.css";
+import "./css/AdminNavbar.css";
 
 function AdminNavbar() {
   return (

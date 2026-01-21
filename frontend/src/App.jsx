@@ -1,30 +1,12 @@
-// import React from "react";
-import LoginPage from "./components/HomePage/LoginPage";
-// import StudentNavbar from "./components/Student/StudentNavbar";
-// import StudentFooter from "./components/Student/StudentFooter";
+import LoginPage from "./components/LoginPage";
 
-// import TeacherFooter from "./components/Teacher/TeacherFooter";
-// import TeacherNavbar from "./components/Teacher/TeacherNabvar";
-
-// import AdminFooter from "./components/Admin/AdminFooter";
-// import AdminNavbar from "./components/Admin/AdminNavbar";
-
-
+import TeacherDashBoard from "./pages/Teacher/TeacherDashboard";
 function App() {
   return (
        <>
-       
-       {/* <StudentNavbar /> */}
-       <LoginPage />       
-       {/* <StudentFooter /> */}
+       {/* <LoginPage />        */}
 
-       {/* <AdminNavbar />
-
-       <AdminFooter /> */}
-
-        {/* <TeacherNavbar /> */}
-
-        {/* <TeacherFooter /> */}
+       <TeacherDashBoard />
 
 
        </> 

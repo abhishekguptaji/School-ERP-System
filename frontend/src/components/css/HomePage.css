@@ -1,0 +1,35 @@
+.homepage {
+  margin-top: 70px;
+  background-color: #f9fafb;
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 90vh;
+  background: linear-gradient(135deg, #f8fbff, #eef4ff);
+  padding: 60px 0;
+}
+
+.hero-image {
+  max-height: 420px;
+}
+
+/* Features */
+.features-section {
+  background-color: #ffffff;
+}
+
+.feature-card {
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Footer */
+.footer {
+  font-size: 14px;
+}

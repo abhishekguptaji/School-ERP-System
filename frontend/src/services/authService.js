@@ -1,16 +1,12 @@
-import API from "./api";
+import axios from "axios";
 
-const registerUser = async (formData) => {
-  const response = await API.post("/user/register", formData);
+const API = axios.create({
+  baseURL: "http://localhost:8000/api/v1",
+  withCredentials: true, 
+  // VERY IMPORTANT for cookies
+});
+
+export const loginUser = async (payload) => {
+  const response = await API.post("/user/login", payload);
   return response.data;
 };
-
-const loginUser = async (formData) => {
-  const response = await API.post("/user/login", formData);
-  return response.data;
-};
-
-export {
-  registerUser,
-  loginUser,
-}

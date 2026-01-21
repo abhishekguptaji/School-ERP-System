@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import "./css/LoginPage.css";
 
-
-
 function LoginPage() {
+  const navigate = useNavigate();
+
   const [role, setRole] = useState("student");
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
@@ -16,29 +17,34 @@ function LoginPage() {
     try {
       setLoading(true);
 
-      const data = await loginUser({
-        loginId,   
-        password,
-        role,
-      });
+      const payload = { password, role };
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.user.role);
-
-      alert("Login Successful");
-
-      if (data.user.role === "admin") {
-        window.location.href = "/admin/dashboard";
-      } else if (data.user.role === "teacher") {
-        window.location.href = "/teacher/dashboard";
+      // Decide email OR rollNumber
+      if (loginId.includes("@")) {
+        payload.email = loginId;
       } else {
-        window.location.href = "/student/dashboard";
+        payload.rollNumber = loginId;
+      }
+
+      const res = await loginUser(payload);
+      // res === response.data
+
+      // ✅ SAVE AUTH DATA
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("role", res.user.role);
+      localStorage.setItem("user", JSON.stringify(res.user));
+
+      // ✅ ROLE BASED REDIRECT
+      if (res.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (res.user.role === "teacher") {
+        navigate("/teacher/dashboard");
+      } else {
+        navigate("/student/dashboard");
       }
 
     } catch (error) {
-      alert(
-        error?.response?.data?.message || "Invalid credentials"
-      );
+      alert(error?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -48,7 +54,7 @@ function LoginPage() {
     <div className="erp-login-container">
       <div className="row g-0 min-vh-100">
 
-        {/* LEFT BRAND SECTION */}
+        {/* LEFT BRAND */}
         <div className="col-md-6 d-none d-md-flex erp-brand-section">
           <div className="brand-content">
             <h1 className="school-name">Gupta Ji Public School</h1>
@@ -59,7 +65,7 @@ function LoginPage() {
           </div>
         </div>
 
-        {/* RIGHT LOGIN SECTION */}
+        {/* RIGHT LOGIN */}
         <div className="col-md-6 d-flex align-items-center justify-content-center">
           <div className="login-card card shadow-sm">
             <div className="card-body p-4">
@@ -87,7 +93,7 @@ function LoginPage() {
                 ))}
               </div>
 
-              {/* LOGIN FORM */}
+              {/* FORM */}
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">
@@ -100,7 +106,6 @@ function LoginPage() {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Enter your login ID"
                     value={loginId}
                     onChange={(e) => setLoginId(e.target.value)}
                     required
@@ -112,7 +117,6 @@ function LoginPage() {
                   <input
                     type="password"
                     className="form-control"
-                    placeholder="Enter password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required

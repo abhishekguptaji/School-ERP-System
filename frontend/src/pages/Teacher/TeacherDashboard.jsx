@@ -1,4 +1,4 @@
-import TeacherNavbar from "./TeacherNavbvar.jsx";
+import TeacherNavbar from "./TeacherNavbar.jsx";
 import TeacherFooter from "./TeacherFooter.jsx";
 
 function TeacherDashboard() {

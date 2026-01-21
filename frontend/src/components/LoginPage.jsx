@@ -1,8 +1,48 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { loginUser } from "../services/authService";
 import "./css/LoginPage.css";
 
 function LoginPage() {
   const [role, setRole] = useState("student");
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const data = await loginUser({
+        loginId,   // email / rollNo / employeeId
+        password,
+        role,
+      });
+
+      // token store
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.user.role);
+
+      alert("Login Successful");
+
+      // role based redirect
+      if (data.user.role === "admin") {
+        window.location.href = "/admin/dashboard";
+      } else if (data.user.role === "teacher") {
+        window.location.href = "/teacher/dashboard";
+      } else {
+        window.location.href = "/student/dashboard";
+      }
+
+    } catch (error) {
+      alert(
+        error?.response?.data?.message || "Invalid credentials"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="erp-login-container">
@@ -22,7 +62,6 @@ function LoginPage() {
         {/* RIGHT LOGIN SECTION */}
         <div className="col-md-6 d-flex align-items-center justify-content-center">
           <div className="login-card card shadow-sm">
-
             <div className="card-body p-4">
 
               <h4 className="text-center fw-bold mb-2">
@@ -34,28 +73,22 @@ function LoginPage() {
 
               {/* ROLE SELECTOR */}
               <div className="btn-group w-100 mb-4">
-                <button
-                  className={`btn ${role === "student" ? "btn-primary" : "btn-outline-primary"}`}
-                  onClick={() => setRole("student")}
-                >
-                  Student
-                </button>
-                <button
-                  className={`btn ${role === "teacher" ? "btn-primary" : "btn-outline-primary"}`}
-                  onClick={() => setRole("teacher")}
-                >
-                  Teacher
-                </button>
-                <button
-                  className={`btn ${role === "admin" ? "btn-primary" : "btn-outline-primary"}`}
-                  onClick={() => setRole("admin")}
-                >
-                  Admin
-                </button>
+                {["student", "teacher", "admin"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`btn ${
+                      role === r ? "btn-primary" : "btn-outline-primary"
+                    }`}
+                    onClick={() => setRole(r)}
+                  >
+                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                  </button>
+                ))}
               </div>
 
               {/* LOGIN FORM */}
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">
                     {role === "student"
@@ -68,6 +101,8 @@ function LoginPage() {
                     type="text"
                     className="form-control"
                     placeholder="Enter your login ID"
+                    value={loginId}
+                    onChange={(e) => setLoginId(e.target.value)}
                     required
                   />
                 </div>
@@ -78,23 +113,19 @@ function LoginPage() {
                     type="password"
                     className="form-control"
                     placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
 
-                <div className="d-flex justify-content-between mb-3">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input" />
-                    <label className="form-check-label">Remember me</label>
-                  </div>
-                  <a href="#" className="small text-decoration-none">
-                    Forgot Password?
-                  </a>
-                </div>
-
                 <div className="d-grid">
-                  <button className="btn btn-primary">
-                    Login
+                  <button
+                    className="btn btn-primary"
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? "Logging in..." : "Login"}
                   </button>
                 </div>
               </form>

@@ -20,12 +20,12 @@ app.use(cookieParser());
 app.use(express.static("public"));
 
 
-app.use((req, res, next) => {
-  console.log("METHOD:", req.method);
-  console.log("HEADERS:", req.headers["content-type"]);
-  console.log("BODY:", req.body);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log("METHOD:", req.method);
+//   console.log("HEADERS:", req.headers["content-type"]);
+//   console.log("BODY:", req.body);
+//   next();
+// });
 
 
 app.use("/api/v1/user", userRouter);

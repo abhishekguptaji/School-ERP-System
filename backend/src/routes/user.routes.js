@@ -1,20 +1,16 @@
-import {Router} from "express";
+import { Router } from "express";
 
-import {registerUser} from "../controllers/user.controller.js";
-import {
-  loginUser,
-  logoutUser
+import { registerUser } from "../controllers/user.controller.js";
+import { loginUser, logoutUser } from "../controllers/login.controller.js";
 
-} from "../controllers/login.controller.js";
-
-import {verifyJWT} from "../middlewares/auth.middleware.js";
+import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
+router.post("/login", loginUser);
 
+router.post("/logout", verifyJWT, logoutUser);
 
-router.route("/register").post(registerUser);
-router.route("/login-user").post(loginUser);
-router.route("/logout").post(verifyJWT,logoutUser);
+router.post("/register", verifyJWT, authorizeRoles("admin"), registerUser);
 
 export default router;

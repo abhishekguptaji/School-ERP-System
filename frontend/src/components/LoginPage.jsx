@@ -2,6 +2,8 @@ import { useState } from "react";
 import { loginUser } from "../services/authService";
 import "./css/LoginPage.css";
 
+
+
 function LoginPage() {
   const [role, setRole] = useState("student");
   const [loginId, setLoginId] = useState("");
@@ -15,18 +17,16 @@ function LoginPage() {
       setLoading(true);
 
       const data = await loginUser({
-        loginId,   // email / rollNo / employeeId
+        loginId,   
         password,
         role,
       });
 
-      // token store
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.user.role);
 
       alert("Login Successful");
 
-      // role based redirect
       if (data.user.role === "admin") {
         window.location.href = "/admin/dashboard";
       } else if (data.user.role === "teacher") {

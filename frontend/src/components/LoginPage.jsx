@@ -19,7 +19,6 @@ function LoginPage() {
 
       const payload = { password, role };
 
-      // Decide email OR rollNumber
       if (loginId.includes("@")) {
         payload.email = loginId;
       } else {
@@ -27,24 +26,25 @@ function LoginPage() {
       }
 
       const res = await loginUser(payload);
-      // res === response.data
-
-      // ✅ SAVE AUTH DATA
+      // console.log(res);
+      // console.log(res.data.user.role);
+      //  SAVE AUTH DATA
       localStorage.setItem("token", res.token);
-      localStorage.setItem("role", res.user.role);
+      localStorage.setItem("role", res.data.user.role);
       localStorage.setItem("user", JSON.stringify(res.user));
 
       // ✅ ROLE BASED REDIRECT
-      if (res.user.role === "admin") {
+      if (res.data.user.role === "admin") {
         navigate("/admin/dashboard");
-      } else if (res.user.role === "teacher") {
+      } else if (res.data.user.role === "teacher") {
         navigate("/teacher/dashboard");
       } else {
         navigate("/student/dashboard");
       }
 
     } catch (error) {
-      alert(error?.response?.data?.message || "Login failed");
+      // alert(error?.res?.data?.message || "Login failed");
+      console.log(error);
     } finally {
       setLoading(false);
     }

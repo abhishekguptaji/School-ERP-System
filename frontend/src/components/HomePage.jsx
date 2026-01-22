@@ -42,7 +42,7 @@ export default function HomePage() {
 
             <div className="col-md-6 text-center">
               <img
-                src="./School_image.jpg"
+                src="/School_image.jpg"
                 alt="School ERP"
                 className="img-fluid hero-image"
               />

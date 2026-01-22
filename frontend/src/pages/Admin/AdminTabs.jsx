@@ -17,8 +17,8 @@ export default function AdminTabs() {
       {/* TAB HEADER */}
       <div className="tabs-header">
         <button className="tab-btn active" onClick={() => handleTabClick(0)}>Dashboard</button>
-        <button className="tab-btn" onClick={() => handleTabClick(1)}>Students</button>
-        <button className="tab-btn" onClick={() => handleTabClick(2)}>Teachers</button>
+        <button className="tab-btn" onClick={() => handleTabClick(1)}>Manage Students</button>
+        <button className="tab-btn" onClick={() => handleTabClick(2)}>Manage Teachers</button>
         <button className="tab-btn" onClick={() => handleTabClick(3)}>Classes</button>
         <button className="tab-btn" onClick={() => handleTabClick(4)}>Subjects</button>
         <button className="tab-btn" onClick={() => handleTabClick(5)}>Attendance</button>

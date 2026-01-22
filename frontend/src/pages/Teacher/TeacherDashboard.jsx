@@ -1,5 +1,6 @@
 import TeacherNavbar from "./TeacherNavbar.jsx";
 import TeacherFooter from "./TeacherFooter.jsx";
+import TeacherTabs from "./TeacherTabs.jsx";
 
 function TeacherDashboard() {
   return (
@@ -7,10 +8,7 @@ function TeacherDashboard() {
       <TeacherNavbar />
 
       <main className="min-h-screen p-6 bg-gray-100 text-center">
-        <h1 className="text-2xl font-bold">Teacher Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Welcome to the Teacher Panel
-        </p>
+        <TeacherTabs />
       </main>
 
       <TeacherFooter />

@@ -9,8 +9,6 @@ import StudentDashboard from "./pages/Student/StudentDasboard";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
-
-
 function App() {
   return (
      <>
@@ -37,6 +35,7 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["teacher"]}>
               <TeacherDashboard />
+
             </ProtectedRoute>
           }
         />

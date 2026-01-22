@@ -1,18 +1,24 @@
 import React from "react";
 import "./TeacherNavbar.css";
+import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../services/authService";
 
 function TeacherNavbar() {
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await logoutUser({});
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/", { replace: true });
+  };
+
   return (
     <nav className="navbar navbar-expand-lg teacher-navbar sticky-top">
       <div className="container-fluid">
-
-        {/* BRAND */}
         <div className="d-flex align-items-center">
           <span className="school-brand">Gupta Ji Public School</span>
           <span className="erp-brand ms-2">Teacher ERP</span>
         </div>
-
-        {/* TOGGLE */}
         <button
           className="navbar-toggler"
           type="button"
@@ -21,47 +27,49 @@ function TeacherNavbar() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-
-        {/* MENU */}
         <div className="collapse navbar-collapse" id="teacherNavbar">
           <ul className="navbar-nav mx-auto teacher-menu">
-
             <li className="nav-item">
-              <a className="nav-link active" href="#">Dashboard</a>
+              <a className="nav-link active" href="#">
+                Dashboard
+              </a>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">My Classes</a>
+              <a className="nav-link" href="#">
+                My Classes
+              </a>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">Attendance</a>
+              <a className="nav-link" href="#">
+                Attendance
+              </a>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">Marks</a>
+              <a className="nav-link" href="#">
+                Marks
+              </a>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">Assignments</a>
+              <a className="nav-link" href="#">
+                Assignments
+              </a>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">Notices</a>
+              <a className="nav-link" href="#">
+                Notices
+              </a>
             </li>
-
           </ul>
-
-          {/* RIGHT SIDE */}
           <div className="d-flex align-items-center gap-3">
-
-            {/* Notifications */}
             <div className="notification-icon">
               <i className="bi bi-bell"></i>
               <span className="notification-dot"></span>
             </div>
-
-            {/* Profile */}
             <div className="dropdown">
               <a
                 href="#"
@@ -77,13 +85,28 @@ function TeacherNavbar() {
               </a>
 
               <ul className="dropdown-menu dropdown-menu-end">
-                <li><a className="dropdown-item" href="#">My Profile</a></li>
-                <li><a className="dropdown-item" href="#">Settings</a></li>
-                <li><hr className="dropdown-divider" /></li>
-                <li><a className="dropdown-item text-danger" href="#">Logout</a></li>
+                <li>
+                  <a className="dropdown-item" href="#">
+                    My Profile
+                  </a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#">
+                    Settings
+                  </a>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <a className="dropdown-item text-danger">
+                    <button type="button" onClick={handleLogout}>
+                      Logout
+                    </button>
+                  </a>
+                </li>
               </ul>
             </div>
-
           </div>
         </div>
       </div>

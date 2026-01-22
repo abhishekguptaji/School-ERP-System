@@ -1,7 +1,22 @@
 import React from "react";
 import "./css/StudentNavbar.css";
 
+import { useNavigate } from "react-router-dom";
+
+import {logoutUser} from "../../services/authService";
+
 function StudentNavbar() {
+  const navigate = useNavigate();
+    const handleLogout = async () => {
+      await logoutUser({});
+  
+      // clear auth data
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+  
+      // redirect to main page
+      navigate("/", { replace: true });
+    };
   return (
     <nav className="navbar navbar-expand-lg erp-navbar">
       <div className="container-fluid">        
@@ -74,7 +89,10 @@ function StudentNavbar() {
           {/* Logout */}
           <div className="d-flex">
             <a className="nav-link logout-link" href="#">
-              <i className="bi bi-box-arrow-right"></i> Logout
+              <i className="bi bi-box-arrow-right"></i> 
+              <button type="button" onClick={handleLogout}>
+                      Logout
+                    </button>
             </a>
           </div>
 

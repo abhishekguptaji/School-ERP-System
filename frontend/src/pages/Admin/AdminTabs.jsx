@@ -1,4 +1,8 @@
+import ClassXSection from "./ClassXSection";
 import "./css/Tab.css";
+import DashboardInner from "./DashboardInner";
+import ManageStudent from "./ManageStudent";
+import ManageTeacher from "./ManageTeacher";
 
 export default function AdminTabs() {
   const handleTabClick = (index) => {
@@ -16,30 +20,70 @@ export default function AdminTabs() {
     <div className="tabs-wrapper">
       {/* TAB HEADER */}
       <div className="tabs-header">
-        <button className="tab-btn active" onClick={() => handleTabClick(0)}>Dashboard</button>
-        <button className="tab-btn" onClick={() => handleTabClick(1)}>Manage Students</button>
-        <button className="tab-btn" onClick={() => handleTabClick(2)}>Manage Teachers</button>
-        <button className="tab-btn" onClick={() => handleTabClick(3)}>Classes</button>
-        <button className="tab-btn" onClick={() => handleTabClick(4)}>Subjects</button>
-        <button className="tab-btn" onClick={() => handleTabClick(5)}>Attendance</button>
-        <button className="tab-btn" onClick={() => handleTabClick(6)}>Exams</button>
-        <button className="tab-btn" onClick={() => handleTabClick(7)}>Fees</button>
-        <button className="tab-btn" onClick={() => handleTabClick(8)}>Reports</button>
-        <button className="tab-btn" onClick={() => handleTabClick(9)}>Settings</button>
+        <button className="tab-btn active" onClick={() => handleTabClick(0)}>
+          Dashboard
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(1)}>
+          Manage Students
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(2)}>
+          Manage Teachers
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(3)}>
+          Classes
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(4)}>
+          Subjects
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(5)}>
+          Attendance
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(6)}>
+          Exams
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(7)}>
+          Fees
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(8)}>
+          Reports
+        </button>
+        <button className="tab-btn" onClick={() => handleTabClick(9)}>
+          Settings
+        </button>
       </div>
 
       {/* TAB CONTENT */}
       <div className="tabs-body">
-        <div className="tab-content show">Admin Dashboard Overview</div>
-        <div className="tab-content">Manage Students</div>
-        <div className="tab-content">Manage Teachers</div>
-        <div className="tab-content">Class & Section Management</div>
-        <div className="tab-content">Subject Management</div>
-        <div className="tab-content">Attendance Monitoring</div>
-        <div className="tab-content">Exam Management</div>
-        <div className="tab-content">Fees & Payments</div>
-        <div className="tab-content">Reports & Analytics</div>
-        <div className="tab-content">System Settings</div>
+        <div className="tab-content show">
+          <DashboardInner />
+        </div>
+        <div className="tab-content">
+          <ManageStudent />
+        </div>
+        <div className="tab-content">
+          <ManageTeacher />
+        </div>
+        <div className="tab-content">
+          <ClassXSection /> 
+        </div>
+        <div className="tab-content">
+        Subject Management
+        </div>
+        <div className="tab-content">
+          Attendance Monitoring
+        </div>
+        <div className="tab-content">
+         Exam Management
+        </div>
+        <div className="tab-content">
+          Fees & Payments
+        </div>
+        <div className="tab-content">
+          Reports & Analytics
+        </div>
+        <div className="tab-content">
+          System Settings
+        </div>
       </div>
     </div>
   );

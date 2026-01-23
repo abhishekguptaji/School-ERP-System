@@ -1,17 +1,22 @@
-import AdminFooter from "./AdminFooter"
-import AdminNavbar from "./AdminNavbar"
+import AdminNavbar from "./AdminNavbar";
+import AdminFooter from "./AdminFooter";
 
-
-function AdminProfile(){
+function AdminProfile() {
   return (
     <>
-      <AdminNavbar />
-       <h1>Profile Page</h1>
-
-      <AdminFooter />
-
+      <div className="d-flex flex-column vh-100">
+       <AdminNavbar />
+        <div className="flex-grow-1 overflow-auto">
+          <h1>Admin Profile</h1>
+           
+        
+        
+        
+        </div>
+        <AdminFooter />
+      </div>
     </>
-  )
+  );
 }
 
 export default AdminProfile;

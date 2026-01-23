@@ -1,6 +1,4 @@
-import React from "react";
 import "./css/AdminNavbar.css";
-
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 
@@ -19,12 +17,9 @@ function AdminNavbar() {
         <div className="d-flex align-items-center">
           <span className="school-brand">
             <a className="nav-link " href="/admin/dashboard">
-                Gupta Ji Public School
-              </a>
-            
-            
-            
-            </span>
+              Gupta Ji Public School
+            </a>
+          </span>
           <span className="erp-brand ms-2">Campus ERP</span>
         </div>
         <button
@@ -88,7 +83,7 @@ function AdminNavbar() {
 
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <a className="dropdown-item" href="/admin/admin-profile">
                     My Profile
                   </a>
                 </li>

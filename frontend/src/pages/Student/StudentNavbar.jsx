@@ -1,27 +1,33 @@
 import React from "react";
 import "./css/StudentNavbar.css";
-
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import {logoutUser} from "../../services/authService";
+import { logoutUser } from "../../services/authService";
 
 function StudentNavbar() {
   const navigate = useNavigate();
-    const handleLogout = async () => {
-      await logoutUser({});
-  
-      // clear auth data
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-  
-      // redirect to main page
-      navigate("/", { replace: true });
-    };
+  const handleLogout = async () => {
+    await logoutUser({});
+
+    // clear auth data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // redirect to main page
+    navigate("/", { replace: true });
+  };
   return (
     <nav className="navbar navbar-expand-lg erp-navbar">
-      <div className="container-fluid">        
-          <h3 className="text-white">Campus ERP</h3>
-          
+      <div className="container-fluid">
+        <h3 className="text-white">
+          <Link className="nav-link" to="/student/dashboard">
+            <span className="text-white" style={{ textDecoration: "none" }}>
+              Campus ERP
+            </span>
+          </Link>
+        </h3>
+
         {/* Toggle (Mobile) */}
         <button
           className="navbar-toggler"
@@ -35,13 +41,6 @@ function StudentNavbar() {
         {/* Menu */}
         <div className="collapse navbar-collapse" id="erpNavbar">
           <ul className="navbar-nav mx-auto erp-menu">
-
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                <i className="bi bi-bell"></i> Notice
-              </a>
-            </li>
-
             <li className="nav-item">
               <a className="nav-link" href="#">
                 <i className="bi bi-file-earmark-text"></i> Apply Forms
@@ -79,23 +78,21 @@ function StudentNavbar() {
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                <i className="bi bi-key"></i> Password
-              </a>
+              <Link to="/student/password-change" className="nav-link text-white">
+                <i className="bi bi-key"></i>Password
+              </Link>
             </li>
-
           </ul>
 
           {/* Logout */}
           <div className="d-flex">
             <a className="nav-link logout-link" href="#">
-              <i className="bi bi-box-arrow-right"></i> 
+              <i className="bi bi-box-arrow-right"></i>
               <button type="button" onClick={handleLogout}>
-                      Logout
-                    </button>
+                Logout
+              </button>
             </a>
           </div>
-
         </div>
       </div>
     </nav>

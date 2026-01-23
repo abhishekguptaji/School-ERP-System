@@ -1,5 +1,6 @@
 import "./css/Tab.css";
 
+import NoticeBoard from "./NoticeBoard";
 export default function Tabs() {
   const handleTabClick = (index) => {
     const buttons = document.querySelectorAll(".tab-btn");
@@ -37,7 +38,9 @@ export default function Tabs() {
         <div className="tab-content">Class Time Table</div>
         <div className="tab-content">Assignments & Submissions</div>
         <div className="tab-content">Fees & Payments</div>
-        <div className="tab-content">School Notices & Updates</div>
+        <div className="tab-content">
+        <NoticeBoard />  
+        </div>
         <div className="tab-content">Study Materials</div>
         <div className="tab-content">Leave Application</div>
       </div>

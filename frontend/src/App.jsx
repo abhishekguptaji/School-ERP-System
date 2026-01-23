@@ -12,6 +12,7 @@ import RegisterStu from "./pages/Admin/RegisterStu";
 import RegisterTeacher from "./pages/Admin/RegisterTeacher";
 import AdminProfile from "./pages/Admin/AdminProfile";
 import GrievancePanel from "./pages/Admin/GrievancePanel";
+import PasswordChange from "./pages/Student/PasswordChange";
 
 function App() {
   return (
@@ -91,6 +92,18 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          
+
+          <Route
+           path="/student/password-change"
+           element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <PasswordChange />
+            </ProtectedRoute>
+           }>
+
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

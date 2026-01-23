@@ -1,4 +1,5 @@
 import "./Tabs.css";
+import TeacherProfile from "./TeacherProfile";
 
 export default function TeacherTabs() {
   const handleTabClick = (index) => {
@@ -30,7 +31,9 @@ export default function TeacherTabs() {
 
       {/* TAB CONTENT */}
       <div className="tabs-body">
-        <div className="tab-content show">Teacher Dashboard Overview</div>
+        <div className="tab-content show">
+          <TeacherProfile />
+        </div>
         <div className="tab-content">Teacher Profile Information</div>
         <div className="tab-content">Assigned Classes & Subjects</div>
         <div className="tab-content">Mark / Update Attendance</div>

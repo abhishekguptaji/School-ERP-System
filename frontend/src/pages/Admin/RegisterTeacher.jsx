@@ -1,39 +1,41 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../services/authService";
 import AdminFooter from "./AdminFooter";
 import AdminNavbar from "./AdminNavbar";
-import axios from "axios";
 
 function RegisterTeacher() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
-    rollNumber: "",
+    employeeId: "",
     email: "",
     password: "",
+    role: "teacher", 
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    try {
-      await axios.post("http://localhost:5000/api/auth/register", {
-        ...formData,
-        role: "student",
-      });
+    const response = await registerUser(formData);
 
-      alert("Student registered successfully");
+    setLoading(false);
 
-      setFormData({
-        name: "",
-        rollNumber: "",
-        email: "",
-        password: "",
-      });
-    } catch (error) {
-      alert(error.response?.data?.message || "Student registration failed");
+    if (response.success) {
+      alert("Teacher registered successfully");
+      navigate("/admin/dashboard"); // or teacher list page
+    } else {
+      alert(response.message || "Teacher registration failed");
     }
   };
 
@@ -46,11 +48,11 @@ function RegisterTeacher() {
           <div className="col-md-5">
             <div className="card shadow">
               <div className="card-body">
-                <h4 className="text-center mb-4">Register New Student</h4>
+                <h4 className="text-center mb-4">Register New Teacher</h4>
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label className="form-label">Student Name</label>
+                    <label className="form-label">Teacher Name</label>
                     <input
                       type="text"
                       className="form-control"
@@ -62,25 +64,26 @@ function RegisterTeacher() {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label">Roll Number</label>
+                    <label className="form-label">Employee ID</label>
                     <input
                       type="text"
                       className="form-control"
-                      name="rollNumber"
-                      value={formData.rollNumber}
+                      name="employeeId"
+                      value={formData.employeeId}
                       onChange={handleChange}
                       required
                     />
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label">Email (Optional)</label>
+                    <label className="form-label">Email</label>
                     <input
                       type="email"
                       className="form-control"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
+                      required
                     />
                   </div>
 
@@ -96,8 +99,12 @@ function RegisterTeacher() {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-100">
-                    Register Student
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100"
+                    disabled={loading}
+                  >
+                    {loading ? "Registering..." : "Register Teacher"}
                   </button>
                 </form>
 

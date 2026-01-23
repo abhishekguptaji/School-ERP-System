@@ -1,39 +1,44 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../services/authService";
 import AdminFooter from "./AdminFooter";
 import AdminNavbar from "./AdminNavbar";
-import axios from "axios";
 
 function RegisterStu() {
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     rollNumber: "",
     email: "",
     password: "",
+    role: "student",
   });
 
+  // ================= HANDLE CHANGE =================
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  // ================= HANDLE SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    try {
-      await axios.post("http://localhost:5000/api/auth/register", {
-        ...formData,
-        role: "student",
-      });
+    const response = await registerUser(formData);
 
+    setLoading(false);
+
+    if (response.success) {
       alert("Student registered successfully");
-
-      setFormData({
-        name: "",
-        rollNumber: "",
-        email: "",
-        password: "",
-      });
-    } catch (error) {
-      alert(error.response?.data?.message || "Student registration failed");
+      navigate("/admin/dashboard"); // change route if needed
+    } else {
+      alert(response.message);
     }
   };
 
@@ -96,8 +101,12 @@ function RegisterStu() {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-100">
-                    Register Student
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100"
+                    disabled={loading}
+                  >
+                    {loading ? "Registering..." : "Register Student"}
                   </button>
                 </form>
 

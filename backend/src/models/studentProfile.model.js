@@ -3,7 +3,6 @@ import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const studentProfileSchema = new mongoose.Schema(
   {
-    /* ===== USER LINK ===== */
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -26,7 +25,6 @@ const studentProfileSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    /* ===== SCHOOL INFO ===== */
     admissionNumber: {
       type: String,
       required: true,
@@ -35,25 +33,25 @@ const studentProfileSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
-    class: {
-      type: String,
+    className: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
-      enum: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
-      index: true,
+    },
+    rollNo :{
+       type:Number,
+       required:true,
     },
     section: {
-      type: String,
+     type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
-      uppercase: true,
-      enum: ["A", "B"],
-      index: true,
     },
     academicYear: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
-      trim: true,
     },
-    /* ===== PERSONAL ===== */
     dob: {
       type: Date,
       required: true,
@@ -67,7 +65,6 @@ const studentProfileSchema = new mongoose.Schema(
       type: String,
       enum: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"],
     },
-    /* ===== ADDRESS ===== */
     address: {
       city: String,
       state: String,
@@ -76,7 +73,6 @@ const studentProfileSchema = new mongoose.Schema(
         match: [/^[0-9]{6}$/, "Invalid pincode"],
       },
     },
-    /* ===== PARENTS ===== */
     father: {
       name: { type: String, required: true },
       phone: {
@@ -105,7 +101,6 @@ const studentProfileSchema = new mongoose.Schema(
         match: [/^[6-9]\d{9}$/, "Invalid phone number"],
       },
     },
-    /* ===== DOCUMENTS ===== */
     documents: {
       aadhaarNumber: {
         type: String,
@@ -120,8 +115,6 @@ const studentProfileSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false },
 );
-
-/* INDEXES */
 studentProfileSchema.index({ class: 1, section: 1 });
 studentProfileSchema.index({ academicYear: 1 });
 

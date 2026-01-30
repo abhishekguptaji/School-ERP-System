@@ -1,4 +1,5 @@
 import "./css/AdminNavbar.css";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 
@@ -16,9 +17,9 @@ function AdminNavbar() {
       <div className="container-fluid">
         <div className="d-flex align-items-center">
           <span className="school-brand">
-            <a className="nav-link " href="/admin/dashboard">
+            <Link className="nav-link " to="/admin/dashboard">
               Gupta Ji Public School
-            </a>
+            </Link>
           </span>
           <span className="erp-brand ms-2">Campus ERP</span>
         </div>
@@ -33,26 +34,26 @@ function AdminNavbar() {
         <div className="collapse navbar-collapse" id="adminNavbar">
           <ul className="navbar-nav mx-auto admin-menu">
             <li className="nav-item">
-              <a className="nav-link " href="/admin/admin-profile">
+              <Link className="nav-link" to="/admin/admin-profile">
                 My Profile
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link " href="/admin/add-student">
+              <Link className="nav-link " to="/admin/add-student">
                 Add Student
-              </a>
+              </Link>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link " href="/admin/add-teacher">
+              <Link className="nav-link " to="/admin/add-teacher">
                 Add Teacher
-              </a>
+              </Link>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="/admin/grievance-profile">
+              <Link className="nav-link" to="/admin/grievance-profile">
                 Grievance Panel
-              </a>
+              </Link>
             </li>
 
             {/* <li className="nav-item">
@@ -73,34 +74,34 @@ function AdminNavbar() {
               <span className="notification-dot"></span>
             </div>
             <div className="dropdown">
-              <a
+              <Link
                 href="#"
                 className="d-flex align-items-center admin-profile dropdown-toggle"
                 data-bs-toggle="dropdown"
               >
                 <span className="ms-2">Admin Name</span>
-              </a>
+              </Link>
 
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
-                  <a className="dropdown-item" href="/admin/admin-profile">
+                  <Link className="dropdown-item" to="/admin/admin-profile">
                     My Profile
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <Link className="dropdown-item" to="#">
                     Settings
-                  </a>
+                  </Link>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item text-danger" href="#">
+                  <Link className="dropdown-item text-danger" to="#">
                     <button type="button" onClick={handleLogout}>
                       Logout
                     </button>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>

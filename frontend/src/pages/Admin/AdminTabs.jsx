@@ -30,26 +30,26 @@ export default function AdminTabs() {
           Manage Teachers
         </button>
         <button className="tab-btn" onClick={() => handleTabClick(3)}>
-          Classes
+          Classes & Subjects 
         </button>
         <button className="tab-btn" onClick={() => handleTabClick(4)}>
-          Subjects
+           Attendance
         </button>
         <button className="tab-btn" onClick={() => handleTabClick(5)}>
-          Attendance
+           Exams
         </button>
         <button className="tab-btn" onClick={() => handleTabClick(6)}>
-          Exams
+         Fees
         </button>
         <button className="tab-btn" onClick={() => handleTabClick(7)}>
-          Fees
+         Reports   
         </button>
         <button className="tab-btn" onClick={() => handleTabClick(8)}>
-          Reports
-        </button>
-        <button className="tab-btn" onClick={() => handleTabClick(9)}>
           Settings
         </button>
+        {/* <button className="tab-btn" onClick={() => handleTabClick(9)}>
+          A
+        </button> */}
       </div>
 
       {/* TAB CONTENT */}

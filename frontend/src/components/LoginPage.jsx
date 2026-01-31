@@ -2,17 +2,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import "./css/LoginPage.css";
+
 import Swal from "sweetalert2";
 
 function LoginPage() {
   const navigate = useNavigate();
-
+  
   const [role, setRole] = useState("student");
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {   
     e.preventDefault();
 
     try {
@@ -29,12 +30,11 @@ function LoginPage() {
       const res = await loginUser(payload);
       // console.log(res);
       // console.log(res.data.user.role);
-      //  SAVE AUTH DATA
+      // SAVE AUTH DATA
       localStorage.setItem("token", res.token);
       localStorage.setItem("role", res.data.user.role);
       localStorage.setItem("user", JSON.stringify(res.user));
 
-      // ✅ ROLE BASED REDIRECT
       if (res.data.user.role === "admin") {
         navigate("/admin/dashboard");
       } else if (res.data.user.role === "teacher") {
@@ -46,8 +46,7 @@ function LoginPage() {
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text:
-          error?.response?.data?.message ||
+        text: error?.response?.data?.message ||
           "Invalid email or password. Please try again.",
         confirmButtonText: "Try Again",
         confirmButtonColor: "#d33",

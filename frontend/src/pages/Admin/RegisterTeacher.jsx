@@ -4,6 +4,9 @@ import { registerUser } from "../../services/authService";
 import AdminFooter from "./AdminFooter";
 import AdminNavbar from "./AdminNavbar";
 
+import Swal from "sweetalert2";
+
+
 function RegisterTeacher() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -32,11 +35,22 @@ function RegisterTeacher() {
     setLoading(false);
 
     if (response.success) {
-      alert("Teacher registered successfully");
-      navigate("/admin/dashboard"); // or teacher list page
-    } else {
-      alert(response.message || "Teacher registration failed");
-    }
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Teacher registered successfully",
+            timer: 2000,
+            showConfirmButton: false,
+          });
+          navigate("/admin/dashboard");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: response.message,
+            
+          });
+        }
   };
 
   return (

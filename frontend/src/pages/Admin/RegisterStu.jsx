@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
 import AdminFooter from "./AdminFooter";
 import AdminNavbar from "./AdminNavbar";
+import Swal from "sweetalert2";
 
 function RegisterStu() {
   const navigate = useNavigate();
@@ -35,10 +36,20 @@ function RegisterStu() {
     setLoading(false);
 
     if (response.success) {
-      alert("Student registered successfully");
-      navigate("/admin/dashboard"); // change route if needed
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Student registered successfully",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/admin/dashboard");
     } else {
-      alert(response.message);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: response.message,
+      });
     }
   };
 

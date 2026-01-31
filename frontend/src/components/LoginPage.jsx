@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import "./css/LoginPage.css";
+import Swal from "sweetalert2";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -41,10 +42,20 @@ function LoginPage() {
       } else {
         navigate("/student/dashboard");
       }
-
     } catch (error) {
-      // alert(error?.res?.data?.message || "Login failed");
-      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text:
+          error?.response?.data?.message ||
+          "Invalid email or password. Please try again.",
+        confirmButtonText: "Try Again",
+        confirmButtonColor: "#d33",
+        background: "#ffffff",
+        backdrop: "rgba(0,0,0,0.6)",
+        allowOutsideClick: false,
+      });
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -53,15 +64,12 @@ function LoginPage() {
   return (
     <div className="erp-login-container">
       <div className="row g-0 min-vh-100">
-
         {/* LEFT BRAND */}
         <div className="col-md-6 d-none d-md-flex erp-brand-section">
           <div className="brand-content">
             <h1 className="school-name">Gupta Ji Public School</h1>
             <h3 className="erp-name">Campus ERP</h3>
-            <p className="tagline">
-              Smart Digital School Management System
-            </p>
+            <p className="tagline">Smart Digital School Management System</p>
           </div>
         </div>
 
@@ -69,10 +77,7 @@ function LoginPage() {
         <div className="col-md-6 d-flex align-items-center justify-content-center">
           <div className="login-card card shadow-sm">
             <div className="card-body p-4">
-
-              <h4 className="text-center fw-bold mb-2">
-                Login to Campus ERP
-              </h4>
+              <h4 className="text-center fw-bold mb-2">Login to Campus ERP</h4>
               <p className="text-center text-muted mb-4">
                 Select role to continue
               </p>
@@ -100,8 +105,8 @@ function LoginPage() {
                     {role === "student"
                       ? "Roll No / Email"
                       : role === "teacher"
-                      ? "Employee ID / Email"
-                      : "Admin Email"}
+                        ? "Employee ID / Email"
+                        : "Admin Email"}
                   </label>
                   <input
                     type="text"
@@ -137,11 +142,9 @@ function LoginPage() {
               <p className="text-center text-muted mt-4 small">
                 © {new Date().getFullYear()} Gupta Ji Public School
               </p>
-
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

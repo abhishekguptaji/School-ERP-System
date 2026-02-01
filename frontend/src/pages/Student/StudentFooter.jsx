@@ -1,9 +1,8 @@
-import React from "react";
 import "./css/StudentFooter.css";
 
 function StudentFooter() {
   return (
-    <footer className="erp-footer text-center">
+    <footer className="erp-footer text-center student-footer">
       <div className="container-fluid">
         <p className="mb-1">
           Copyright © {new Date().getFullYear()}{" "}

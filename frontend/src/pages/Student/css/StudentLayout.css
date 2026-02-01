@@ -1,0 +1,16 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;          
+}
+
+.footer {
+  
+  color: white;
+  padding: 10px;
+  text-align: center;
+}

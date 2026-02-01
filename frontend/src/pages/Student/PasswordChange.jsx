@@ -1,6 +1,4 @@
 import { useState } from "react";
-import StudentNavbar from "./StudentNavbar";
-import StudentFooter from "./StudentFooter";
 function PasswordChange() {
   const [formData, setFormData] = useState({
     currentPassword: "",
@@ -36,10 +34,7 @@ function PasswordChange() {
   };
 
   return (
-    <div className="d-flex flex-column vh-100 overflow-x-hidden">
-      {/* NAVBAR */}
-      <StudentNavbar />
-
+    <div className="d-flex flex-column ">
       {/* MIDDLE CONTENT (SCROLLABLE) */}
       <div className="flex-grow-1 overflow-y-auto bg-light">
         <div className="container py-4">
@@ -102,8 +97,6 @@ function PasswordChange() {
         </div>
       </div>
 
-      {/* FOOTER */}
-      <StudentFooter />
     </div>
   );
 }

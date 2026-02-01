@@ -9,6 +9,4 @@ function StuProfile(){
   )
 }
 
-export {
-  StuProfile 
-}
+export default StuProfile;

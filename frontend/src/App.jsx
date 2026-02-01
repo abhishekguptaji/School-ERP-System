@@ -28,8 +28,10 @@ import TeacherLayout from "./pages/Teacher/TeacherLayout";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 
 /* ===== STUDENT ===== */
-import StudentDashboard from "./pages/Student/StudentDasboard";
+import StudentLayout from "./pages/Student/StudentLayout";
 import PasswordChange from "./pages/Student/PasswordChange";
+import NoticeBoard from "./pages/Student/NoticeBoard";
+import StudentDashboard from "./pages/Student/StudentDasboard";
 
 function App() {
   return (
@@ -85,13 +87,29 @@ function App() {
 
         {/* ================= STUDENT ================= */}
         <Route
-          path="/student/dashboard"
+          path="/student"
           element={
             <ProtectedRoute allowedRoles={["student"]}>
-              <StudentDashboard />
+              <StudentLayout />
             </ProtectedRoute>
           }
-        />
+        >
+        
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<StudentDashboard />} />
+        <Route path="notice-board" element={<NoticeBoard />} />
+        <Route path="password-change" element={<PasswordChange />} />
+        {/* <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} />
+        <Route path=" " element={} /> */}
+
+        </Route>  
 
         <Route
           path="/student/password-change"

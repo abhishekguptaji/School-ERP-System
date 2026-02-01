@@ -1,16 +1,27 @@
 import AdminNavbar from "./AdminNavbar";
 import AdminFooter from "./AdminFooter";
+import AdminTabs from "./AdminTabs";
+import "./css/AdminLayout.css";
+
 function AdminLayout() {
-  return(
-    <> 
-     <AdminNavbar />
-      <main className="min-h-screen p-6 bg-gray-100 text-center">
-        
-        
-      </main>
+  return (
+    <div className="admin-root">
+      <AdminNavbar />
+
+      {/* AREA BETWEEN NAVBAR & FOOTER */}
+      <div className="admin-body">
+        {/* LEFT FIXED TABS */}
+        <AdminTabs />
+
+        {/* RIGHT SCROLLABLE CONTENT */}
+        <div className="admin-content">
+          {/* yahan tumhara data/pages aayega */}
+        </div>
+      </div>
+
       <AdminFooter />
-    </>
-  )
+    </div>
+  );
 }
 
-export default  AdminLayout;
+export default AdminLayout;

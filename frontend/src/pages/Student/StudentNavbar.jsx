@@ -103,55 +103,55 @@ function StudentNavbar() {
   <div className="container-fluid">
     <ul className="navbar-nav flex-row admin-menu mx-auto">
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/dashboard">
+        <Link className="nav-link" to="/student/dashboard">
           Dashboard
         </Link>
       </li>
 
       <li className="nav-item ">
-        <Link className="nav-link" to="/admin/manage-student">
+        <Link className="nav-link" to="/student/stu-profile">
           My Profile
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/classes-subject">
-          Classes 
+        <Link className="nav-link" to="/student/time-table">
+          Time Table
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/attendence">
+        <Link className="nav-link" to="/student/results">
           Attendence
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/exams">
-          Exams
+        <Link className="nav-link" to="/student/stu-fee">
+         Fee
         </Link>
       </li>
 
       <li className="nav-item ">
-        <Link className="nav-link" to="/admin/fees">
+        <Link className="nav-link" to="/student/fees">
           Result
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/reports">
+        <Link className="nav-link" to="/student/study-material">
           Study Material
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/settings">
+        <Link className="nav-link" to="/student/notices">
           Notice
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/settings">
+        <Link className="nav-link" to="/student/leave-permission">
           Leave
         </Link>
       </li>

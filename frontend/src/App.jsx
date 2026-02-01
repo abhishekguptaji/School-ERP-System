@@ -32,6 +32,12 @@ import StudentLayout from "./pages/Student/StudentLayout";
 import PasswordChange from "./pages/Student/PasswordChange";
 import NoticeBoard from "./pages/Student/NoticeBoard";
 import StudentDashboard from "./pages/Student/StudentDasboard";
+import Attendence from "./pages/Student/Attendence";
+import Assignment from "./pages/Student/Assignment";
+import LeavePermission from "./pages/Student/LeavePermission";
+import Results from "./pages/Student/Results";
+import StudyMaterial from "./pages/Student/StudyMaterial";
+import StuProfile from "./pages/Student/StuProfile";
 
 function App() {
   return (
@@ -85,7 +91,7 @@ function App() {
         
         </Route>  
 
-        {/* ================= STUDENT ================= */}
+        {/* ================ STUDENT ================= */}
         <Route
           path="/student"
           element={
@@ -99,26 +105,16 @@ function App() {
         <Route path="dashboard" element={<StudentDashboard />} />
         <Route path="notice-board" element={<NoticeBoard />} />
         <Route path="password-change" element={<PasswordChange />} />
-        {/* <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} />
-        <Route path=" " element={} /> */}
-
+        <Route path="assignment" element={<Assignment />} />
+        <Route path="attendence" element={<Attendence />} />
+        <Route path="leave-permission" element={<LeavePermission />} />
+        <Route path="results" element={<Results />} />
+        <Route path="study-material" element={<StudyMaterial />} />
+        <Route path="stu-fee" element={<StuFee />} />
+        <Route path="time-table" element={<TimeTable />} />
+        <Route path="stu-profile"  element={<StuProfile/>} />
         </Route>  
 
-        <Route
-          path="/student/password-change"
-          element={
-            <ProtectedRoute allowedRoles={["student"]}>
-              <PasswordChange />
-            </ProtectedRoute>
-          }
-        />
       </Routes>
     </BrowserRouter>
   );

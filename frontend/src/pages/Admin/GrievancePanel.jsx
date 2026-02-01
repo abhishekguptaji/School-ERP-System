@@ -1,14 +1,9 @@
-import AdminNavbar from "./AdminNavbar";
-import AdminFooter from "./AdminFooter";
-
 function GrievancePanel() {
   return (
     <>
       {/* FULL PAGE LAYOUT */}
-      <div className="d-flex flex-column vh-100">
+      <div className="">
 
-        {/* NAVBAR (TOP) */}
-        <AdminNavbar />
 
         {/* MAIN CONTENT (SCROLLABLE) */}
         <div className="flex-grow-1 overflow-auto">
@@ -36,10 +31,6 @@ function GrievancePanel() {
             </div>
           </div>
         </div>
-
-        {/* FOOTER (ALWAYS VISIBLE) */}
-        <AdminFooter />
-
       </div>
     </>
   );

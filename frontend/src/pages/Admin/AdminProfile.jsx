@@ -1,6 +1,3 @@
-import AdminNavbar from "./AdminNavbar";
-import AdminFooter from "./AdminFooter";
-
 function AdminProfile() {
   // Demo data (replace later with API data)
   const admin = {
@@ -16,9 +13,8 @@ function AdminProfile() {
   };
 
   return (
-    <div className="d-flex flex-column vh-100 overflow-x-hidden">
-      {/* NAVBAR */}
-      <AdminNavbar />
+    <div className="">
+
 
       {/* MIDDLE CONTENT (SCROLLABLE) */}
       <div className="flex-grow-1 overflow-y-auto bg-light">
@@ -84,12 +80,8 @@ function AdminProfile() {
               </button>
             </div>
           </div>
-
         </div>
       </div>
-
-      {/* FOOTER */}
-      <AdminFooter />
     </div>
   );
 }

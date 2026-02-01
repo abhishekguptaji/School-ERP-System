@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
-import AdminFooter from "./AdminFooter";
-import AdminNavbar from "./AdminNavbar";
-
 import Swal from "sweetalert2";
 
 
@@ -56,7 +53,6 @@ function RegisterTeacher() {
   return (
     <>
       <div className="d-flex flex-column vh-100">
-        <AdminNavbar />
         <div className="flex-grow-1 overflow-auto">
           <div className="container mt-4 mb-5">
             <div className="row justify-content-center">
@@ -128,7 +124,6 @@ function RegisterTeacher() {
             </div>
           </div>
         </div>
-        <AdminFooter />
       </div>
     </>
   );

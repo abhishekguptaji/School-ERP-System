@@ -1,112 +1,100 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./components/HomePage";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+/* ===== PUBLIC ===== */
+import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
 
-import AdminLayout from "./pages/Admin/AdminLayout";
-import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
-import StudentDashboard from "./pages/Student/StudentDasboard";
-
+/* ===== AUTH ===== */
 import ProtectedRoute from "./components/ProtectedRoute";
-import RegisterStu from "./pages/Admin/RegisterStu";
-import RegisterTeacher from "./pages/Admin/RegisterTeacher";
+
+/* ===== ADMIN ===== */
+import AdminLayout from "./pages/Admin/AdminLayout";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminProfile from "./pages/Admin/AdminProfile";
 import GrievancePanel from "./pages/Admin/GrievancePanel";
+import RegisterStu from "./pages/Admin/RegisterStu";
+import RegisterTeacher from "./pages/Admin/RegisterTeacher";
+import Attendence from "./pages/Admin/Attendence";
+import ClassXSection from "./pages/Admin/ClassXSection";
+import ManageStudent from "./pages/Admin/ManageTeacher";
+import ManageTeacher from  "./pages/Admin/ManageTeacher";
+import Exams from "./pages/Admin/Exams";
+import Fees from "./pages/Admin/Fees";
+import Reports from "./pages/Admin/Reports";
+import Settings from "./pages/Admin/Reports";
+
+/* ===== TEACHER ===== */
+import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
+
+/* ===== STUDENT ===== */
+import StudentDashboard from "./pages/Student/StudentDasboard";
 import PasswordChange from "./pages/Student/PasswordChange";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          {/* PUBLIC ROUTES */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
+    <BrowserRouter>
+      <Routes>
+        {/* ================= PUBLIC ================= */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
 
-          {/* ADMIN */}
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          />
-               
-            <Route
-            path="/admin/admin-profile"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminProfile />
-              </ProtectedRoute>
-            }
-          ></Route>
+        {/* ================= ADMIN ================= */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* /admin → /admin/dashboard */}
+          <Route index element={<Navigate to="dashboard" replace />} />
 
-          <Route
-            path="/admin/grievance-profile"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <GrievancePanel />
-              </ProtectedRoute>
-            }
-          ></Route>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="admin-profile" element={<AdminProfile />} />
+          <Route path="grievance-profile" element={<GrievancePanel />} />
+          <Route path="add-student" element={<RegisterStu />} />
+          <Route path="add-teacher" element={<RegisterTeacher />} />
+          <Route path="manage-student" element={<ManageStudent />} />
+          <Route path="manage-teacher" element={<ManageTeacher />} />
+          <Route path="classes-subject" element={<ClassXSection />} />
+          <Route path="attendence" element={<Attendence />} />
+          <Route path="exams" element={<Exams />} />
+          <Route path="fees" element={<Fees />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
 
+        {/* ================= TEACHER ================= */}
+        <Route
+          path="/teacher/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["teacher"]}>
+              <TeacherDashboard />
+            </ProtectedRoute>
+          }
+        />
 
+        {/* ================= STUDENT ================= */}
+        <Route
+          path="/student/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-
-
-          <Route
-            path="/admin/add-student"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <RegisterStu />
-              </ProtectedRoute>
-            }
-          ></Route>
-
-          <Route
-            path="/admin/add-teacher"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <RegisterTeacher />
-              </ProtectedRoute>
-            }
-          ></Route>
-
-          {/* TEACHER */}
-          <Route
-            path="/teacher/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["teacher"]}>
-                <TeacherDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* STUDENT */}
-          <Route
-            path="/student/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          
-
-          <Route
-           path="/student/password-change"
-           element={
+        <Route
+          path="/student/password-change"
+          element={
             <ProtectedRoute allowedRoles={["student"]}>
               <PasswordChange />
             </ProtectedRoute>
-           }>
-
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -1,0 +1,12 @@
+/* FULL PAGE LAYOUT */
+.admin-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CONTENT AREA */
+.admin-main {
+  flex: 1;                
+  padding: 16px;
+}

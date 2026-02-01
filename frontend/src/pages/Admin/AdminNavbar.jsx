@@ -13,6 +13,7 @@ function AdminNavbar() {
   };
 
   return (
+    <>
     <nav className="navbar navbar-expand-lg admin-navbar sticky-top">
       <div className="container-fluid">
         <div className="d-flex align-items-center">
@@ -56,17 +57,6 @@ function AdminNavbar() {
               </Link>
             </li>
 
-            {/* <li className="nav-item">
-              <a className="nav-link" href="#">
-                Fees
-              </a>
-            </li>
-
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Reports
-              </a>
-            </li> */}
           </ul>
           <div className="d-flex align-items-center gap-3">
             <div className="notification-icon">
@@ -89,7 +79,7 @@ function AdminNavbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="#">
+                  <Link className="dropdown-item" to="/admin/settings">
                     Settings
                   </Link>
                 </li>
@@ -109,6 +99,66 @@ function AdminNavbar() {
         </div>
       </div>
     </nav>
+        
+{/* ================================================== */}
+   <nav className="navbar admin-navbar">
+  <div className="container-fluid">
+    <ul className="navbar-nav flex-row admin-menu mx-auto">
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/dashboard">
+          Dashboard
+        </Link>
+      </li>
+
+      <li className="nav-item ">
+        <Link className="nav-link" to="/admin/manage-student">
+          Manage Student
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/classes-subject">
+          Class & Subject 
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/attendence">
+          Attendence
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/exams">
+          Exams
+        </Link>
+      </li>
+
+      <li className="nav-item ">
+        <Link className="nav-link" to="/admin/fees">
+          Fees
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/reports">
+          Reports
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/settings">
+          Settings
+        </Link>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+{/* ===================================================== */}
+
+    </>
   );
 }
 

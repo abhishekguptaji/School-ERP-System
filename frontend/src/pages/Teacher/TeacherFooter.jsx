@@ -1,5 +1,5 @@
 import React from "react";
-import "./TeacherFooter.css";
+import "./css/TeacherFooter.css";
 
 function TeacherFooter() {
   return (

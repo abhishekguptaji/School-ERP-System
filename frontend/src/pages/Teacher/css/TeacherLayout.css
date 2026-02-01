@@ -1,0 +1,11 @@
+.teacher-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CONTENT AREA */
+.teacher-main {
+  flex: 1;                
+  padding: 16px;
+}

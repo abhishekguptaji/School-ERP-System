@@ -1,6 +1,5 @@
-import React from "react";
-import "./TeacherNavbar.css";
-import { useNavigate } from "react-router-dom";
+import "./css/TeacherNavbar.css";
+import { Link,useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 
 function TeacherNavbar() {
@@ -13,57 +12,50 @@ function TeacherNavbar() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg teacher-navbar sticky-top">
+    <>
+    <nav className="navbar navbar-expand-lg admin-navbar sticky-top">
       <div className="container-fluid">
         <div className="d-flex align-items-center">
-          <span className="school-brand">Gupta Ji Public School</span>
+          <span className="school-brand">
+            <Link className="nav-link " to="">
+              Gupta Ji Public School
+            </Link>
+          </span>
           <span className="erp-brand ms-2">Teacher ERP</span>
         </div>
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#teacherNavbar"
+          data-bs-target="#adminNavbar"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="teacherNavbar">
-          <ul className="navbar-nav mx-auto teacher-menu">
+        <div className="collapse navbar-collapse" id="adminNavbar">
+          <ul className="navbar-nav mx-auto admin-menu">
             <li className="nav-item">
-              <a className="nav-link active" href="#">
-                Dashboard
-              </a>
+              <Link className="nav-link" to="/admin/admin-profile">
+                My Class
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link " to="/admin/add-student">
+               My Attendence
+              </Link>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                My Classes
-              </a>
+              <Link className="nav-link " to="/admin/add-teacher">
+              Student View
+              </Link>
             </li>
 
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Attendance
-              </a>
+              <Link className="nav-link" to="/admin/grievance-profile">
+                Teacher Notice
+              </Link>
             </li>
 
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Marks
-              </a>
-            </li>
-
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Assignments
-              </a>
-            </li>
-
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Notices
-              </a>
-            </li>
           </ul>
           <div className="d-flex align-items-center gap-3">
             <div className="notification-icon">
@@ -71,39 +63,26 @@ function TeacherNavbar() {
               <span className="notification-dot"></span>
             </div>
             <div className="dropdown">
-              <a
+              <Link
                 href="#"
-                className="d-flex align-items-center teacher-profile dropdown-toggle"
+                className="d-flex align-items-center admin-profile dropdown-toggle"
                 data-bs-toggle="dropdown"
               >
-                <img
-                  src="https://i.pravatar.cc/32?img=12"
-                  alt="teacher"
-                  className="teacher-avatar"
-                />
                 <span className="ms-2">Teacher</span>
-              </a>
+              </Link>
 
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
-                  <a className="dropdown-item" href="#">
+                  <Link className="dropdown-item" to="/admin/admin-profile">
                     My Profile
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#">
-                    Settings
-                  </a>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <a className="dropdown-item text-danger">
+                  <Link className="dropdown-item text-danger" to="#">
                     <button type="button" onClick={handleLogout}>
                       Logout
                     </button>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -111,6 +90,72 @@ function TeacherNavbar() {
         </div>
       </div>
     </nav>
+        
+{/* ================================================== */}
+   <nav className="navbar admin-navbar">
+  <div className="container-fluid">
+    <ul className="navbar-nav flex-row admin-menu mx-auto">
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/dashboard">
+          Dashboard
+        </Link>
+      </li>
+
+      <li className="nav-item ">
+        <Link className="nav-link" to="/admin/manage-student">
+          My Profile
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/classes-subject">
+          Classes 
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/attendence">
+          Attendence
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/exams">
+          Exams
+        </Link>
+      </li>
+
+      <li className="nav-item ">
+        <Link className="nav-link" to="/admin/fees">
+          Result
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/reports">
+          Study Material
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/settings">
+          Notice
+        </Link>
+      </li>
+
+      <li className="nav-item">
+        <Link className="nav-link" to="/admin/settings">
+          Leave
+        </Link>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+{/* ===================================================== */}
+
+    </>
   );
 }
 

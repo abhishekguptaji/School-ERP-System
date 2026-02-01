@@ -24,6 +24,7 @@ import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Reports";
 
 /* ===== TEACHER ===== */
+import TeacherLayout from "./pages/Teacher/TeacherLayout";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 
 /* ===== STUDENT ===== */
@@ -67,13 +68,20 @@ function App() {
 
         {/* ================= TEACHER ================= */}
         <Route
-          path="/teacher/dashboard"
+          path="/teacher"
           element={
             <ProtectedRoute allowedRoles={["teacher"]}>
-              <TeacherDashboard />
+              <TeacherLayout />
             </ProtectedRoute>
           }
-        />
+        >
+        <Route index element={<Navigate to="dashboard" replace />} />
+
+        <Route path="dashboard" element={<TeacherDashboard/>}/>
+        
+
+        
+        </Route>  
 
         {/* ================= STUDENT ================= */}
         <Route

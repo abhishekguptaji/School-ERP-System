@@ -22,7 +22,7 @@ function AdminNavbar() {
               Gupta Ji Public School
             </Link>
           </span>
-          <span className="erp-brand ms-2">Campus ERP</span>
+          <span className="erp-brand ms-2">Admin ERP</span>
         </div>
         <button
           className="navbar-toggler"

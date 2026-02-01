@@ -2,9 +2,9 @@
 
 
 function ManageTeacher(){
-  return(
+  return (
     <>
-     <h1>Managemenet of Teacher from this Page.</h1>
+      <h1>Abhishespdadjkf</h1>
     </>
   )
 }

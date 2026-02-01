@@ -1,6 +1,6 @@
 import ClassXSection from "./ClassXSection";
 import "./css/Tab.css";
-import DashboardInner from "./DashboardInner";
+// import DashboardInner from "./DashboardInner";
 import ManageStudent from "./ManageStudent";
 import ManageTeacher from "./ManageTeacher";
 
@@ -55,7 +55,7 @@ export default function AdminTabs() {
       {/* TAB CONTENT */}
       <div className="tabs-body">
         <div className="tab-content show">
-          <DashboardInner />
+          {/* <DashboardInner /> */}
         </div>
         <div className="tab-content">
           <ManageStudent />

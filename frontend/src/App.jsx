@@ -3,7 +3,7 @@ import HomePage from "./components/HomePage";
 
 import LoginPage from "./components/LoginPage";
 
-import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLayout from "./pages/Admin/AdminLayout";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
 import StudentDashboard from "./pages/Student/StudentDasboard";
 
@@ -28,7 +28,7 @@ function App() {
             path="/admin/dashboard"
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminDashboard />
+                <AdminLayout />
               </ProtectedRoute>
             }
           />

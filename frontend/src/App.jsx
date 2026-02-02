@@ -8,51 +8,57 @@ import LoginPage from "./components/LoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 /* ===== ADMIN ===== */
-import AdminLayout from "./pages/Admin/AdminLayout";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import AdminProfile from "./pages/Admin/AdminProfile";
-import GrievancePanel from "./pages/Admin/GrievancePanel";
-import RegisterStu from "./pages/Admin/RegisterStu";
-import RegisterTeacher from "./pages/Admin/RegisterTeacher";
-import Attendence from "./pages/Admin/Attendence";
-import ClassXSection from "./pages/Admin/ClassXSection";
-import ManageStudent from "./pages/Admin/ManageTeacher";
-import ManageTeacher from  "./pages/Admin/ManageTeacher";
-import Exams from "./pages/Admin/Exams";
-import Fees from "./pages/Admin/Fees";
-import Reports from "./pages/Admin/Reports";
-import Settings from "./pages/Admin/Reports";
+import {
+  AdminLayout,
+  AdminDashboard,
+  AdminProfile,
+  GrievancePanel,
+  RegisterStu,
+  RegisterTeacher,
+  Attendence,
+  ClassXSection,
+  ManageStudent,
+  ManageTeacher,
+  Exams,
+  Fees,
+  Reports,
+  Settings,
+} from "./AdminImports";
 
 /* ===== TEACHER ===== */
-import TeacherLayout from "./pages/Teacher/TeacherLayout";
-import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
-import TeaAttendence from "./pages/Teacher/TeaAttendence";
-import TeaNotices from "./pages/Teacher/TeaNotices";
-import TeaExams from "./pages/Teacher/TeaExams";
-import TeaLeave from "./pages/Teacher/TeaLeave";
-import TeaResults from "./pages/Teacher/TeaResults";
-import TeaStudyMaterial from "./pages/Teacher/TeaStudyMaterial";
+import {
+  TeacherLayout,
+  TeacherDashboard,
+  TeaAttendence,
+  TeaNotices,
+  TeaExams,
+  TeaLeave,
+  TeaResults,
+  TeaStudyMaterial,
+  StudentView,
+  TeaClasses,
+  TeacherProfile,
+  TeacherNotice,
+} from "./TeacherImports";
 
 /* ===== STUDENT ===== */
-import StudentLayout from "./pages/Student/StudentLayout";
-import PasswordChange from "./pages/Student/PasswordChange";
-import NoticeBoard from "./pages/Student/NoticeBoard";
-import StudentDashboard from "./pages/Student/StudentDasboard";
-import StuAttendence from "./pages/Student/StuAttendence";
-import Assignment from "./pages/Student/Assignment";
-import LeavePermission from "./pages/Student/LeavePermission";
-import Results from "./pages/Student/Results";
-import StudyMaterial from "./pages/Student/StudyMaterial";
-import StuProfile from "./pages/Student/StuProfile";
-import StuFee from "./pages/Student/StuFees";
-import TimeTable from "./pages/Student/TimeTable";
-import ApplyForm from "./pages/Student/ApplyForm";
-import StuGrievance from "./pages/Student/StuGrievance";
-import Library from "./pages/Student/Library";
-import StudentView from "./pages/Teacher/StudentView";
-import TeaClasses from "./pages/Teacher/TeaClasses";
-import TeacherProfile from "./pages/Teacher/TeacherProfile";
-import TeacherNotice from "./pages/Teacher/TeacherNotice";
+import {
+  StudentLayout,
+  PasswordChange,
+  NoticeBoard,
+  StudentDashboard,
+  StuAttendence,
+  Assignment,
+  LeavePermission,
+  Results,
+  StudyMaterial,
+  StuProfile,
+  StuFee,
+  TimeTable,
+  ApplyForm,
+  StuGrievance,
+  Library,
+} from "./StudentImports";
 
 function App() {
   return (
@@ -71,9 +77,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          {/* /admin → /admin/dashboard */}
           <Route index element={<Navigate to="dashboard" replace />} />
-
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="admin-profile" element={<AdminProfile />} />
           <Route path="grievance-profile" element={<GrievancePanel />} />
@@ -98,25 +102,20 @@ function App() {
             </ProtectedRoute>
           }
         >
-        <Route index element={<Navigate to="dashboard" replace />} />
-
-        <Route path="dashboard" element={<TeacherDashboard/>}/>
-        <Route path="my-profile" element={<TeacherProfile />}/>
-        <Route path="teacher-notice" element={<TeacherNotice />}/>
-        <Route path="studentview" element={<StudentView />} />
-        <Route path="tea-attendence" element={<TeaAttendence />} />
-        <Route path="tea-notices" element={<TeaNotices />} />
-        <Route path="tea-classes" element={<TeaClasses />} />
-        <Route path="tea-exams" element={<TeaExams />} />
-        <Route path="tea-leave" element={<TeaLeave />} />
-        <Route path="tea-notices" element={<TeaNotices />} />
-        <Route path="tea-results" element={<TeaResults />} />
-        <Route path="tea-study-material" element={<TeaStudyMaterial />} />
-      
-        
-
-        
-        </Route>  
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<TeacherDashboard />} />
+          <Route path="my-profile" element={<TeacherProfile />} />
+          <Route path="teacher-notice" element={<TeacherNotice />} />
+          <Route path="studentview" element={<StudentView />} />
+          <Route path="tea-attendence" element={<TeaAttendence />} />
+          <Route path="tea-notices" element={<TeaNotices />} />
+          <Route path="tea-classes" element={<TeaClasses />} />
+          <Route path="tea-exams" element={<TeaExams />} />
+          <Route path="tea-leave" element={<TeaLeave />} />
+          <Route path="tea-notices" element={<TeaNotices />} />
+          <Route path="tea-results" element={<TeaResults />} />
+          <Route path="tea-study-material" element={<TeaStudyMaterial />} />
+        </Route>
 
         {/* ================ STUDENT ================= */}
         <Route
@@ -127,24 +126,22 @@ function App() {
             </ProtectedRoute>
           }
         >
-        
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<StudentDashboard />} />
-        <Route path="notice-board" element={<NoticeBoard />} />
-        <Route path="password-change" element={<PasswordChange />} />
-        <Route path="assignment" element={<Assignment />} />
-        <Route path="attendence" element={<StuAttendence />} />
-        <Route path="leave-permission" element={<LeavePermission />} />
-        <Route path="results" element={<Results />} />
-        <Route path="study-material" element={<StudyMaterial />} />
-        <Route path="stu-fee" element={<StuFee />} />
-        <Route path="time-table" element={<TimeTable />} />
-        <Route path="stu-profile"  element={<StuProfile/>} />
-        <Route path="apply-form" element={<ApplyForm />}/>
-        <Route path="stu-grievance" element={<StuGrievance />}/>
-        <Route path="library" element={<Library />}/>
-        </Route>  
-
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="notice-board" element={<NoticeBoard />} />
+          <Route path="password-change" element={<PasswordChange />} />
+          <Route path="assignment" element={<Assignment />} />
+          <Route path="attendence" element={<StuAttendence />} />
+          <Route path="leave-permission" element={<LeavePermission />} />
+          <Route path="results" element={<Results />} />
+          <Route path="study-material" element={<StudyMaterial />} />
+          <Route path="stu-fee" element={<StuFee />} />
+          <Route path="time-table" element={<TimeTable />} />
+          <Route path="stu-profile" element={<StuProfile />} />
+          <Route path="apply-form" element={<ApplyForm />} />
+          <Route path="stu-grievance" element={<StuGrievance />} />
+          <Route path="library" element={<Library />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

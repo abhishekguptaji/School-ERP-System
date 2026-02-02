@@ -1,0 +1,65 @@
+/* ===== PAGE ===== */
+.profile-container {
+  max-width: 1200px;
+  margin: 5px auto;
+  /* padding: 5px; */
+  font-family: Arial, sans-serif;
+}
+
+/* ===== CARD ===== */
+.profile-card {
+  background: #ffffff;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== TITLE ===== */
+.profile-title {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* ===== IMAGE SECTION ===== */
+.image-section {
+  display: flex;
+  justify-content:space-around;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+/* ===== IMAGE BOX ===== */
+.image-box {
+  text-align: center;
+}
+
+.image-preview {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border: 2px solid #ddd;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-preview span {
+  font-size: 12px;
+  color: #888;
+}
+
+.image-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}

@@ -34,24 +34,24 @@ function TeacherNavbar() {
         <div className="collapse navbar-collapse" id="adminNavbar">
           <ul className="navbar-nav mx-auto admin-menu">
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/admin-profile">
+              <Link className="nav-link" to="/teacher/tea-classes">
                 My Class
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link " to="/admin/add-student">
+              <Link className="nav-link " to="/teacher/tea-attendence">
                My Attendence
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link " to="/admin/add-teacher">
+              <Link className="nav-link " to="/teacher/studentview">
               Student View
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/grievance-profile">
+              <Link className="nav-link" to="/teacher/teacher-notice">
                 Teacher Notice
               </Link>
             </li>
@@ -73,7 +73,7 @@ function TeacherNavbar() {
 
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
-                  <Link className="dropdown-item" to="/admin/admin-profile">
+                  <Link className="dropdown-item" to="/teacher/my-profile">
                     My Profile
                   </Link>
                 </li>
@@ -96,55 +96,55 @@ function TeacherNavbar() {
   <div className="container-fluid">
     <ul className="navbar-nav flex-row admin-menu mx-auto">
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/dashboard">
+        <Link className="nav-link" to="/teacher/dashboard">
           Dashboard
         </Link>
       </li>
 
       <li className="nav-item ">
-        <Link className="nav-link" to="/admin/manage-student">
+        <Link className="nav-link" to="/teacher/my-profile">
           My Profile
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/classes-subject">
+        <Link className="nav-link" to="/teacher/tea-classes">
           Classes 
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/attendence">
+        <Link className="nav-link" to="/teacher/tea-attendence">
           Attendence
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/exams">
+        <Link className="nav-link" to="/teacher/tea-exams">
           Exams
         </Link>
       </li>
 
       <li className="nav-item ">
-        <Link className="nav-link" to="/admin/fees">
+        <Link className="nav-link" to="/teacher/tea-results">
           Result
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/reports">
+        <Link className="nav-link" to="/teacher/tea-study-material">
           Study Material
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/settings">
+        <Link className="nav-link" to="/teacher/tea-notices">
           Notice
         </Link>
       </li>
 
       <li className="nav-item">
-        <Link className="nav-link" to="/admin/settings">
+        <Link className="nav-link" to="/teacher/tea-leave">
           Leave
         </Link>
       </li>

@@ -26,6 +26,12 @@ import Settings from "./pages/Admin/Reports";
 /* ===== TEACHER ===== */
 import TeacherLayout from "./pages/Teacher/TeacherLayout";
 import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
+import TeaAttendence from "./pages/Teacher/TeaAttendence";
+import TeaNotices from "./pages/Teacher/TeaNotices";
+import TeaExams from "./pages/Teacher/TeaExams";
+import TeaLeave from "./pages/Teacher/TeaLeave";
+import TeaResults from "./pages/Teacher/TeaResults";
+import TeaStudyMaterial from "./pages/Teacher/TeaStudyMaterial";
 
 /* ===== STUDENT ===== */
 import StudentLayout from "./pages/Student/StudentLayout";
@@ -43,6 +49,10 @@ import TimeTable from "./pages/Student/TimeTable";
 import ApplyForm from "./pages/Student/ApplyForm";
 import StuGrievance from "./pages/Student/StuGrievance";
 import Library from "./pages/Student/Library";
+import StudentView from "./pages/Teacher/StudentView";
+import TeaClasses from "./pages/Teacher/TeaClasses";
+import TeacherProfile from "./pages/Teacher/TeacherProfile";
+import TeacherNotice from "./pages/Teacher/TeacherNotice";
 
 function App() {
   return (
@@ -91,6 +101,18 @@ function App() {
         <Route index element={<Navigate to="dashboard" replace />} />
 
         <Route path="dashboard" element={<TeacherDashboard/>}/>
+        <Route path="my-profile" element={<TeacherProfile />}/>
+        <Route path="teacher-notice" element={<TeacherNotice />}/>
+        <Route path="studentview" element={<StudentView />} />
+        <Route path="tea-attendence" element={<TeaAttendence />} />
+        <Route path="tea-notices" element={<TeaNotices />} />
+        <Route path="tea-classes" element={<TeaClasses />} />
+        <Route path="tea-exams" element={<TeaExams />} />
+        <Route path="tea-leave" element={<TeaLeave />} />
+        <Route path="tea-notices" element={<TeaNotices />} />
+        <Route path="tea-results" element={<TeaResults />} />
+        <Route path="tea-study-material" element={<TeaStudyMaterial />} />
+      
         
 
         

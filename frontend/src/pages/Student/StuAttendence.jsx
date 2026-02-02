@@ -1,6 +1,4 @@
-
-
-function Attendence(){
+function StuAttendence(){
   return (
     <>
     <h1>Attendkejnj</h1>
@@ -9,4 +7,4 @@ function Attendence(){
 
 }
 
-export default Attendence;
+export default StuAttendence;

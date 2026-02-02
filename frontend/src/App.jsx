@@ -32,12 +32,17 @@ import StudentLayout from "./pages/Student/StudentLayout";
 import PasswordChange from "./pages/Student/PasswordChange";
 import NoticeBoard from "./pages/Student/NoticeBoard";
 import StudentDashboard from "./pages/Student/StudentDasboard";
-import Attendence from "./pages/Student/Attendence";
+import StuAttendence from "./pages/Student/StuAttendence";
 import Assignment from "./pages/Student/Assignment";
 import LeavePermission from "./pages/Student/LeavePermission";
 import Results from "./pages/Student/Results";
 import StudyMaterial from "./pages/Student/StudyMaterial";
 import StuProfile from "./pages/Student/StuProfile";
+import StuFee from "./pages/Student/StuFees";
+import TimeTable from "./pages/Student/TimeTable";
+import ApplyForm from "./pages/Student/ApplyForm";
+import StuGrievance from "./pages/Student/StuGrievance";
+import Library from "./pages/Student/Library";
 
 function App() {
   return (
@@ -106,13 +111,16 @@ function App() {
         <Route path="notice-board" element={<NoticeBoard />} />
         <Route path="password-change" element={<PasswordChange />} />
         <Route path="assignment" element={<Assignment />} />
-        <Route path="attendence" element={<Attendence />} />
+        <Route path="attendence" element={<StuAttendence />} />
         <Route path="leave-permission" element={<LeavePermission />} />
         <Route path="results" element={<Results />} />
         <Route path="study-material" element={<StudyMaterial />} />
         <Route path="stu-fee" element={<StuFee />} />
         <Route path="time-table" element={<TimeTable />} />
         <Route path="stu-profile"  element={<StuProfile/>} />
+        <Route path="apply-form" element={<ApplyForm />}/>
+        <Route path="stu-grievance" element={<StuGrievance />}/>
+        <Route path="library" element={<Library />}/>
         </Route>  
 
       </Routes>

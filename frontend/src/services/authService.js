@@ -3,7 +3,6 @@ import axios from "axios";
 const API = axios.create({
   baseURL: "http://localhost:8000/api/v1",
   withCredentials: true, 
-  // VERY IMPORTANT for cookies
 });
 
 export const registerUser = async (payload) => {
@@ -34,4 +33,18 @@ export const logoutUser = async (payload) => {
       message: error?.response?.data?.message || "Logout failed",
     };
   }
+};
+
+export const getAdminProfile = async (payload) => {
+  try {
+    const res = await API.get("/admin-profile",payload);
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message:
+        error?.response?.data?.message || "Failed to fetch admin profile",
+    };
+  }
+
 };

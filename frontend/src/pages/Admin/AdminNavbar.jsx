@@ -40,6 +40,11 @@ function AdminNavbar() {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link " to="/admin/show-classes">
+                Find Students
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link " to="/admin/add-student">
                 Add Student
               </Link>

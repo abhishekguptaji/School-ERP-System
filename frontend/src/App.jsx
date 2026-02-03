@@ -23,6 +23,7 @@ import {
   Fees,
   Reports,
   Settings,
+  ShowClasses
 } from "./AdminImports";
 
 /* ===== TEACHER ===== */
@@ -91,6 +92,7 @@ function App() {
           <Route path="fees" element={<Fees />} />
           <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="show-classes" element={<ShowClasses />}/>
         </Route>
 
         {/* ================= TEACHER ================= */}

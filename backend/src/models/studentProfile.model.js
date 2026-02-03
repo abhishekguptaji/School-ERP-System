@@ -115,7 +115,7 @@ const studentProfileSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false },
 );
-studentProfileSchema.index({ class: 1, section: 1 });
+studentProfileSchema.index({ className: 1, section: 1 });
 studentProfileSchema.index({ academicYear: 1 });
 
 studentProfileSchema.virtual("studentAge").get(function () {

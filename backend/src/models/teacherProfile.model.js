@@ -2,7 +2,14 @@ import mongoose from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const teacherProfileSchema = new mongoose.Schema(
-  {
+  { 
+     teacher:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User",
+      required:"true",
+      
+     },
+
     /* ===== USER LINK ===== */
     user: {
       type: mongoose.Schema.Types.ObjectId,

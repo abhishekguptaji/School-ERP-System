@@ -35,9 +35,14 @@ export const logoutUser = async (payload) => {
   }
 };
 
-export const getAdminProfile = async (payload) => {
+export const getAdminProfile = async () => {
   try {
-    const res = await API.get("/admin-profile",payload);
+    const token = localStorage.getItem("accessToken");
+    const res = await API.get("/admin/admin-profile",{
+      headers:{
+        Authorization: `Bearer ${token}`,
+      }
+    });
     return res.data;
   } catch (error) {
     return {

@@ -5,12 +5,7 @@ import {adminProfile} from "../controllers/adminProfile.controller.js";
 
 const router = Router();
 
-router.get(
-  "/admin/admin-profile",
-  verifyJWT,
-  authorizeRoles("admin"),
-  adminProfile
-);
+router.get("/admin-profile",verifyJWT,adminProfile);
 
 
 export default router;

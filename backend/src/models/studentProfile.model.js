@@ -3,7 +3,7 @@ import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const studentProfileSchema = new mongoose.Schema(
   {
-    user: {
+    name: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -34,22 +34,8 @@ const studentProfileSchema = new mongoose.Schema(
       index: true,
     },
     className: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Class",
-      required: true,
-    },
-    rollNo :{
-       type:Number,
-       required:true,
-    },
-    section: {
-     type: mongoose.Schema.Types.ObjectId,
-      ref: "Class",
-      required: true,
-    },
-    academicYear: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Class",
+      type: Number,
+      enum: [1,2,3,4,5,6,7,8,9,10,11,12],
       required: true,
     },
     dob: {

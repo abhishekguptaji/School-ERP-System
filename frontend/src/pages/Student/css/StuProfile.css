@@ -1,65 +1,113 @@
-/* ===== PAGE ===== */
-.profile-container {
-  max-width: 1200px;
-  margin: 5px auto;
-  /* padding: 5px; */
-  font-family: Arial, sans-serif;
+/* Background */
+.stu-bg {
+  background-color: #f4f6f9;
+  min-height: 100vh;
 }
 
-/* ===== CARD ===== */
-.profile-card {
+/* Full width card */
+.profile-card-full {
   background: #ffffff;
-  padding: 5px;
-  border-radius: 10px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
+  padding: 24px;
+  width: 100%;
 }
 
-/* ===== TITLE ===== */
-.profile-title {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #333;
+/* Header */
+.profile-header h4 {
+  font-weight: 700;
 }
 
-/* ===== IMAGE SECTION ===== */
-.image-section {
-  display: flex;
-  justify-content:space-around;
-  flex-wrap: wrap;
-  gap: 30px;
+.profile-header small {
+  font-size: 13px;
 }
 
-/* ===== IMAGE BOX ===== */
+/* Fieldset */
+fieldset {
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+legend {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+/* Labels */
+label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Image box */
 .image-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* optional, centers horizontally */
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 14px;
+  transition: 0.3s;
+}
+
+.image-box:hover {
+  background: #eef2ff;
 }
 
 .image-preview {
-  width: 120px;   
-  height: 120px; 
-  border: 1px solid #ccc;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  position: relative;
-  border-radius:20%;
-}
-
-.image-label {
-  margin-top: 8px; 
-  font-weight: bold;
+  justify-content: center;
 }
 
 .image-preview img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;   /* ✅ image fits perfectly */
 }
 
-.image-preview span {
-  font-size: 12px;
-  color: #888;
+
+.image-label {
+  margin-top: 8px;
+  font-weight: 600;
 }
 
+/* Save button */
+.btn-save-sm {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border-radius: 20px;
+  padding: 8px 24px;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-save-sm:hover {
+  opacity: 0.9;
+}
+.btn-edit {
+  background: #0d6efd;
+  color: white;
+  border-radius: 20px;
+  padding: 8px 20px;
+  border: none;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+  border-radius: 20px;
+  padding: 8px 20px;
+  border: none;
+}

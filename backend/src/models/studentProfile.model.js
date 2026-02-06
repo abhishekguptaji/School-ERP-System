@@ -3,7 +3,7 @@ import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const studentProfileSchema = new mongoose.Schema(
   {
-    name: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

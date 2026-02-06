@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
-
+import studentRouter from "./routes/student.routes.js";
 const app = express();
 
 app.use(cors({
@@ -29,6 +29,7 @@ app.use(express.static("public"));
 
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/student", studentRouter)
 app.use("/api/v1/admin", adminRouter);
 
 

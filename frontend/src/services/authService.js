@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "http://localhost:8000/api/v1",
-  withCredentials: true,
+  withCredentials: true, 
 });
 
 export const registerUser = async (payload) => {
@@ -16,6 +16,7 @@ export const registerUser = async (payload) => {
     };
   }
 };
+
 
 export const loginUser = async (payload) => {
   const response = await API.post("/user/login", payload);
@@ -37,10 +38,10 @@ export const logoutUser = async (payload) => {
 export const getAdminProfile = async () => {
   try {
     const token = localStorage.getItem("accessToken");
-    const res = await API.get("/admin/admin-profile", {
-      headers: {
+    const res = await API.get("/admin/admin-profile",{
+      headers:{
         Authorization: `Bearer ${token}`,
-      },
+      }
     });
     return res.data;
   } catch (error) {
@@ -50,14 +51,15 @@ export const getAdminProfile = async () => {
         error?.response?.data?.message || "Failed to fetch admin profile",
     };
   }
+
 };
 
-export const createOrUpdateStudentProfile = async (payload) => {
-  const response = await API.post("/student/student-profile", payload, {
+
+export const createStudentProfile = async(payload) =>{
+   const response  = await API.post("/student/student-profile",payload,payload, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-    withCredentials: true,
   });
-  return response.data;
-};
+   return response.data;
+}

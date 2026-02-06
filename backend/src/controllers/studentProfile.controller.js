@@ -2,6 +2,7 @@ import StudentProfile from "../models/studentProfile.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const beforeCreateFile = asyncHandler(async (req, res) => {
   return res.status(200).json(
@@ -48,9 +49,29 @@ const createOrUpdateStudentProfile = asyncHandler(async (req, res) => {
   let fatherImage = existingProfile?.fatherImage || "";
   let motherImage = existingProfile?.motherImage || "";
 
-  if (req.files?.userImage?.[0]) userImage = req.files.userImage[0].path;
-  if (req.files?.fatherImage?.[0]) fatherImage = req.files.fatherImage[0].path;
-  if (req.files?.motherImage?.[0]) motherImage = req.files.motherImage[0].path;
+  if (req.files?.userImage?.[0]) {
+    const upload = await uploadOnCloudinary(
+      req.files.userImage[0].path,
+      "schoolERP/student/user",
+    );
+    if (upload?.secure_url) userImage = upload.secure_url;
+  }
+
+  if (req.files?.fatherImage?.[0]) {
+    const upload = await uploadOnCloudinary(
+      req.files.fatherImage[0].path,
+      "schoolERP/student/father",
+    );
+    if (upload?.secure_url) fatherImage = upload.secure_url;
+  }
+
+  if (req.files?.motherImage?.[0]) {
+    const upload = await uploadOnCloudinary(
+      req.files.motherImage[0].path,
+      "schoolERP/student/mother",
+    );
+    if (upload?.secure_url) motherImage = upload.secure_url;
+  }
 
   if (!existingProfile) {
     if (!userImage || !fatherImage || !motherImage) {
@@ -103,4 +124,8 @@ const createOrUpdateStudentProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, profile, "Profile saved successfully"));
 });
 
-export { getMyStudentProfile, beforeCreateFile, createOrUpdateStudentProfile };
+export { 
+  getMyStudentProfile, 
+  beforeCreateFile, 
+  createOrUpdateStudentProfile
+};

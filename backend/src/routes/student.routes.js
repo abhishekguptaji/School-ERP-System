@@ -7,6 +7,8 @@ import {
   getMyStudentProfile,
 } from "../controllers/studentProfile.controller.js";
 
+import {getStudentData} from "../controllers/studentDashboard.controller.js";
+
 const router = Router();
 
 router.get("/student-profile", verifyJWT, getMyStudentProfile);
@@ -21,5 +23,7 @@ router.post(
   ]),
   createOrUpdateStudentProfile,
 );
+
+router.get("/dashboard",verifyJWT,getStudentData);
 
 export default router;

@@ -17,7 +17,6 @@ export const registerUser = async (payload) => {
   }
 };
 
-
 export const loginUser = async (payload) => {
   const response = await API.post("/user/login", payload);
   return response.data;
@@ -79,3 +78,15 @@ export const getStudentProfile = async() =>{
     }  
   }
 }
+
+export const getShortProfileStudent = async () => {
+  try {
+    const res = await API.get("/student/dashboard");
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: error?.response?.data?.message || "Something went wrong",
+    };
+  }
+};

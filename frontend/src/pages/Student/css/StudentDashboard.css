@@ -1,0 +1,81 @@
+.dash-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.dash-title {
+  font-size: 26px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.dash-card {
+  display: flex;
+  gap: 20px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.dash-left {
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dash-img {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #eee;
+}
+
+.dash-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+}
+
+.dash-row {
+  display: flex;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.label {
+  font-weight: bold;
+  width: 150px;
+  color: #333;
+}
+
+.value {
+  color: #444;
+}
+
+.dash-loading {
+  padding: 30px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.dash-error {
+  padding: 30px;
+  text-align: center;
+}
+
+.dash-error button {
+  margin-top: 10px;
+  padding: 10px 16px;
+  border: none;
+  background: black;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}

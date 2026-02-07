@@ -4,6 +4,8 @@ import {
   getStudentProfile,
   createStudentProfile,
 } from "../../services/authService.js";
+import Swal from "sweetalert2";
+
 
 function StuProfile() {
   const [loading, setLoading] = useState(true);
@@ -76,7 +78,11 @@ function StuProfile() {
     const res = await getStudentProfile();
 
     if (res?.success === false) {
-      alert(res?.message || "Failed to fetch profile");
+      Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: res?.message || "Failed to fetch profile",
+            });
       setLoading(false);
       return;
     }
@@ -260,11 +266,20 @@ function StuProfile() {
       const res = await createStudentProfile(payload);
 
       if (res?.success === false) {
-        alert(res?.message || "Failed to save profile");
+         Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: res?.message || "Failed to save profile",
+            });
         return;
       }
-
-      alert(res?.message || "Profile saved successfully");
+      Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: "Profile Save Successfully",
+              timer: 1000,
+              showConfirmButton: false,
+            });
       setIsEditing(false);
       fetchProfile();
     } catch (err) {
@@ -313,10 +328,6 @@ function StuProfile() {
             </div>
           )}
         </div>
-
-        <p className="mb-3">
-          {isProfileCreated ? "Profile Found ✅" : "Profile Not Created 📝"}
-        </p>
 
         {/* ===== IMAGES ===== */}
         <div className="row text-center mb-4">

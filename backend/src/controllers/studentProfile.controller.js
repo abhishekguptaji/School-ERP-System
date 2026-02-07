@@ -4,31 +4,45 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-const beforeCreateFile = asyncHandler(async (req, res) => {
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        _id: req.user._id,
-        name: req.user.name,
-        email: req.user.email,
-        rollNumber: req.user.rollNumber,
-      },
-      "User fetched",
-    ),
-  );
-});
 
 const getMyStudentProfile = asyncHandler(async (req, res) => {
   const profile = await StudentProfile.findOne({ user: req.user._id }).populate(
     "user",
-    "name email rollNumber",
+    "name email rollNumber"
   );
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, profile, "See Complete Profile"));
+  if (!profile) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          user: {
+            _id: req.user._id,
+            name: req.user.name,
+            email: req.user.email,
+            rollNumber: req.user.rollNumber,
+          },
+          profile: null,
+          isProfileCreated: false,
+        },
+        "Profile not created yet, basic user data sent"
+      )
+    );
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        user: profile.user,
+        profile,
+        isProfileCreated: true,
+      },
+      "Complete profile fetched"
+    )
+  );
 });
+
 
 const createOrUpdateStudentProfile = asyncHandler(async (req, res) => {
   if (!req.body?.data) {
@@ -126,6 +140,5 @@ const createOrUpdateStudentProfile = asyncHandler(async (req, res) => {
 
 export { 
   getMyStudentProfile, 
-  beforeCreateFile, 
   createOrUpdateStudentProfile
 };

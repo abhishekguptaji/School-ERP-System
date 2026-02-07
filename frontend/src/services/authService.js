@@ -54,7 +54,6 @@ export const getAdminProfile = async () => {
 
 };
 
-
 export const createStudentProfile = async(payload) =>{
    const response  = await API.post("/student/student-profile",payload,payload, {
     headers: {
@@ -62,4 +61,21 @@ export const createStudentProfile = async(payload) =>{
     },
   });
    return response.data;
+}
+
+export const getStudentProfile = async() =>{
+   try{
+    const token = localStorage.getItem("accessToken");
+    const res = await API.get("/student/student-profile",{
+      headers:{
+        Authorization:`Bearer ${token}`,
+      }
+    });
+    return res.data;
+  } catch(error){
+    return {
+      success:false,
+      message:error?.response?.data?.message,
+    }  
+  }
 }

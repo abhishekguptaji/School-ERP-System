@@ -1,129 +1,322 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./css/StuProfile.css";
+import {
+  getStudentProfile,
+  createStudentProfile,
+} from "../../services/authService.js";
 
 function StuProfile() {
+  const [loading, setLoading] = useState(true);
+  const [isProfileCreated, setIsProfileCreated] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  /* ================= FORM DATA (EXACT SCHEMA MATCH) ================= */
+  // ================= FORM DATA (FLAT FOR UI) =================
   const [formData, setFormData] = useState({
+    // user
+    name: "",
+    email: "",
+    rollNumber: "",
+
+    // profile basic
     admissionNumber: "",
-    user:"",
-    rollNo: "",
     className: "",
-    email:"",
     dob: "",
     gender: "",
     bloodGroup: "",
 
-    address: {
-      city: "",
-      state: "",
-      pincode: "",
-    },
+    // address
+    city: "",
+    state: "",
+    pincode: "",
 
-    father: {
-      name: "",
-      phone: "",
-      occupation: "",
-    },
+    // father
+    fatherName: "",
+    fatherPhone: "",
+    fatherOccupation: "",
 
-    mother: {
-      name: "",
-      phone: "",
-      occupation: "",
-    },
+    // mother
+    motherName: "",
+    motherPhone: "",
+    motherOccupation: "",
 
-    guardian: {
-      name: "",
-      relation: "",
-      phone: "",
-    },
+    // guardian
+    guardianName: "",
+    guardianRelation: "",
+    guardianPhone: "",
 
-    documents: {
-      aadhaarNumber: "",
-    },
+    // documents
+    aadhaarNumber: "",
   });
 
-  /* ================= IMAGE STATE ================= */
-  const [images, setImages] = useState({
+  // ================= IMAGE URLS (FROM BACKEND) =================
+  const [imageUrls, setImageUrls] = useState({
+    userImage: "",
+    fatherImage: "",
+    motherImage: "",
+  });
+
+  // ================= IMAGE FILES (FOR UPLOAD) =================
+  const [imageFiles, setImageFiles] = useState({
     userImage: null,
     fatherImage: null,
     motherImage: null,
   });
 
-  const [preview, setPreview] = useState({
-    userImage: null,
-    fatherImage: null,
-    motherImage: null,
+  // ================= IMAGE PREVIEWS (LOCAL FILE PREVIEW) =================
+  const [previews, setPreviews] = useState({
+    userImage: "",
+    fatherImage: "",
+    motherImage: "",
   });
 
-  /* ================= HANDLERS ================= */
+  // ================= GET PROFILE =================
+  const fetchProfile = async () => {
+    setLoading(true);
 
+    const res = await getStudentProfile();
+
+    if (res?.success === false) {
+      alert(res?.message || "Failed to fetch profile");
+      setLoading(false);
+      return;
+    }
+
+    const payload = res?.data;
+
+    // if profile not created
+    if (payload?.isProfileCreated === false) {
+      const user = payload?.user;
+
+      setFormData((prev) => ({
+        ...prev,
+        name: user?.name || "",
+        email: user?.email || "",
+        rollNumber: user?.rollNumber || "",
+      }));
+
+      setIsProfileCreated(false);
+      setIsEditing(true);
+      setLoading(false);
+      return;
+    }
+
+    // if profile created
+    const user = payload?.user;
+    const profile = payload?.profile;
+
+    setFormData({
+      // user
+      name: user?.name || "",
+      email: user?.email || "",
+      rollNumber: user?.rollNumber || "",
+
+      // profile basic
+      admissionNumber: profile?.admissionNumber || "",
+      className: profile?.className || "",
+      dob: profile?.dob ? profile?.dob?.slice(0, 10) : "",
+      gender: profile?.gender || "",
+      bloodGroup: profile?.bloodGroup || "",
+
+      // address
+      city: profile?.address?.city || "",
+      state: profile?.address?.state || "",
+      pincode: profile?.address?.pincode || "",
+
+      // father
+      fatherName: profile?.father?.name || "",
+      fatherPhone: profile?.father?.phone || "",
+      fatherOccupation: profile?.father?.occupation || "",
+
+      // mother
+      motherName: profile?.mother?.name || "",
+      motherPhone: profile?.mother?.phone || "",
+      motherOccupation: profile?.mother?.occupation || "",
+
+      // guardian
+      guardianName: profile?.guardian?.name || "",
+      guardianRelation: profile?.guardian?.relation || "",
+      guardianPhone: profile?.guardian?.phone || "",
+
+      // documents
+      aadhaarNumber: profile?.documents?.aadhaarNumber || "",
+    });
+
+    // store backend image urls
+    setImageUrls({
+      userImage: profile?.userImage || "",
+      fatherImage: profile?.fatherImage || "",
+      motherImage: profile?.motherImage || "",
+    });
+
+    // reset previews + files
+    setPreviews({
+      userImage: "",
+      fatherImage: "",
+      motherImage: "",
+    });
+
+    setImageFiles({
+      userImage: null,
+      fatherImage: null,
+      motherImage: null,
+    });
+
+    setIsProfileCreated(true);
+    setIsEditing(false);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  // ================= INPUT CHANGE =================
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name.includes(".")) {
-      const [parent, child] = name.split(".");
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: value,
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // ================= IMAGE CHANGE =================
+  const handleImageChange = (e, key) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFiles((prev) => ({
+      ...prev,
+      [key]: file,
+    }));
+
+    const previewUrl = URL.createObjectURL(file);
+
+    setPreviews((prev) => ({
+      ...prev,
+      [key]: previewUrl,
+    }));
+  };
+
+  // ================= SAVE =================
+  const handleSave = async () => {
+    try {
+      if (!formData.dob) return alert("DOB is required");
+      if (!formData.gender) return alert("Gender is required");
+      if (!formData.city) return alert("City is required");
+      if (!formData.fatherName) return alert("Father Name is required");
+      if (!formData.motherName) return alert("Mother Name is required");
+      if (!formData.aadhaarNumber) return alert("Aadhaar Number is required");
+
+      const payload = new FormData();
+
+      // ✅ IMPORTANT: send JSON in "data"
+      const jsonData = {
+        admissionNumber: formData.admissionNumber,
+        className: formData.className,
+        dob: formData.dob,
+        gender: formData.gender,
+        bloodGroup: formData.bloodGroup,
+
+        address: {
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
         },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+
+        father: {
+          name: formData.fatherName,
+          phone: formData.fatherPhone,
+          occupation: formData.fatherOccupation,
+        },
+
+        mother: {
+          name: formData.motherName,
+          phone: formData.motherPhone,
+          occupation: formData.motherOccupation,
+        },
+
+        guardian: {
+          name: formData.guardianName,
+          relation: formData.guardianRelation,
+          phone: formData.guardianPhone,
+        },
+
+        documents: {
+          aadhaarNumber: formData.aadhaarNumber,
+        },
+      };
+
+      payload.append("data", JSON.stringify(jsonData));
+
+      // images
+      if (imageFiles.userImage)
+        payload.append("userImage", imageFiles.userImage);
+      if (imageFiles.fatherImage)
+        payload.append("fatherImage", imageFiles.fatherImage);
+      if (imageFiles.motherImage)
+        payload.append("motherImage", imageFiles.motherImage);
+
+      const res = await createStudentProfile(payload);
+
+      if (res?.success === false) {
+        alert(res?.message || "Failed to save profile");
+        return;
+      }
+
+      alert(res?.message || "Profile saved successfully");
+      setIsEditing(false);
+      fetchProfile();
+    } catch (err) {
+      console.log("SAVE ERROR:", err);
+      alert("Save failed. Check console.");
     }
   };
 
-  const handleImageChange = (e, key) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setImages((prev) => ({ ...prev, [key]: file }));
-    setPreview((prev) => ({ ...prev, [key]: URL.createObjectURL(file) }));
-  };
-
-  const handleSave = () => {
-    const payload = new FormData();
-
-    payload.append("userImage", images.userImage);
-    payload.append("fatherImage", images.fatherImage);
-    payload.append("motherImage", images.motherImage);
-    payload.append("data", JSON.stringify(formData));
-
-    console.log("FORM DATA:", formData);
-    console.log("IMAGES:", images);
-
-    setIsEditing(false);
-    // 👉 axios.post("/student-profile", payload)
-  };
-
-  /* ================= UI ================= */
+  // ================= UI =================
+  if (loading) {
+    return <h3 style={{ padding: "20px" }}>Loading...</h3>;
+  }
 
   return (
     <div className="container-fluid px-4 mt-3 stu-bg">
       <div className="profile-card-full p-4 shadow-sm">
-
         {/* ===== HEADER ===== */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h4>Student Profile</h4>
 
           {!isEditing ? (
-            <button className="btn btn-edit" onClick={() => setIsEditing(true)}>
+            <button
+              type="button"
+              className="btn btn-edit"
+              onClick={() => setIsEditing(true)}
+            >
               Edit
             </button>
           ) : (
             <div>
-              <button className="btn btn-secondary me-2" onClick={() => setIsEditing(false)}>
+              <button
+                type="button"
+                className="btn btn-secondary me-2"
+                onClick={() => setIsEditing(false)}
+              >
                 Cancel
               </button>
-              <button className="btn btn-primary" onClick={handleSave}>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleSave}
+              >
                 Save
               </button>
             </div>
           )}
         </div>
+
+        <p className="mb-3">
+          {isProfileCreated ? "Profile Found ✅" : "Profile Not Created 📝"}
+        </p>
 
         {/* ===== IMAGES ===== */}
         <div className="row text-center mb-4">
@@ -135,8 +328,13 @@ function StuProfile() {
             <div className="col-md-4" key={key}>
               <div className="image-box">
                 <div className="image-preview">
-                  {preview[key] ? <img src={preview[key]} alt="" /> : <span>No Photo</span>}
+                  {previews[key] || imageUrls[key] ? (
+                    <img src={previews[key] || imageUrls[key]} alt={label} />
+                  ) : (
+                    <span>No Photo</span>
+                  )}
                 </div>
+
                 <p className="image-label">{label}</p>
 
                 {isEditing && (
@@ -153,51 +351,79 @@ function StuProfile() {
         </div>
 
         {/* ===== BASIC ===== */}
-        <fieldset>
+        <fieldset className="mb-3">
           <legend>Basic Information</legend>
+
           <div className="row g-3">
             <div className="col-md-3">
               <label>Admission Number</label>
-              <input name="admissionNumber" value={formData.admissionNumber} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="admissionNumber"
+                value={formData.admissionNumber}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
 
             <div className="col-md-3">
-              <label>Student's Name</label>
-              <input name="user_name" value={formData.name} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <label>Student Name</label>
+              <input value={formData.name} className="form-control" disabled />
             </div>
 
             <div className="col-md-3">
               <label>Roll No</label>
-              <input name="rollNo" value={formData.rollNo} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                value={formData.rollNumber}
+                className="form-control"
+                disabled
+              />
             </div>
 
             <div className="col-md-3">
               <label>Class</label>
-              <select name="className" value={formData.className} onChange={handleChange} className="form-select" disabled={!isEditing}>
+              <select
+                name="className"
+                value={formData.className}
+                onChange={handleChange}
+                className="form-select"
+                disabled={!isEditing}
+              >
                 <option value="">Select</option>
-                <option value="1">1th</option><option value="2">2nd</option>
-                <option value="3">3rd</option><option value="4">4th</option>
-                <option value="5">5th</option><option value="6">6th</option>
-                <option value="7">7th</option><option value="8">8th</option>
-                <option value="9">9th</option><option value="10">10th</option>
-                <option value="11">11th</option><option value="12">12th</option>
-                
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((cls) => (
+                  <option key={cls} value={cls}>
+                    {cls}
+                  </option>
+                ))}
               </select>
             </div>
-            
+
             <div className="col-md-3">
               <label>Email</label>
-              <input name="email" value={formData.email} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input value={formData.email} className="form-control" disabled />
             </div>
 
             <div className="col-md-3">
               <label>DOB</label>
-              <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
 
             <div className="col-md-3">
               <label>Gender</label>
-              <select name="gender" value={formData.gender} onChange={handleChange} className="form-select" disabled={!isEditing}>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="form-select"
+                disabled={!isEditing}
+              >
                 <option value="">Select</option>
                 <option>Male</option>
                 <option>Female</option>
@@ -207,98 +433,197 @@ function StuProfile() {
 
             <div className="col-md-3">
               <label>Blood Group</label>
-              <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} className="form-select" disabled={!isEditing}>
+              <select
+                name="bloodGroup"
+                value={formData.bloodGroup}
+                onChange={handleChange}
+                className="form-select"
+                disabled={!isEditing}
+              >
                 <option value="">Select</option>
-                <option>A+</option><option>A-</option>
-                <option>B+</option><option>B-</option>
-                <option>O+</option><option>O-</option>
-                <option>AB+</option><option>AB-</option>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>O+</option>
+                <option>O-</option>
+                <option>AB+</option>
+                <option>AB-</option>
               </select>
             </div>
           </div>
         </fieldset>
 
         {/* ===== ADDRESS ===== */}
-        <fieldset>
+        <fieldset className="mb-3">
           <legend>Address</legend>
+
           <div className="row g-3">
             <div className="col-md-4">
-              <label>Town & City</label>
-              <input name="address.city" value={formData.address.city} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <label>City</label>
+              <input
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>State</label>
-              <input name="address.state" value={formData.address.state} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Pincode</label>
-              <input name="address.pincode" value={formData.address.pincode} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="pincode"
+                value={formData.pincode}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
           </div>
         </fieldset>
 
         {/* ===== PARENTS ===== */}
-        <fieldset>
+        <fieldset className="mb-3">
           <legend>Parent Details</legend>
+
           <div className="row g-3">
             <div className="col-md-4">
               <label>Father Name</label>
-              <input name="father.name" value={formData.father.name} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="fatherName"
+                value={formData.fatherName}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Father Phone</label>
-              <input name="father.phone" value={formData.father.phone} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="fatherPhone"
+                value={formData.fatherPhone}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Father Occupation</label>
-              <input name="father.occupation" value={formData.father.occupation} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="fatherOccupation"
+                value={formData.fatherOccupation}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
 
             <div className="col-md-4">
               <label>Mother Name</label>
-              <input name="mother.name" value={formData.mother.name} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="motherName"
+                value={formData.motherName}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Mother Phone</label>
-              <input name="mother.phone" value={formData.mother.phone} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="motherPhone"
+                value={formData.motherPhone}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Mother Occupation</label>
-              <input name="mother.occupation" value={formData.mother.occupation} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="motherOccupation"
+                value={formData.motherOccupation}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
           </div>
         </fieldset>
 
         {/* ===== GUARDIAN ===== */}
-        <fieldset>
+        <fieldset className="mb-3">
           <legend>Guardian Details</legend>
+
           <div className="row g-3">
             <div className="col-md-4">
               <label>Guardian Name</label>
-              <input name="guardian.name" value={formData.guardian.name} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="guardianName"
+                value={formData.guardianName}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Relation</label>
-              <input name="guardian.relation" value={formData.guardian.relation} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="guardianRelation"
+                value={formData.guardianRelation}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
+
             <div className="col-md-4">
               <label>Guardian Phone</label>
-              <input name="guardian.phone" value={formData.guardian.phone} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="guardianPhone"
+                value={formData.guardianPhone}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
           </div>
         </fieldset>
 
         {/* ===== DOCUMENTS ===== */}
-        <fieldset>
+        <fieldset className="mb-3">
           <legend>Documents</legend>
+
           <div className="row g-3">
             <div className="col-md-4">
               <label>Aadhaar Number</label>
-              <input name="documents.aadhaarNumber" value={formData.documents.aadhaarNumber} onChange={handleChange} className="form-control" disabled={!isEditing} />
+              <input
+                name="aadhaarNumber"
+                value={formData.aadhaarNumber}
+                onChange={handleChange}
+                className="form-control"
+                disabled={!isEditing}
+              />
             </div>
           </div>
         </fieldset>
-
       </div>
     </div>
   );

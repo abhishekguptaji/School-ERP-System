@@ -5,13 +5,11 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {
   createOrUpdateStudentProfile,
   getMyStudentProfile,
-  beforeCreateFile,
 } from "../controllers/studentProfile.controller.js";
 
 const router = Router();
 
 router.get("/student-profile", verifyJWT, getMyStudentProfile);
-router.get("/get-me", verifyJWT, beforeCreateFile);
 
 router.post(
   "/student-profile",

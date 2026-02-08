@@ -68,13 +68,8 @@ function StudentDashboard() {
           </div>
 
           <div className="dash-row">
-            <span className="label">Roll Number:</span>
-            <span className="value">{user?.rollNumber || "-"}</span>
-          </div>
-
-          <div className="dash-row">
             <span className="label">Admission No:</span>
-            <span className="value">{student?.admissionNumber || "-"}</span>
+            <span className="value">{user?.campusId || "-"}</span>
           </div>
 
           <div className="dash-row">

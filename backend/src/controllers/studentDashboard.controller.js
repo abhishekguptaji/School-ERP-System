@@ -7,8 +7,9 @@ const getStudentData = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   const profile = await StudentProfile.findOne({ user: userId })
     .select("userImage admissionNumber father.phone ")
-    .populate("user", "name email rollNumber");
-
+    .populate("user", "name email campusId");
+    // console.log(profile.user.campusId);
+  
   if (!profile) {
     throw new ApiError(404, "Student profile not found");
   }

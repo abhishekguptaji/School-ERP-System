@@ -7,13 +7,13 @@ import Swal from "sweetalert2";
 
 function LoginPage() {
   const navigate = useNavigate();
-  
+
   const [role, setRole] = useState("student");
   const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {   
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -46,7 +46,8 @@ function LoginPage() {
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text: error?.response?.data?.message ||
+        text:
+          error?.response?.data?.message ||
           "Invalid email or password. Please try again.",
         confirmButtonText: "Try Again",
         confirmButtonColor: "#d33",
@@ -56,6 +57,8 @@ function LoginPage() {
       });
       console.error(error);
     } finally {
+      setLoginId("");
+      setPassword("");
       setLoading(false);
     }
   };
@@ -102,9 +105,9 @@ function LoginPage() {
                 <div className="mb-3">
                   <label className="form-label">
                     {role === "student"
-                      ? "Roll No / Email"
+                      ? "Student's Email"
                       : role === "teacher"
-                        ? "Employee ID / Email"
+                        ? "Teacher's Email"
                         : "Admin Email"}
                   </label>
                   <input

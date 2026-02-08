@@ -17,7 +17,7 @@ function StuProfile() {
     // user
     name: "",
     email: "",
-    rollNumber: "",
+    campusId: "",
 
     // profile basic
     admissionNumber: "",
@@ -97,7 +97,7 @@ function StuProfile() {
         ...prev,
         name: user?.name || "",
         email: user?.email || "",
-        rollNumber: user?.rollNumber || "",
+        campusId: user?.campusId || "",
       }));
 
       setIsProfileCreated(false);
@@ -114,7 +114,7 @@ function StuProfile() {
       // user
       name: user?.name || "",
       email: user?.email || "",
-      rollNumber: user?.rollNumber || "",
+      campusId: user?.campusId || "",
 
       // profile basic
       admissionNumber: profile?.admissionNumber || "",
@@ -365,8 +365,24 @@ function StuProfile() {
           <legend>Basic Information</legend>
 
           <div className="row g-3">
+
             <div className="col-md-3">
               <label>Admission Number</label>
+              <input
+                value={formData.campusId}
+                className="form-control"
+                disabled
+              />
+            </div>
+            
+
+            <div className="col-md-3">
+              <label>Student Name</label>
+              <input value={formData.name} className="form-control" disabled />
+            </div>
+            
+            <div className="col-md-3">
+              <label>Roll No</label>
               <input
                 name="admissionNumber"
                 value={formData.admissionNumber}
@@ -375,20 +391,7 @@ function StuProfile() {
                 disabled={!isEditing}
               />
             </div>
-
-            <div className="col-md-3">
-              <label>Student Name</label>
-              <input value={formData.name} className="form-control" disabled />
-            </div>
-
-            <div className="col-md-3">
-              <label>Roll No</label>
-              <input
-                value={formData.rollNumber}
-                className="form-control"
-                disabled
-              />
-            </div>
+            
 
             <div className="col-md-3">
               <label>Class</label>

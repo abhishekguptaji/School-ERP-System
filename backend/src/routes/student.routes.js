@@ -8,6 +8,9 @@ import {
 } from "../controllers/studentProfile.controller.js";
 
 import {getStudentData} from "../controllers/studentDashboard.controller.js";
+import {createApplyForm} from "../controllers/ApplyForm.controller.js";
+
+
 
 const router = Router();
 
@@ -25,5 +28,13 @@ router.post(
 );
 
 router.get("/dashboard",verifyJWT,getStudentData);
+
+router.post(
+  "/apply-form",
+  verifyJWT,
+  upload.fields([{ name: "attachment", maxCount: 1 }]),
+  createApplyForm
+);
+
 
 export default router;

@@ -50,17 +50,11 @@ function StudentNavbar() {
                   </Link>
                 </li>
 
-                <li className="nav-item">
+                {/* <li className="nav-item">
                   <Link className="nav-link" to="#">
                     <i className="bi bi-award"></i> Scholarship Undertaking
                   </Link>
-                </li>
-
-                {/* <li className="nav-item">
-              <Link className="nav-link" to="/reg">
-                <i className="bi bi-pencil-square"></i> Registration-2025
-             </Link>
-            </li> */}
+                </li> */}
 
                 <li className="nav-item">
                   <Link className="nav-link" to="/student/stu-grievance">
@@ -75,11 +69,17 @@ function StudentNavbar() {
                 </li>
 
                 <li className="nav-item">
+                  <Link className="nav-link" to="/student/notice-board">
+                    Notice
+                  </Link>
+                </li>
+                
+                <li className="nav-item">
                   <Link
                     to="/student/password-change"
                     className="nav-link text-white"
                   >
-                    <i className="bi bi-key"></i>Password
+                    <i className="bi bi-key"></i>Change Password
                   </Link>
                 </li>
               </ul>
@@ -134,12 +134,6 @@ function StudentNavbar() {
               <li className="nav-item ">
                 <Link className="nav-link" to="/student/results">
                   Result
-                </Link>
-              </li>
-
-              <li className="nav-item">
-                <Link className="nav-link" to="/student/notice-board">
-                  Notice
                 </Link>
               </li>
 

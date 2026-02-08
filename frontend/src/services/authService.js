@@ -91,7 +91,6 @@ export const getShortProfileStudent = async () => {
   }
 };
 
-
 export const getTeacherProfile = async () => {
   try {
     const res = await API.get("/teacher/teacher-profile");
@@ -116,4 +115,19 @@ export const createOrUpdateTeacherProfile = async (payload) => {
       message: error?.response?.data?.message || "Something went wrong",
     };
   }
+};
+
+
+export const createApplyForm = async (payload) => {
+  const res = await API.post("student/apply-form", payload, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+};
+
+export const getMyApplyForms = async () => {
+  const res = await API.get("student/apply-form");
+  return res.data;
 };

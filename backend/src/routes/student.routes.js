@@ -1,16 +1,16 @@
 import { Router } from "express";
-
-import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
   createOrUpdateStudentProfile,
   getMyStudentProfile,
 } from "../controllers/studentProfile.controller.js";
 
-import {getStudentData} from "../controllers/studentDashboard.controller.js";
-import {createApplyForm} from "../controllers/ApplyForm.controller.js";
-
-
+import { getStudentData } from "../controllers/studentDashboard.controller.js";
+import {
+  createApplyForm,
+  getMyApplyForms,
+} from "../controllers/ApplyForm.controller.js";
 
 const router = Router();
 
@@ -27,14 +27,15 @@ router.post(
   createOrUpdateStudentProfile,
 );
 
-router.get("/dashboard",verifyJWT,getStudentData);
+router.get("/dashboard", verifyJWT, getStudentData);
 
 router.post(
   "/apply-form",
   verifyJWT,
   upload.fields([{ name: "attachment", maxCount: 1 }]),
-  createApplyForm
+  createApplyForm,
 );
 
+router.get("/apply-form", verifyJWT, getMyApplyForms);
 
 export default router;

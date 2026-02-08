@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const applyFormSchema = new mongoose.Schema(
   {
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -26,7 +27,7 @@ const applyFormSchema = new mongoose.Schema(
     },
 
     applyDate: {
-      type: String,
+      type: String, 
       required: true,
     },
 
@@ -37,7 +38,7 @@ const applyFormSchema = new mongoose.Schema(
     },
 
     attachment: {
-      type: String,
+      type: String, 
       trim: true,
       default: "",
     },
@@ -65,7 +66,7 @@ const applyFormSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const ApplyForm = mongoose.model("ApplyForm", applyFormSchema);

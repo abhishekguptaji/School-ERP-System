@@ -4,11 +4,10 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-
 const getMyStudentProfile = asyncHandler(async (req, res) => {
   const profile = await StudentProfile.findOne({ user: req.user._id }).populate(
     "user",
-    "name email rollNumber"
+    "name email campusId"
   );
 
   if (!profile) {
@@ -20,7 +19,7 @@ const getMyStudentProfile = asyncHandler(async (req, res) => {
             _id: req.user._id,
             name: req.user.name,
             email: req.user.email,
-            rollNumber: req.user.rollNumber,
+            campusId: req.user.campusId,
           },
           profile: null,
           isProfileCreated: false,
@@ -123,13 +122,13 @@ const createOrUpdateStudentProfile = asyncHandler(async (req, res) => {
       { user: req.user._id },
       payload,
       { new: true, runValidators: true },
-    ).populate("user", "name email rollNumber");
+    ).populate("user", "name email campusId");
   } else {
     profile = await StudentProfile.create(payload);
 
     profile = await StudentProfile.findById(profile._id).populate(
       "user",
-      "name email rollNumber",
+      "name email campusId",
     );
   }
 

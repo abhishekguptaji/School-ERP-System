@@ -284,7 +284,6 @@ function StuProfile() {
       fetchProfile();
     } catch (err) {
       console.log("SAVE ERROR:", err);
-      alert("Save failed. Check console.");
     }
   };
 

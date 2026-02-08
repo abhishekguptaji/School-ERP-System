@@ -34,7 +34,7 @@ function StudentDashboard() {
   if (error) {
     return (
       <div className="dash-error">
-        <h3>❌ Error</h3>
+        <h3>Complete The Profile First</h3>
         <p>{error}</p>
         <button onClick={fetchStudent}>Retry</button>
       </div>

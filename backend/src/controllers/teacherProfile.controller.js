@@ -1,115 +1,40 @@
 import TeacherProfile from "../models/teacherProfile.model.js";
+import User from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-// export const getTeacherDashboard = asyncHandler(async (req, res) => {
-//   const userId = req.user?._id;
-
-//   if (!userId) throw new ApiError(401, "Unauthorized");
-
-//   if (req.user.role !== "teacher") {
-//     throw new ApiError(403, "Only teachers can access teacher dashboard");
-//   }
-
-//   const profile = await TeacherProfile.findOne({ user: userId })
-//     .select("teacherImage designation department dateOfJoining isActive user")
-//     .populate("user", "name email");
-
-//   return res.status(200).json(
-//     new ApiResponse(
-//       200,
-//       {
-//         profile,
-//         isProfileCreated: !!profile,
-//       },
-//       "Teacher dashboard fetched"
-//     )
-//   );
-// });
-
-// const createOrUpdateTeacherProfile = asyncHandler(async (req, res) => {
-//   const userId = req.user?._id;
-
-//   if (!userId) throw new ApiError(401, "Unauthorized");
-
-//   if (req.user.role !== "teacher") {
-//     throw new ApiError(403, "Only teachers can create/update teacher profile");
-//   }
-
-//   if (!req.body?.data) {
-//     throw new ApiError(400, "Missing 'data' field in form-data");
-//   }
-
-//   let parsedData;
-//   try {
-//     parsedData = JSON.parse(req.body.data);
-//   } catch (err) {
-//     throw new ApiError(400, "Invalid JSON in 'data' field");
-//   }
-
-//   const teacherImage = req.file?.path || req.file?.secure_url || "";
-
-//   const updateData = {
-//     designation: parsedData.designation,
-//     department: parsedData.department,
-//     dateOfJoining: parsedData.dateOfJoining,
-//     qualification: parsedData.qualification,
-//     experience: parsedData.experience,
-//     subjects: parsedData.subjects,
-//     address: parsedData.address,
-//     documents: parsedData.documents,
-//     isActive: parsedData.isActive,
-//   };
-
-//   // If image uploaded
-//   if (teacherImage) {
-//     updateData.teacherImage = teacherImage;
-//   }
-
-//   // upsert (create if not exists)
-//   const profile = await TeacherProfile.findOneAndUpdate(
-//     { user: userId },
-//     { $set: { user: userId, ...updateData } },
-//     { new: true, upsert: true }
-//   ).populate("user", "name email");
-
-//   return res
-//     .status(200)
-//     .json(new ApiResponse(200, profile, "Teacher profile saved"));
-// });
-
 const getTeacherProfile = asyncHandler(async (req, res) => {
-  const userId = req.user?._id;
-  if (!userId) throw new ApiError(401, "Unauthorized");
-
   if (req.user.role !== "teacher") {
     throw new ApiError(403, "Only teachers can access teacher profile");
   }
-  const profile = await TeacherProfile.findOne({ user: userId }).populate(
-    "user",
-    "name email employeeId",
-  );
 
-  if (!profile) {
+ const profile = await TeacherProfile.findOne({ user: req.user._id }).populate(
+    "user",
+    "name email campusId role"
+  );
+ 
+    if (!profile) {
     return res.status(200).json(
       new ApiResponse(
         200,
         {
           user: {
-            _id: userId,
+            _id: req.user._id,
             name: req.user.name,
             email: req.user.email,
-            employeeId: req.user.employeeId,
+            campusId: req.user.campusId,
           },
           profile: null,
           isProfileCreated: false,
         },
-        "Profile not created of Teacher, Basic Details are share",
-      ),
+        "Profile not created yet, basic user data sent"
+      )
     );
   }
+ 
+
   return res.status(200).json(
     new ApiResponse(
       200,
@@ -118,8 +43,8 @@ const getTeacherProfile = asyncHandler(async (req, res) => {
         profile,
         isProfileCreated: true,
       },
-      "Complete Profile Fetched of Teacher",
-    ),
+      profile ? "Complete Profile Fetched of Teacher" : "Profile not created"
+    )
   );
 });
 

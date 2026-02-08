@@ -5,7 +5,7 @@ import User from "../models/user.model.js";
 import { generateAccessAndRefreshTokens } from "../utils/generateTokens.js";
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, rollNumber, password, role } = req.body;
+  const { email, password, role } = req.body;
 
   if (!role) {
     throw new ApiError(400, "Role is required");
@@ -15,15 +15,14 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid role");
   }
 
-  if ((!email && !rollNumber) || !password) {
+  if (!email || !password) {
     throw new ApiError(400, "Credentials are required");
   }
 
-  const user = await User.findOne({
-    role,
-    $or: [{ email }, { rollNumber }],
-  }).select("+password +refreshToken");
-
+  const user = await User.findOne({ email, role }).select(
+    "+password +refreshToken",
+  );
+  
   if (!user) {
     throw new ApiError(404, "User does not exist");
   }
@@ -31,13 +30,6 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!user.isActive) {
     throw new ApiError(403, "User account is deactivated");
   }
-
-//   console.log(
-//   "Has method:",
-//   typeof user.isPasswordCorrect,
-//   Object.getPrototypeOf(user)
-// );
-
 
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
@@ -77,7 +69,6 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-
   if (!req.user?._id) {
     throw new ApiError(401, "Unauthorized request");
   }
@@ -87,7 +78,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     {
       $unset: { refreshToken: 1 },
     },
-    { new: true }
+    { new: true },
   );
 
   const options = {
@@ -103,11 +94,4 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
-
-
-
-export { 
-  loginUser,
-  logoutUser,
-
- };
+export { loginUser, logoutUser };

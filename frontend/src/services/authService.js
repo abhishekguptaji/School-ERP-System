@@ -131,3 +131,17 @@ export const getMyApplyForms = async () => {
   const res = await API.get("student/apply-form");
   return res.data;
 };
+
+export const createMyGrievance = async(payload) =>{
+  const res = await API.post("/student/apply-grievance",payload,{
+    headers:{
+      "Content-Type":"multipart/form-data",
+    },
+  });
+  return res.data;
+}
+
+export const getMyGrievance = async () =>{
+  const res = API.get("/student/apply-grievance");
+  return res.data;
+}

@@ -6,7 +6,7 @@ function StudentFooter() {
       <div className="container-fluid">
         <p className="mb-1">
           Copyright © {new Date().getFullYear()}{" "}
-          <strong>GNIOT GROUP ERP</strong>
+          <strong>GUPTA'S GROUP ERP</strong>
         </p>
         <p className="mb-0">
           Designed & Developed by:{" "}

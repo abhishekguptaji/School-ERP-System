@@ -14,6 +14,7 @@ import {
 
 import {
   createGrievance,
+  getOurGrievance
 } from "../controllers/grievancePanel.controller.js";
 
 
@@ -49,6 +50,8 @@ router.post(
   upload.fields([{ name: "attachment", maxCount: 1 }]),
   createGrievance
 );
+
+router.get("/apply-grievance",verifyJWT,getOurGrievance);
 
 
 

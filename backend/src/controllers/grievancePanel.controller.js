@@ -62,4 +62,28 @@ const createGrievance = asyncHandler(async (req, res) => {
     );
 });
 
-export { createGrievance };
+const getOurGrievance = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized User Want to see credentials");
+  }
+
+  if (req.user.role !== "student" && req.user.role !== "teacher") {
+    throw new ApiError(
+      403,
+      "Only student or teacher can view their grievances",
+    );
+  }
+
+  const grievances = await GrievancePanel.find({ createdBy: userId })
+    .sort({ createdAt: -1 })
+    .populate("assignedTo", "name email role");
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, grievances, "Your grievances fetched successfully"),
+    );
+});
+
+export { createGrievance, getOurGrievance };

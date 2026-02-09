@@ -48,12 +48,9 @@ function StuGrievance() {
   const fetchMyGrievances = async () => {
     try {
       const res = await getMyGrievance();
-
-      if (!res?.success) {
-        return;
+      if (res?.success) {
+        setapplyForm(res?.data || []);
       }
-
-      setapplyForm(res?.data || []);
     } catch (err) {
       console.log("FETCH GRIEVANCE ERROR:", err);
     }
@@ -64,7 +61,6 @@ function StuGrievance() {
     fetchMyGrievances();
   }, []);
 
-  // ===================== INPUT HANDLERS =====================
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -151,8 +147,13 @@ function StuGrievance() {
       setSubmitting(false);
     }
   };
+
   if (loading) {
-    return <div className="dash-loading">Loading student dashboard...</div>;
+    return (
+      <div className="dash-loading text-center">
+        Loading student dashboard...
+      </div>
+    );
   }
 
   if (error) {
@@ -166,10 +167,10 @@ function StuGrievance() {
   }
 
   const user = student?.user;
-
+  const applydata = applyForm || [];
   return (
     <>
-      <div className="container-fluid px-5 pt-3">
+      <div className="container pt-3 pb-3">
         <div className="row g-4">
           <div className="col-12 col-lg-4">
             <div className="erpProfileCard">
@@ -300,6 +301,135 @@ function StuGrievance() {
                     {submitting ? "Submitting..." : "Submit Grievance"}
                   </button>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="row mt-4">
+          <div className="col-12">
+            <div className="erpProfileCard">
+              <div className="p-3">
+                <h4 className="mb-0 fw-bold text-center">My Grievances</h4>
+
+                <hr className="my-3" />
+
+                {/* EMPTY STATE */}
+                {applydata?.length === 0 ? (
+                  <div className="alert alert-info text-center mb-0">
+                    No grievances found. Submit your first complaint.
+                  </div>
+                ) : (
+                  <div className="erpProfileCard grievanceCard">
+                    <table className="table table-hover align-middle mb-0 grievanceTable">
+                      <thead className="grievanceTableHead">
+                        <tr>
+                          <th style={{ whiteSpace: "nowrap" }}>Ticket</th>
+                          <th>Title</th>
+                          <th>Category</th>
+                          <th>Priority</th>
+                          <th>Status</th>
+                          <th style={{ whiteSpace: "nowrap" }}>Created</th>
+                          <th>Attachment</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {applydata.map((g) => (
+                          <tr key={g._id}>
+                            {/* Ticket */}
+                            <td style={{ whiteSpace: "nowrap" }}>
+                              <span className="badge bg-light text-primary border">
+                                {g.ticketId || "-"}
+                              </span>
+                            </td>
+
+                            {/* Title + Description */}
+                            <td style={{ minWidth: "260px" }}>
+                              <div className="fw-semibold">{g.title}</div>
+                              <div
+                                className="text-muted"
+                                style={{ fontSize: "12px" }}
+                              >
+                                {g.description?.slice(0, 70)}
+                                {g.description?.length > 70 ? "..." : ""}
+                              </div>
+                            </td>
+
+                            {/* Category */}
+                            <td className="text-capitalize">
+                              <span className="badge bg-primary-subtle text-primary border">
+                                {g.category}
+                              </span>
+                            </td>
+
+                            {/* Priority */}
+                            <td className="text-capitalize">
+                              <span
+                                className={`badge ${
+                                  g.priority === "high"
+                                    ? "bg-danger"
+                                    : g.priority === "medium"
+                                      ? "bg-warning text-dark"
+                                      : "bg-success"
+                                }`}
+                              >
+                                {g.priority}
+                              </span>
+                            </td>
+
+                            {/* Status */}
+                            <td className="text-capitalize">
+                              <span
+                                className={`badge ${
+                                  g.status === "pending"
+                                    ? "bg-secondary"
+                                    : g.status === "in_progress"
+                                      ? "bg-primary"
+                                      : g.status === "resolved"
+                                        ? "bg-success"
+                                        : g.status === "rejected"
+                                          ? "bg-danger"
+                                          : "bg-dark"
+                                }`}
+                              >
+                                {g.status}
+                              </span>
+                            </td>
+
+                            {/* Created */}
+                            <td style={{ whiteSpace: "nowrap" }}>
+                              <span
+                                className="text-muted"
+                                style={{ fontSize: "13px" }}
+                              >
+                                {g.createdAt
+                                  ? new Date(g.createdAt).toLocaleString()
+                                  : "-"}
+                              </span>
+                            </td>
+
+                            {/* Attachment */}
+                            <td>
+                              {g.attachment?.fileUrl ? (
+                                <a
+                                  href={g.attachment.fileUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="btn btn-sm btn-primary"
+                                >
+                                  View
+                                </a>
+                              ) : (
+                                <span className="text-muted">No File</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </div>
           </div>

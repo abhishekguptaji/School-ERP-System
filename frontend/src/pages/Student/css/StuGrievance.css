@@ -1,0 +1,53 @@
+/* ====== GRIEVANCE TABLE DESIGN ====== */
+
+.grievanceCard {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* table spacing + smooth look */
+.grievanceTable {
+  margin: 0;
+}
+
+.grievanceTable tbody tr {
+  transition: 0.2s ease;
+}
+
+.grievanceTable tbody tr:hover {
+  background: rgba(13, 110, 253, 0.06);
+}
+
+/* Blue header */
+.grievanceTableHead {
+  background: linear-gradient(90deg, #0d6efd, #0a58ca);
+  color: #fff;
+}
+
+.grievanceTableHead th {
+  border: none !important;
+  padding: 14px 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* body cells */
+.grievanceTable td {
+  padding: 14px 12px;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* badge improvements */
+.grievanceTable .badge {
+  font-size: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+}
+
+/* view button look */
+.grievanceTable .btn {
+  border-radius: 10px;
+  font-weight: 600;
+}

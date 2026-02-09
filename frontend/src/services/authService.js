@@ -142,6 +142,6 @@ export const createMyGrievance = async(payload) =>{
 }
 
 export const getMyGrievance = async () =>{
-  const res = API.get("/student/apply-grievance");
+  const res = await API.get("/student/apply-grievance");
   return res.data;
 }

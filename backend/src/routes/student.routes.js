@@ -12,6 +12,11 @@ import {
   getMyApplyForms,
 } from "../controllers/ApplyForm.controller.js";
 
+import {
+  createGrievance,
+} from "../controllers/grievancePanel.controller.js";
+
+
 const router = Router();
 
 router.get("/student-profile", verifyJWT, getMyStudentProfile);
@@ -37,5 +42,14 @@ router.post(
 );
 
 router.get("/apply-form", verifyJWT, getMyApplyForms);
+
+router.post(
+  "/apply-grievance",
+  verifyJWT,
+  upload.fields([{ name: "attachment", maxCount: 1 }]),
+  createGrievance
+);
+
+
 
 export default router;

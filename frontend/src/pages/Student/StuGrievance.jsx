@@ -3,7 +3,7 @@
 function StuGrievance(){
   return (
     <>
-     <h1>StuGrievance PalAL</h1>
+     <h1 className="text-center mt-4">Grievance Panel</h1>
     </>
   )
 }

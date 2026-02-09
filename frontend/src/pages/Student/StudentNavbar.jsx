@@ -14,7 +14,7 @@ function StudentNavbar() {
 
   return (
     <>
-      <div className="student-navbar">
+      <div className="student-navbar sticky-top">
         <nav className="navbar navbar-expand-lg erp-navbar">
           <div className="container-fluid">
             <h3 className="text-white">

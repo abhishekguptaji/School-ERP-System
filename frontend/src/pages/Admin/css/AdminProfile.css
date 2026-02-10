@@ -1,56 +1,123 @@
-.profile-container {
-  margin-top:20px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f4f6f8;
+.adminProfilePage {
+  background: #f4f7fb;
 }
 
-.profile-card {
-  width: 320px;
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
+/* loading */
+.adminProfileLoading {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 800;
+}
+
+/* error */
+.adminProfileError {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #dc3545;
   text-align: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
-.avatar {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  font-size: 32px;
-  font-weight: bold;
-  border-radius: 50%;
+.adminProfileError i {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+
+/* card */
+.adminProfileCard {
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+/* top section */
+.adminProfileTop {
+  background: linear-gradient(135deg, #0a1930, #0d6efd);
+  padding: 20px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* avatar */
+.adminAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #0d6efd;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
-.name {
-  margin: 8px 0;
+.adminTopInfo h4 {
+  color: #ffffff;
 }
 
-.email {
-  color: #6b7280;
+.adminEmail {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
   font-size: 14px;
 }
 
-.role {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 6px 14px;
-  background: #e0e7ff;
-  color: #3730a3;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
+/* info boxes */
+.adminInfoBox {
+  background: rgba(13, 110, 253, 0.05);
+  border: 1px solid rgba(13, 110, 253, 0.12);
+  border-radius: 18px;
+  padding: 16px 16px;
 }
 
-.date {
-  margin-top: 14px;
+.adminInfoLabel {
   font-size: 13px;
-  color: #9ca3af;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.adminInfoValue {
+  font-size: 15px;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.78);
+  word-break: break-word;
+}
+
+/* note */
+.adminProfileNote {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(10, 25, 47, 0.06);
+  border: 1px solid rgba(10, 25, 47, 0.12);
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+/* mobile */
+@media (max-width: 576px) {
+  .adminProfileTop {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .adminEmail {
+    justify-content: center;
+  }
+
+  .adminRoleChip {
+    display: none;
+  }
 }

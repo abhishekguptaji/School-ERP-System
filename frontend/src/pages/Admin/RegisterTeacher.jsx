@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
 import Swal from "sweetalert2";
-
+import "./css/RegisterStu.css";
 
 function RegisterTeacher() {
   const navigate = useNavigate();
@@ -10,7 +10,6 @@ function RegisterTeacher() {
 
   const [formData, setFormData] = useState({
     name: "",
-    employeeId: "",
     email: "",
     password: "",
     role: "teacher",
@@ -32,100 +31,133 @@ function RegisterTeacher() {
     setLoading(false);
 
     if (response.success) {
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: "Teacher registered successfully",
-            timer: 2000,
-            showConfirmButton: false,
-          });
-          navigate("/admin/dashboard");
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: response.message,
-            
-          });
-        }
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Teacher registered successfully",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/admin/dashboard");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: response.message,
+      });
+    }
   };
 
   return (
-    <>
-      <div className="d-flex flex-column vh-100">
-        <div className="flex-grow-1 overflow-auto">
-          <div className="container mt-4 mb-5">
-            <div className="row justify-content-center">
-              <div className="col-md-5">
-                <div className="card shadow">
-                  <div className="card-body">
-                    <h4 className="text-center mb-4">Register New Teacher</h4>
+    <div className="registerTeacherPage">
+      <div className="container py-4" style={{ maxWidth: 980 }}>
+        {/* HEADER */}
+        
 
-                    <form onSubmit={handleSubmit}>
-                      <div className="mb-3">
-                        <label className="form-label">Teacher Name</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
+        {/* CARD */}
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-7 col-lg-6">
+            <div className="card registerCard border-0 shadow-sm">
+              <div className="card-body p-4 p-md-5">
 
-                      <div className="mb-3">
-                        <label className="form-label">Employee ID</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="employeeId"
-                          value={formData.employeeId}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
 
-                      <div className="mb-3">
-                        <label className="form-label">Email</label>
-                        <input
-                          type="email"
-                          className="form-control"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
+                <h5 className="text-center fw-bold mb-1">
+                  Teacher Registration Form
+                </h5>
 
-                      <div className="mb-3">
-                        <label className="form-label">Password</label>
-                        <input
-                          type="password"
-                          className="form-control"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
 
-                      <button
-                        type="submit"
-                        className="btn btn-primary w-100"
-                        disabled={loading}
-                      >
-                        {loading ? "Registering..." : "Register Teacher"}
-                      </button>
-                    </form>
+                <form onSubmit={handleSubmit}>
+                  {/* EMAIL */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Email</label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-white">
+                        <i className="bi bi-envelope-fill"></i>
+                      </span>
+                      <input
+                        type="email"
+                        className="form-control"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="teacher@gmail.com"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  {/* NAME */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      Teacher Name
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-white">
+                        <i className="bi bi-person-fill"></i>
+                      </span>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter teacher full name"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* PASSWORD */}
+                  <div className="mb-2">
+                    <label className="form-label fw-semibold">Password</label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-white">
+                        <i className="bi bi-lock-fill"></i>
+                      </span>
+                      <input
+                        type="password"
+                        className="form-control"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Create a strong password"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-text">
+                      Use at least 8 characters, including numbers & symbols.
+                    </div>
+                  </div>
+
+                  {/* SUBMIT */}
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100 registerBtn"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        ></span>
+                        Registering...
+                      </>
+                    ) : (
+                      <>
+                        <i className="bi bi-check-circle-fill me-2"></i>
+                        Register Teacher
+                      </>
+                    )}
+                  </button>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

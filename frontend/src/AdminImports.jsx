@@ -13,6 +13,7 @@ import Fees from "./pages/Admin/Fees";
 import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Reports";
 import ShowClasses from "./pages/Admin/ShowClasses";
+import NoticePanel from "./pages/Admin/NoticePanel";
 export {
   AdminLayout,
   AdminDashboard,
@@ -28,6 +29,6 @@ export {
   Fees,
   Reports,
   Settings,
-  ShowClasses
-
+  ShowClasses,
+  NoticePanel
 };

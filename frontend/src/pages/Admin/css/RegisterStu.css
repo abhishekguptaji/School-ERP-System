@@ -1,0 +1,41 @@
+.registerStuPage {
+  background: #f4f7fb;
+}
+
+/* card */
+.registerCard {
+  border-radius: 22px;
+}
+
+/* inputs */
+.registerStuPage .form-control,
+.registerStuPage .input-group-text {
+  border-radius: 14px;
+}
+
+.registerStuPage .input-group .form-control {
+  border-left: 0;
+}
+
+.registerStuPage .input-group-text {
+  border-right: 0;
+}
+
+/* button */
+.registerBtn {
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-weight: 900;
+}
+
+/* note */
+.registerNote {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(13, 110, 253, 0.06);
+  border: 1px solid rgba(13, 110, 253, 0.12);
+  color: rgba(0, 0, 0, 0.7);
+  font-weight: 700;
+  font-size: 13px;
+}

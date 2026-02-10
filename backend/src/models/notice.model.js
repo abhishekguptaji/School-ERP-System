@@ -25,7 +25,7 @@ const noticeSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["Academic", "General", "Exam", "Holiday", "Fee"],
+      enum: ["Academic", "General", "Exam", "Holiday", "Fee","Others"],
       required: true,
       index: true,
     },
@@ -39,7 +39,7 @@ const noticeSchema = new mongoose.Schema(
 
     priority: {
       type: String,
-      enum: ["Normal", "Important", "Urgent"],
+      enum: ["Low", "Important", "Urgent"],
       default: "Normal",
       index: true,
     },

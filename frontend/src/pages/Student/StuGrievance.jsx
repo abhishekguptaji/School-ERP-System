@@ -169,84 +169,123 @@ function StuGrievance() {
   const user = student?.user;
   const applydata = applyForm || [];
   return (
-    <>
-      <div className="container pt-3 pb-3">
-        <div className="row g-4">
-          <div className="col-12 col-lg-4">
-            <div className="erpProfileCard">
-              <div className="row g-0 align-items-center">
-                <div className="col-12 d-flex justify-content-center p-3">
+  <div className="min-vh-100 bg-light py-4">
+    <div className="container" style={{ maxWidth: 1200 }}>
+      {/* PAGE HEADER */}
+      <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+          <h3 className="fw-bold mb-1">
+            <i className="bi bi-chat-left-text-fill text-primary me-2"></i>
+            Student Grievance
+          </h3>
+          <div className="text-muted">
+            Submit your complaint and track status updates
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-outline-primary rounded-3"
+          onClick={() => {
+            fetchStudent();
+            fetchMyGrievances();
+          }}
+        >
+          <i className="bi bi-arrow-clockwise me-2"></i>
+          Refresh
+        </button>
+      </div>
+
+      {/* TOP SECTION */}
+      <div className="row g-4 mb-4">
+        {/* STUDENT CARD */}
+        <div className="col-12 col-lg-4">
+          <div className="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+            <div className="p-4 bg-primary text-white">
+              <div className="d-flex align-items-center gap-3">
+                <div
+                  className="rounded-4 bg-white overflow-hidden"
+                  style={{ width: 72, height: 72 }}
+                >
                   <img
-                    className="erpProfileImg"
                     src={student?.userImage || "/default-user.png"}
                     alt="student"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
                 </div>
 
-                <div className="col-12 p-3">
-                  <div className="row">
-                    <div className="col-12 mb-3">
-                      <div className="erpInfoBox">
-                        <p className="erpLabel">Name</p>
-                        <p className="erpValue">{user?.name || "-"}</p>
-                      </div>
-                    </div>
+                <div>
+                  <div className="fw-bold fs-5">{user?.name || "-"}</div>
+                  <div className="text-white-50">{user?.email || "-"}</div>
+                </div>
+              </div>
+            </div>
 
-                    <div className="col-12 mb-3">
-                      <div className="erpInfoBox">
-                        <p className="erpLabel">Email</p>
-                        <p className="erpValue">{user?.email || "-"}</p>
-                      </div>
-                    </div>
+            <div className="card-body p-4">
+              <div className="d-flex flex-column gap-3">
+                <div className="border rounded-4 p-3 bg-light">
+                  <div className="text-muted small">Campus ID</div>
+                  <div className="fw-semibold">{user?.campusId || "-"}</div>
+                </div>
 
-                    <div className="col-12 mb-3">
-                      <div className="erpInfoBox">
-                        <p className="erpLabel">Campus ID</p>
-                        <p className="erpValue">{user?.campusId || "-"}</p>
-                      </div>
-                    </div>
-
-                    <div className="col-12">
-                      <div className="erpInfoBox">
-                        <p className="erpLabel">Father Mobile</p>
-                        <p className="erpValue">
-                          {student?.father?.phone || "-"}
-                        </p>
-                      </div>
-                    </div>
+                <div className="border rounded-4 p-3 bg-light">
+                  <div className="text-muted small">Father Mobile</div>
+                  <div className="fw-semibold">
+                    {student?.father?.phone || "-"}
                   </div>
                 </div>
-                {/* END RIGHT */}
+
+                <div className="alert alert-light border rounded-4 small mb-0">
+                  <i className="bi bi-info-circle me-2"></i>
+                  Attachments can be PDF or images (jpg/png).
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="col-12 col-lg-8">
-            <div className="erpProfileCard">
-              <div className="p-3">
-                <h4 className="mb-1 text-center">Create Grievance</h4>
+        {/* CREATE GRIEVANCE FORM */}
+        <div className="col-12 col-lg-8">
+          <div className="card border-0 shadow-sm rounded-4 h-100">
+            <div className="card-body p-4">
+              <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <h5 className="fw-bold mb-0">
+                  <i className="bi bi-pencil-square text-primary me-2"></i>
+                  Create Grievance
+                </h5>
 
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label className="form-label">Title</label>
+                <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+                  <i className="bi bi-shield-check me-2"></i>
+                  Secure Ticket System
+                </span>
+              </div>
+
+              <form onSubmit={handleSubmit}>
+                <div className="row g-3">
+                  <div className="col-12">
+                    <label className="form-label fw-semibold">Title</label>
                     <input
                       className="form-control"
                       name="formTitle"
                       value={formData.formTitle}
                       onChange={handleChange}
-                      placeholder="Enter Title of Complain"
+                      placeholder="Enter title of complaint..."
                     />
                   </div>
 
-                  <div className="mb-3">
-                    <label className="form-label">Category</label>
+                  <div className="col-12 col-md-4">
+                    <label className="form-label fw-semibold">Category</label>
                     <select
                       className="form-select"
                       name="formCategory"
                       value={formData.formCategory}
                       onChange={handleChange}
                     >
-                      <option value="">Select Your Category</option>
+                      <option value="">Select category</option>
                       <option value="transport">Transport</option>
                       <option value="fees">Fees</option>
                       <option value="exam">Exam</option>
@@ -256,8 +295,8 @@ function StuGrievance() {
                     </select>
                   </div>
 
-                  <div className="mb-3">
-                    <label className="form-label">Priority</label>
+                  <div className="col-12 col-md-4">
+                    <label className="form-label fw-semibold">Priority</label>
                     <select
                       className="form-select"
                       name="formPriority"
@@ -270,20 +309,8 @@ function StuGrievance() {
                     </select>
                   </div>
 
-                  <div className="mb-3">
-                    <label className="form-label">Description</label>
-                    <textarea
-                      className="form-control"
-                      rows="2"
-                      name="formDescription"
-                      value={formData.formDescription}
-                      onChange={handleChange}
-                      placeholder="Write your grievance..."
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">Attachment</label>
+                  <div className="col-12 col-md-4">
+                    <label className="form-label fw-semibold">Attachment</label>
                     <input
                       className="form-control"
                       type="file"
@@ -293,150 +320,178 @@ function StuGrievance() {
                     />
                   </div>
 
+                  <div className="col-12">
+                    <label className="form-label fw-semibold">
+                      Description
+                    </label>
+                    <textarea
+                      className="form-control"
+                      rows="3"
+                      name="formDescription"
+                      value={formData.formDescription}
+                      onChange={handleChange}
+                      placeholder="Write your grievance in detail..."
+                    />
+                  </div>
+                </div>
+
+                <div className="d-flex justify-content-end mt-4">
                   <button
                     type="submit"
-                    className="btn btn-dark w-100"
+                    className="btn btn-primary rounded-3 px-5 py-2 fw-semibold"
                     disabled={submitting}
                   >
-                    {submitting ? "Submitting..." : "Submit Grievance"}
+                    {submitting ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2"></span>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <i className="bi bi-send-fill me-2"></i>
+                        Submit Grievance
+                      </>
+                    )}
                   </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="row mt-4">
-          <div className="col-12">
-            <div className="erpProfileCard">
-              <div className="p-3">
-                <h4 className="mb-0 fw-bold text-center">My Grievances</h4>
-
-                <hr className="my-3" />
-
-                {/* EMPTY STATE */}
-                {applydata?.length === 0 ? (
-                  <div className="alert alert-info text-center mb-0">
-                    No grievances found. Submit your first complaint.
-                  </div>
-                ) : (
-                  <div className="erpProfileCard grievanceCard">
-                    <table className="table table-hover align-middle mb-0 grievanceTable">
-                      <thead className="grievanceTableHead">
-                        <tr>
-                          <th style={{ whiteSpace: "nowrap" }}>Ticket</th>
-                          <th>Title</th>
-                          <th>Category</th>
-                          <th>Priority</th>
-                          <th>Status</th>
-                          <th style={{ whiteSpace: "nowrap" }}>Created</th>
-                          <th>Attachment</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {applydata.map((g) => (
-                          <tr key={g._id}>
-                            {/* Ticket */}
-                            <td style={{ whiteSpace: "nowrap" }}>
-                              <span className="badge bg-light text-primary border">
-                                {g.ticketId || "-"}
-                              </span>
-                            </td>
-
-                            {/* Title + Description */}
-                            <td style={{ minWidth: "260px" }}>
-                              <div className="fw-semibold">{g.title}</div>
-                              <div
-                                className="text-muted"
-                                style={{ fontSize: "12px" }}
-                              >
-                                {g.description?.slice(0, 70)}
-                                {g.description?.length > 70 ? "..." : ""}
-                              </div>
-                            </td>
-
-                            {/* Category */}
-                            <td className="text-capitalize">
-                              <span className="badge bg-primary-subtle text-primary border">
-                                {g.category}
-                              </span>
-                            </td>
-
-                            {/* Priority */}
-                            <td className="text-capitalize">
-                              <span
-                                className={`badge ${
-                                  g.priority === "high"
-                                    ? "bg-danger"
-                                    : g.priority === "medium"
-                                      ? "bg-warning text-dark"
-                                      : "bg-success"
-                                }`}
-                              >
-                                {g.priority}
-                              </span>
-                            </td>
-
-                            {/* Status */}
-                            <td className="text-capitalize">
-                              <span
-                                className={`badge ${
-                                  g.status === "pending"
-                                    ? "bg-secondary"
-                                    : g.status === "in_progress"
-                                      ? "bg-primary"
-                                      : g.status === "resolved"
-                                        ? "bg-success"
-                                        : g.status === "rejected"
-                                          ? "bg-danger"
-                                          : "bg-dark"
-                                }`}
-                              >
-                                {g.status}
-                              </span>
-                            </td>
-
-                            {/* Created */}
-                            <td style={{ whiteSpace: "nowrap" }}>
-                              <span
-                                className="text-muted"
-                                style={{ fontSize: "13px" }}
-                              >
-                                {g.createdAt
-                                  ? new Date(g.createdAt).toLocaleString()
-                                  : "-"}
-                              </span>
-                            </td>
-
-                            {/* Attachment */}
-                            <td>
-                              {g.attachment?.fileUrl ? (
-                                <a
-                                  href={g.attachment.fileUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="btn btn-sm btn-primary"
-                                >
-                                  View
-                                </a>
-                              ) : (
-                                <span className="text-muted">No File</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
-    </>
-  );
+
+      {/* MY GRIEVANCES */}
+      <div className="card border-0 shadow-sm rounded-4">
+        <div className="card-body p-4">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h5 className="fw-bold mb-0">
+              <i className="bi bi-list-check text-primary me-2"></i>
+              My Grievances
+            </h5>
+
+            <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+              Total: <b>{applydata?.length || 0}</b>
+            </span>
+          </div>
+
+          {applydata?.length === 0 ? (
+            <div className="alert alert-info rounded-4 border mb-0 text-center">
+              <i className="bi bi-info-circle me-2"></i>
+              No grievances found. Submit your first complaint.
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0">
+                <thead>
+                  <tr className="text-muted">
+                    <th style={{ whiteSpace: "nowrap" }}>Ticket</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th style={{ whiteSpace: "nowrap" }}>Created</th>
+                    <th className="text-end">Attachment</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {applydata.map((g) => {
+                    const priorityColor =
+                      g.priority === "high"
+                        ? "danger"
+                        : g.priority === "medium"
+                        ? "warning"
+                        : "success";
+
+                    const statusColor =
+                      g.status === "pending"
+                        ? "secondary"
+                        : g.status === "in_progress"
+                        ? "primary"
+                        : g.status === "resolved"
+                        ? "success"
+                        : g.status === "rejected"
+                        ? "danger"
+                        : "dark";
+
+                    return (
+                      <tr key={g._id}>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          <span className="badge text-bg-light border text-primary rounded-pill">
+                            {g.ticketId || "-"}
+                          </span>
+                        </td>
+
+                        <td style={{ minWidth: 280 }}>
+                          <div className="fw-semibold">{g.title || "-"}</div>
+                          <div className="text-muted small">
+                            {(g.description || "").slice(0, 70)}
+                            {(g.description || "").length > 70 ? "..." : ""}
+                          </div>
+                        </td>
+
+                        <td className="text-capitalize">
+                          <span className="badge text-bg-light border text-dark rounded-pill">
+                            {g.category || "-"}
+                          </span>
+                        </td>
+
+                        <td className="text-capitalize">
+                          <span
+                            className={`badge text-bg-${priorityColor} rounded-pill`}
+                          >
+                            {g.priority || "-"}
+                          </span>
+                        </td>
+
+                        <td className="text-capitalize">
+                          <span
+                            className={`badge text-bg-${statusColor} rounded-pill`}
+                          >
+                            {g.status || "-"}
+                          </span>
+                        </td>
+
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          <span className="text-muted small">
+                            {g.createdAt
+                              ? new Date(g.createdAt).toLocaleString()
+                              : "-"}
+                          </span>
+                        </td>
+
+                        <td className="text-end">
+                          {g.attachment?.fileUrl ? (
+                            <a
+                              href={g.attachment.fileUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-outline-primary btn-sm rounded-3"
+                            >
+                              <i className="bi bi-eye me-1"></i>
+                              View
+                            </a>
+                          ) : (
+                            <span className="text-muted">No File</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div className="small text-muted mt-2">
+            <i className="bi bi-lightbulb me-2"></i>
+            Tip: Your grievance status will update once admin/teacher responds.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 }
 
 export default StuGrievance;

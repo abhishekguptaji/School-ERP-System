@@ -154,219 +154,278 @@ function ApplyForm() {
   const user = student?.user;
   const applydata = applyForm || [];
 
-  // ================= MAIN UI =================
-  return (
-    <div className="container py-2">
+
+// ================= MAIN UI =================
+return (
+  <div className="min-vh-100 bg-light py-4">
+    <div className="container" style={{ maxWidth: 1200 }}>
+      {/* PAGE HEADER */}
+      <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+          <h3 className="fw-bold mb-1">
+            Apply Forms
+          </h3>
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-outline-primary rounded-3"
+          onClick={fetchStudent}
+        >
+          <i className="bi bi-arrow-clockwise me-2"></i>
+          Refresh
+        </button>
+      </div>
+
       {/* PROFILE CARD */}
-      <div className="row">
-        <div className="col-12">
-          <div className="erpProfileCard">
-            <div className="row g-0 align-items-center">
-              <div className="col-12 col-md-3 d-flex justify-content-center p-3">
+      <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        <div className="p-4 bg-primary text-white">
+          <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div
+                className="rounded-4 bg-white d-flex align-items-center justify-content-center overflow-hidden"
+                style={{ width: 72, height: 72 }}
+              >
                 <img
-                  className="erpProfileImg"
                   src={student?.userImage || "/default-user.png"}
                   alt="student"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                 />
               </div>
 
-              <div className="col-12 col-md-9 p-3">
-                <div className="row">
-                  <div className="col-12 col-md-6 mb-3">
-                    <div className="erpInfoBox">
-                      <p className="erpLabel">Name</p>
-                      <p className="erpValue">{user?.name || "-"}</p>
-                    </div>
-                  </div>
-
-                  <div className="col-12 col-md-6 mb-3">
-                    <div className="erpInfoBox">
-                      <p className="erpLabel">Email</p>
-                      <p className="erpValue">{user?.email || "-"}</p>
-                    </div>
-                  </div>
-
-                  <div className="col-12 col-md-6 mb-3 mb-md-0">
-                    <div className="erpInfoBox">
-                      <p className="erpLabel">Campus ID</p>
-                      <p className="erpValue">{user?.campusId || "-"}</p>
-                    </div>
-                  </div>
-
-                  <div className="col-12 col-md-6">
-                    <div className="erpInfoBox">
-                      <p className="erpLabel">Father Mobile</p>
-                      <p className="erpValue">
-                        {student?.father?.phone || "-"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              <div>
+                <div className="fw-bold fs-4">{user?.name || "-"}</div>
+                <div className="text-white-50">{user?.email || "-"}</div>
               </div>
-              {/* END RIGHT */}
             </div>
+
+            <div className="d-flex flex-wrap gap-2">
+              <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+                <i className="bi bi-upc-scan me-2"></i>
+                Campus ID: <b>{user?.campusId || "-"}</b>
+              </span>
+
+              <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+                <i className="bi bi-telephone-fill me-2"></i>
+                Father: <b>{student?.father?.phone || "-"}</b>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="card-body p-4">
+          <div className="alert alert-light border rounded-4 small mb-0">
+            <i className="bi bi-info-circle me-2"></i>
+            Please submit correct information. You can track approval in the
+            table below.
           </div>
         </div>
       </div>
 
       {/* APPLY FORM CARD */}
-      <div className="row mt-4">
-        <div className="col-12">
-          <div className="erpFormCard">
-            <h5 className="erpFormTitle text-center">Apply New Form</h5>
+      <div className="card border-0 shadow-sm rounded-4 mb-4">
+        <div className="card-body p-4">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h5 className="fw-bold mb-0">
+              <i className="bi bi-pencil-square text-primary me-2"></i>
+              Apply New Form
+            </h5>
 
-            <div className="row g-3">
-              <div className="col-12 col-md-4">
-                <label className="form-label erpLabel">Date</label>
-                <input
-                  type="date"
-                  className="form-control erpInput"
-                  name="applyDate"
-                  value={formData.applyDate}
-                  onChange={handleChange}
-                />
-              </div>
+            <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+              <i className="bi bi-paperclip me-2"></i>
+              Optional attachment
+            </span>
+          </div>
 
-              <div className="col-12 col-md-4">
-                <label className="form-label erpLabel">Type</label>
-                <select
-                  className="form-select erpInput"
-                  name="formType"
-                  value={formData.formType}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Type</option>
-                  <option value="LEAVE">LEAVE</option>
-                  <option value="BONAFIDE">BONAFIDE</option>
-                  <option value="TC">TC</option>
-                  <option value="CHARACTER_CERTIFICATE">
-                    CHARACTER CERTIFICATE
-                  </option>
-                  <option value="FEE_CONCESSION">FEE CONCESSION</option>
-                  <option value="TRANSPORT">TRANSPORT</option>
-                  <option value="SUBJECT_CHANGE">SUBJECT CHANGE</option>
-                  <option value="COMPLAINT">COMPLAINT</option>
-                  <option value="OTHER">OTHER</option>
-                </select>
-              </div>
-
-              <div className="col-12 col-md-4">
-                <label className="form-label erpLabel">Attachment</label>
-                <input
-                  type="file"
-                  key={fileKey}
-                  className="form-control erpInput"
-                  onChange={handleFileChange}
-                />
-              </div>
-
-              <div className="col-12">
-                <label className="form-label erpLabel">Reason</label>
-                <textarea
-                  rows="3"
-                  className="form-control erpInput"
-                  placeholder="Write your reason..."
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleChange}
-                ></textarea>
-              </div>
+          <div className="row g-3">
+            <div className="col-12 col-md-4">
+              <label className="form-label fw-semibold">Apply Date</label>
+              <input
+                type="date"
+                className="form-control"
+                name="applyDate"
+                value={formData.applyDate}
+                onChange={handleChange}
+              />
             </div>
 
-            <div className="row mt-4">
-              <div className="col-12 d-flex justify-content-center">
-                <button
-                  type="button"
-                  className="btn erpApplyBtn px-5"
-                  onClick={handleApplyForm}
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting..." : "APPLY"}
-                </button>
-              </div>
+            <div className="col-12 col-md-4">
+              <label className="form-label fw-semibold">Form Type</label>
+              <select
+                className="form-select"
+                name="formType"
+                value={formData.formType}
+                onChange={handleChange}
+              >
+                <option value="">Select Type</option>
+                <option value="LEAVE">LEAVE</option>
+                <option value="BONAFIDE">BONAFIDE</option>
+                <option value="TC">TC</option>
+                <option value="CHARACTER_CERTIFICATE">
+                  CHARACTER CERTIFICATE
+                </option>
+                <option value="FEE_CONCESSION">FEE CONCESSION</option>
+                <option value="TRANSPORT">TRANSPORT</option>
+                <option value="SUBJECT_CHANGE">SUBJECT CHANGE</option>
+                <option value="COMPLAINT">COMPLAINT</option>
+                <option value="OTHER">OTHER</option>
+              </select>
             </div>
+
+            <div className="col-12 col-md-4">
+              <label className="form-label fw-semibold">Attachment</label>
+              <input
+                type="file"
+                key={fileKey}
+                className="form-control"
+                onChange={handleFileChange}
+              />
+            </div>
+
+            <div className="col-12">
+              <label className="form-label fw-semibold">Reason</label>
+              <textarea
+                rows="3"
+                className="form-control"
+                placeholder="Write your reason..."
+                name="reason"
+                value={formData.reason}
+                onChange={handleChange}
+              ></textarea>
+            </div>
+          </div>
+
+          <div className="d-flex justify-content-end mt-4">
+            <button
+              type="button"
+              className="btn btn-primary rounded-3 px-5 py-2 fw-semibold"
+              onClick={handleApplyForm}
+              disabled={submitting}
+            >
+              {submitting ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2"></span>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-send-fill me-2"></i>
+                  Apply
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="row px-4 mt-4">
-        <div className="col-12">
-          <div className="applyFormTable">
-            {/* HEADER */}
-            <div className="row headerRow m-0">
-              <div className="col">
-                <h4>Form Type</h4>
-              </div>
-              <div className="col">
-                <h4>Apply Date</h4>
-              </div>
-              <div className="col">
-                <h4>Reason</h4>
-              </div>
-              <div className="col">
-                <h4>Status</h4>
-              </div>
-              <div className="col">
-                <h4>Attachment</h4>
-              </div>
-            </div>
+      <div className="card border-0 shadow-sm rounded-4">
+        <div className="card-body p-4">
+          <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h5 className="fw-bold mb-0">
+              <i className="bi bi-list-check text-primary me-2"></i>
+              My Applied Forms
+            </h5>
 
-            {/* BODY */}
-            {applydata?.length === 0 ? (
-              <div className="row bodyRow m-0">
-                <div className="col text-center py-3">
-                  <p className="m-0">No forms submitted yet.</p>
-                </div>
-              </div>
-            ) : (
-              applydata.map((item) => (
-                <div
-                  className="row bodyRow m-0 align-items-center"
-                  key={item._id}
-                >
-                  <div className="col fw-semibold">{item?.formType || "-"}</div>
+            <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+              Total: <b>{applydata?.length || 0}</b>
+            </span>
+          </div>
 
-                  <div className="col">
-                    {item?.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString()
-                      : "-"}
-                  </div>
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead>
+                <tr className="text-muted">
+                  <th>Form Type</th>
+                  <th>Apply Date</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                  <th className="text-end">Attachment</th>
+                </tr>
+              </thead>
 
-                  <div className="col reasonCol" title={item?.reason || ""}>
-                    {item?.reason || "-"}
-                  </div>
+              <tbody>
+                {applydata?.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4 text-muted">
+                      <i className="bi bi-info-circle me-2"></i>
+                      No forms submitted yet.
+                    </td>
+                  </tr>
+                ) : (
+                  applydata.map((item) => {
+                    const status = item?.status || "PENDING";
 
-                  <div className="col">
-                    <span
-                      className={`statusBadge ${item?.status || "Pending"}`}
-                    >
-                      {item?.status || "PENDING"}
-                    </span>
-                  </div>
+                    const statusColor =
+                      status === "APPROVED"
+                        ? "success"
+                        : status === "REJECTED"
+                        ? "danger"
+                        : "warning";
 
-                  <div className="col">
-                    {item?.attachment ? (
-                      <a
-                        className="attachBtn"
-                        href={item.attachment}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        View
-                      </a>
-                    ) : (
-                      <span className="text-muted">-</span>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
+                    return (
+                      <tr key={item._id}>
+                        <td className="fw-semibold">{item?.formType || "-"}</td>
+
+                        <td>
+                          {item?.createdAt
+                            ? new Date(item.createdAt).toLocaleDateString()
+                            : "-"}
+                        </td>
+
+                        <td style={{ maxWidth: 340 }}>
+                          <div
+                            className="text-truncate"
+                            title={item?.reason || ""}
+                          >
+                            {item?.reason || "-"}
+                          </div>
+                        </td>
+
+                        <td>
+                          <span
+                            className={`badge text-bg-${statusColor} rounded-pill`}
+                          >
+                            {status}
+                          </span>
+                        </td>
+
+                        <td className="text-end">
+                          {item?.attachment ? (
+                            <a
+                              className="btn btn-outline-primary btn-sm rounded-3"
+                              href={item.attachment}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <i className="bi bi-eye me-1"></i>
+                              View
+                            </a>
+                          ) : (
+                            <span className="text-muted">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="small text-muted mt-2">
+            <i className="bi bi-lightbulb me-2"></i>
+            Tip: If attachment is uploaded, you can open it from “View”.
           </div>
         </div>
       </div>
     </div>
-  );
-}
+  </div>
+);
 
+}
 export default ApplyForm;

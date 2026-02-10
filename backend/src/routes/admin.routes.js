@@ -20,6 +20,6 @@ router.post(
   createNotice
 );
 
-router.get("/create-notice",verifyJWT,getAdminNotices);
+router.get("/get-notice",verifyJWT,getAdminNotices);
 
 export default router;

@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const attachmentSchema = new mongoose.Schema(
   {
     fileName: String,
-    fileUrl: String,        // stored file path / cloud URL
-    fileType: String,       // pdf, image, docx
+    fileUrl: String,
+    fileType: String,
   },
   { _id: false }
 );
@@ -20,6 +20,7 @@ const noticeSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
+      default: "",
     },
 
     category: {
@@ -31,21 +32,29 @@ const noticeSchema = new mongoose.Schema(
 
     audience: {
       type: String,
-      enum: ["Student", "Teacher", "Both"],
+      enum: ["All", "Teacher", "Student"],
       required: true,
       index: true,
     },
 
-    attachments: [attachmentSchema],
+    priority: {
+      type: String,
+      enum: ["Normal", "Important", "Urgent"],
+      default: "Normal",
+      index: true,
+    },
 
-    visibleFrom: {
+    attachement: [attachmentSchema],
+
+    publishAt: {
       type: Date,
       default: Date.now,
       index: true,
     },
 
-    visibleTill: {
+    expireAt: {
       type: Date,
+      index: true,
     },
 
     isActive: {
@@ -56,10 +65,12 @@ const noticeSchema = new mongoose.Schema(
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // admin
+      ref: "User",
     },
   },
   { timestamps: true, versionKey: false }
 );
 
-export default mongoose.model("Notice", noticeSchema);
+const Notice = new mongoose.model("Notice", noticeSchema);
+
+export default Notice;

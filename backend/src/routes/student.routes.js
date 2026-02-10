@@ -17,6 +17,7 @@ import {
   getOurGrievance
 } from "../controllers/grievancePanel.controller.js";
 
+import {getStudentNotice} from "../controllers/notice.controller.js";
 
 const router = Router();
 
@@ -53,6 +54,7 @@ router.post(
 
 router.get("/apply-grievance",verifyJWT,getOurGrievance);
 
+router.get("/get-notice",verifyJWT,getStudentNotice);
 
 
 export default router;

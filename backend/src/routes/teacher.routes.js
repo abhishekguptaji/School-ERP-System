@@ -6,6 +6,7 @@ import { getTeacherProfile,
   createOrUpdateTeacherProfile
 } from "../controllers/teacherProfile.controller.js";
 
+import {getTeacherNotice} from "../controllers/notice.controller.js";
 const router = Router();
 
 router.get("/teacher-profile", verifyJWT, getTeacherProfile);
@@ -15,5 +16,7 @@ router.post(
   upload.fields([{ name: "teacherImage", maxCount: 1 }]),
   createOrUpdateTeacherProfile,
 );
+
+router.get("/get-notice",verifyJWT,getTeacherNotice);
 
 export default router;

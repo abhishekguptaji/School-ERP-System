@@ -1,123 +1,153 @@
-import Notice from "../models/Notice.js";
+import Notice from "../models/notice.model.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-/* ===============================
-   CREATE NOTICE (ADMIN)
-================================ */
-export const createNotice = async (req, res) => {
-  try {
-    const {
-      title,
-      description,
-      category,
-      audience,
-      visibleFrom,
-      visibleTill,
-    } = req.body;
+const createNotice = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized User Come..");
+  }
 
-    if (!title || !category || !audience) {
-      return res.status(400).json({
-        success: false,
-        message: "Required fields missing",
+  if (req.user.role !== "admin") {
+    throw new ApiError(401, "Only Admin and Teacher are create Notices..");
+  }
+
+  const {
+    title,
+    description,
+    category,
+    priority,
+    audience,
+    publishAt,
+    expireAt,
+  } = req.body;
+
+  if (!title || !category || !priority || !audience) {
+    throw new ApiError(400, "All Fields are required to show");
+  }
+  let attachement = [];
+
+  if (req.files?.attachement?.[0]) {
+    const file = req.files.attachement[0];
+    const upload = await uploadOnCloudinary(
+      file.path,
+      "schoolERP/admin/notices",
+    );
+    if (upload?.secure_url) {
+      attachement.push({
+        fileUrl: upload.secure_url,
+        fileType: file.mimetype.includes("pdf") ? "pdf" : "image",
+        fileName: file.originalname || upload.public_id || "",
       });
     }
-
-    const attachments = req.files?.map((file) => ({
-      fileName: file.originalname,
-      fileUrl: `/uploads/notices/${file.filename}`,
-      fileType: file.mimetype,
-    }));
-
-    const notice = await Notice.create({
-      title,
-      description,
-      category,
-      audience,
-      visibleFrom,
-      visibleTill,
-      attachments,
-      createdBy: req.user.id,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Notice published successfully",
-      data: notice,
-    });
-  } catch (error) {
-    console.error("Create Notice Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to create notice",
-    });
   }
-};
 
-/* ===============================
-   GET NOTICES (STUDENT / TEACHER)
-================================ */
-export const getMyNotices = async (req, res) => {
-  try {
-    const role = req.user.role;
-    const now = new Date();
+  const notice = await Notice.create({
+    title: title.trim(),
+    description: description?.trim() || "",
+    category,
+    priority,
+    audience,
+    publishAt: publishAt || Date.now(),
+    expireAt: expireAt || null,
+    attachement,
+    createdBy: userId,
+  });
 
-    const notices = await Notice.find({
-      isActive: true,
-      visibleFrom: { $lte: now },
-      $or: [
-        { visibleTill: { $gte: now } },
-        { visibleTill: { $exists: false } },
-      ],
-      audience:
-        role === "student"
-          ? { $in: ["Student", "Both"] }
-          : { $in: ["Teacher", "Both"] },
-    }).sort({ createdAt: -1 });
+  if (!notice) throw new ApiError(500, "Notice is not created");
+  return res
+    .status(201)
+    .json(new ApiResponse(201, notice, "Notices created Successfully.."));
+});
 
-    res.status(200).json({
-      success: true,
-      data: notices,
-    });
-  } catch (error) {
-    console.error("Get Notices Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch notices",
-    });
+const getAdminNotices = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
   }
-};
 
-/* ===============================
-   ADMIN: ALL NOTICES
-================================ */
-export const getAllNotices = async (req, res) => {
-  try {
-    const notices = await Notice.find()
-      .populate("createdBy", "name")
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      data: notices,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch notices" });
+  if (req.user.role !== "admin") {
+    throw new ApiError(403, "Only Admin can view all notices");
   }
-};
 
-/* ===============================
-   DEACTIVATE NOTICE
-================================ */
-export const deactivateNotice = async (req, res) => {
-  try {
-    await Notice.findByIdAndUpdate(req.params.id, {
-      isActive: false,
-    });
+  const notices = await Notice.find()
+    .populate("createdBy", "name email role")
+    .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      success: true,
-      message: "Notice removed",
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to deactivate notice" });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, notices, "Admin notices fetched successfully"));
+});
+
+const getTeacherNotice = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) throw new ApiError(401, "Unauthorized");
+
+  if (req.user.role !== "teacher") {
+    throw new ApiError(403, "Only Teachers can view these notices");
   }
+
+  const notices = await Notice.find({
+    isActive: true,
+    audience: { $in: ["Teacher", "Both"] },
+  }).sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, notices, "Teacher notices fetched successfully"),
+    );
+});
+
+const getStudentNotice = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) throw new ApiError(401, "Unauthorized");
+
+  if (req.user.role !== "student") {
+    throw new ApiError(403, "Only Students can view these notices");
+  }
+
+  const notices = await Notice.find({
+    isActive: true,
+    audience: { $in: ["Student", "Both"] },
+  }).sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, notices, "Notices fetched successfully"));
+});
+
+const deleteNoticeByAdmin = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) throw new ApiError(401, "Unauthorized");
+
+  if (req.user.role !== "admin") {
+    throw new ApiError(403, "Only Admin can delete notices");
+  }
+
+  const { id } = req.params;
+
+  const deleted = await Notice.findByIdAndDelete(id);
+
+  if (!deleted) {
+    throw new ApiError(404, "Notice not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Notice deleted permanently"));
+});
+
+export {
+  createNotice,
+  getAdminNotices,
+  getTeacherNotice,
+  getStudentNotice,
+  deleteNoticeByAdmin,
 };

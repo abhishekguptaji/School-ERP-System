@@ -5,7 +5,8 @@ import { upload } from "../middlewares/multer.middleware.js";
 import {adminProfile} from "../controllers/adminProfile.controller.js";
 import {
   createNotice,
-  getAdminNotices
+  getAdminNotices,
+  deleteNoticeByAdmin
 } from "../controllers/notice.controller.js";
 
 
@@ -21,5 +22,7 @@ router.post(
 );
 
 router.get("/get-notice",verifyJWT,getAdminNotices);
+
+router.delete("/delete-notice/:id", verifyJWT, deleteNoticeByAdmin);
 
 export default router;

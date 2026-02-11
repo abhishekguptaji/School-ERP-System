@@ -21,3 +21,8 @@ export const getAdminNotice = async() =>{
   const res = await API.get("/admin/get-notice");
   return res.data;
 }  
+
+export const deleteNotice = async (id) => {
+  const res = await API.delete(`/admin/delete-notice/${id}`);
+  return res.data;
+};

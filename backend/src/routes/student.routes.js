@@ -14,7 +14,7 @@ import {
 
 import {
   createGrievance,
-  getOurGrievance
+  getOurGrievanceByStudent,
 } from "../controllers/grievancePanel.controller.js";
 
 import {getStudentNotice} from "../controllers/notice.controller.js";
@@ -52,7 +52,7 @@ router.post(
   createGrievance
 );
 
-router.get("/apply-grievance",verifyJWT,getOurGrievance);
+router.get("/apply-grievance",verifyJWT,getOurGrievanceByStudent);
 
 router.get("/get-notice",verifyJWT,getStudentNotice);
 

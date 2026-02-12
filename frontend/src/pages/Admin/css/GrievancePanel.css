@@ -1,0 +1,83 @@
+.adminGrievanceWrap {
+  background: #f6f8fc;
+  min-height: 100vh;
+}
+
+.grievanceFilters {
+  border-radius: 14px;
+}
+
+.grievanceTable th {
+  font-size: 13px;
+  color: #5b6677;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.grievanceModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 40, 0.55);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.grievanceModal {
+  width: 100%;
+  max-width: 1200px;
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: 18px;
+}
+
+.grievanceBlock {
+  background: #ffffff;
+  border: 1px solid #eef1f6;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.grievanceAttachment {
+  border-radius: 14px;
+  border: 1px solid #e9edf5;
+  max-height: 320px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.grievanceSideCard {
+  background: #ffffff;
+  border: 1px solid #eef1f6;
+  border-radius: 14px;
+  padding: 14px;
+  position: sticky;
+  top: 12px;
+}
+
+.replyList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.replyItem {
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid #eef1f6;
+  background: #fafcff;
+}
+
+.replyItem.admin {
+  border-left: 4px solid #0d6efd;
+}
+
+.replyItem.teacher {
+  border-left: 4px solid #198754;
+}
+
+.replyItem.student {
+  border-left: 4px solid #ffc107;
+}

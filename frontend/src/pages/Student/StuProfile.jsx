@@ -288,101 +288,189 @@ function StuProfile() {
   };
 
   // ================= UI =================
-  if (loading) {
-    return <h3 style={{ padding: "20px" }}>Loading...</h3>;
-  }
-
+if (loading) {
   return (
-    <div className="container-fluid px-4 mt-3 stu-bg">
-      <div className="profile-card-full p-4 shadow-sm">
-        {/* ===== HEADER ===== */}
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4>Student Profile</h4>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+      <div className="text-center">
+        <div className="spinner-border text-primary"></div>
+        <div className="mt-2 fw-semibold">Loading profile...</div>
+      </div>
+    </div>
+  );
+}
 
-          {!isEditing ? (
+return (
+  <div className="min-vh-100 bg-light py-4">
+    <div className="container" style={{ maxWidth: 1200 }}>
+      {/* ===== HEADER ===== */}
+      <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+          <h3 className="fw-bold mb-1">
+            <i className="bi bi-person-badge-fill text-primary me-2"></i>
+            Student Profile
+          </h3>
+          <div className="text-muted">
+            View and update your personal and family details
+          </div>
+        </div>
+
+        {/* Actions */}
+        {!isEditing ? (
+          <button
+            type="button"
+            className="btn btn-primary rounded-3 px-4"
+            onClick={() => setIsEditing(true)}
+          >
+            <i className="bi bi-pencil-square me-2"></i>
+            Edit Profile
+          </button>
+        ) : (
+          <div className="d-flex gap-2">
             <button
               type="button"
-              className="btn btn-edit"
-              onClick={() => setIsEditing(true)}
+              className="btn btn-outline-secondary rounded-3 px-4"
+              onClick={() => setIsEditing(false)}
             >
-              Edit
+              <i className="bi bi-x-circle me-2"></i>
+              Cancel
             </button>
-          ) : (
-            <div>
-              <button
-                type="button"
-                className="btn btn-secondary me-2"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </button>
 
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSave}
-              >
-                Save
-              </button>
-            </div>
-          )}
-        </div>
+            <button
+              type="button"
+              className="btn btn-success rounded-3 px-4"
+              onClick={handleSave}
+            >
+              <i className="bi bi-check2-circle me-2"></i>
+              Save
+            </button>
+          </div>
+        )}
+      </div>
 
-        {/* ===== IMAGES ===== */}
-        <div className="row text-center mb-4">
-          {[
-            { key: "userImage", label: "Student Photo" },
-            { key: "fatherImage", label: "Father Photo" },
-            { key: "motherImage", label: "Mother Photo" },
-          ].map(({ key, label }) => (
-            <div className="col-md-4" key={key}>
-              <div className="image-box">
-                <div className="image-preview">
-                  {previews[key] || imageUrls[key] ? (
-                    <img src={previews[key] || imageUrls[key]} alt={label} />
-                  ) : (
-                    <span>No Photo</span>
-                  )}
+      {/* ===== TOP PROFILE CARD ===== */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+        <div className="p-4 bg-primary text-white">
+          <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+            <div className="d-flex align-items-center gap-3">
+              <div
+                className="bg-white text-primary rounded-4 d-flex align-items-center justify-content-center"
+                style={{ width: 56, height: 56 }}
+              >
+                <i className="bi bi-person-fill fs-3"></i>
+              </div>
+
+              <div>
+                <div className="fw-bold fs-4">{formData.name || "Student"}</div>
+                <div className="text-white-50">
+                  {formData.email || "No email"}
                 </div>
-
-                <p className="image-label">{label}</p>
-
-                {isEditing && (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="form-control"
-                    onChange={(e) => handleImageChange(e, key)}
-                  />
-                )}
               </div>
             </div>
-          ))}
+
+            <div className="d-flex flex-wrap gap-2">
+              <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+                <i className="bi bi-upc-scan me-2"></i>
+                Campus ID: <b>{formData.campusId || "N/A"}</b>
+              </span>
+
+              <span className="badge text-bg-light border text-dark rounded-pill px-3 py-2">
+                <i className="bi bi-mortarboard me-2"></i>
+                Class: <b>{formData.className || "N/A"}</b>
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* ===== BASIC ===== */}
-        <fieldset className="mb-3">
-          <legend>Basic Information</legend>
+        <div className="card-body p-4">
+          {/* ===== IMAGES ===== */}
+          <div className="row g-4">
+            {[
+              { key: "userImage", label: "Student Photo", icon: "bi-person" },
+              { key: "fatherImage", label: "Father Photo", icon: "bi-person" },
+              { key: "motherImage", label: "Mother Photo", icon: "bi-person" },
+            ].map(({ key, label, icon }) => (
+              <div className="col-md-4" key={key}>
+                <div className="border rounded-4 p-3 bg-white h-100">
+                  <div className="d-flex align-items-center justify-content-between mb-2">
+                    <div className="fw-semibold">
+                      <i className={`bi ${icon} me-2 text-primary`}></i>
+                      {label}
+                    </div>
+
+                    <span className="badge text-bg-light border text-dark rounded-pill">
+                      Image
+                    </span>
+                  </div>
+
+                  <div
+                    className="rounded-4 border bg-light d-flex align-items-center justify-content-center overflow-hidden"
+                    style={{ height: 220 }}
+                  >
+                    {previews[key] || imageUrls[key] ? (
+                      <img
+                        src={previews[key] || imageUrls[key]}
+                        alt={label}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <div className="text-center text-muted">
+                        <i className="bi bi-image fs-1"></i>
+                        <div className="small mt-1">No Photo</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {isEditing && (
+                    <div className="mt-3">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="form-control"
+                        onChange={(e) => handleImageChange(e, key)}
+                      />
+                      <small className="text-muted">
+                        Upload JPG / PNG (max recommended 2MB)
+                      </small>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="alert alert-light border rounded-4 small mt-4 mb-0">
+            <i className="bi bi-info-circle me-2"></i>
+            Make sure details are correct. Wrong information may cause problems
+            in documents and reports.
+          </div>
+        </div>
+      </div>
+
+      {/* ===== BASIC INFORMATION ===== */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4">
+        <div className="card-body p-4">
+          <h5 className="fw-bold mb-3">
+            <i className="bi bi-person-lines-fill text-primary me-2"></i>
+            Basic Information
+          </h5>
 
           <div className="row g-3">
-
             <div className="col-md-3">
-              <label>Admission Number</label>
-              <input
-                value={formData.campusId}
-                className="form-control"
-                disabled
-              />
+              <label className="form-label fw-semibold">Admission Number</label>
+              <input value={formData.campusId} className="form-control" disabled />
             </div>
-            
 
             <div className="col-md-3">
-              <label>Student Name</label>
+              <label className="form-label fw-semibold">Student Name</label>
               <input value={formData.name} className="form-control" disabled />
             </div>
-            
+
             <div className="col-md-3">
-              <label>Roll No</label>
+              <label className="form-label fw-semibold">Roll No</label>
               <input
                 name="admissionNumber"
                 value={formData.admissionNumber}
@@ -391,10 +479,9 @@ function StuProfile() {
                 disabled={!isEditing}
               />
             </div>
-            
 
             <div className="col-md-3">
-              <label>Class</label>
+              <label className="form-label fw-semibold">Class</label>
               <select
                 name="className"
                 value={formData.className}
@@ -412,12 +499,12 @@ function StuProfile() {
             </div>
 
             <div className="col-md-3">
-              <label>Email</label>
+              <label className="form-label fw-semibold">Email</label>
               <input value={formData.email} className="form-control" disabled />
             </div>
 
             <div className="col-md-3">
-              <label>DOB</label>
+              <label className="form-label fw-semibold">DOB</label>
               <input
                 type="date"
                 name="dob"
@@ -429,7 +516,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-3">
-              <label>Gender</label>
+              <label className="form-label fw-semibold">Gender</label>
               <select
                 name="gender"
                 value={formData.gender}
@@ -445,7 +532,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-3">
-              <label>Blood Group</label>
+              <label className="form-label fw-semibold">Blood Group</label>
               <select
                 name="bloodGroup"
                 value={formData.bloodGroup}
@@ -465,15 +552,20 @@ function StuProfile() {
               </select>
             </div>
           </div>
-        </fieldset>
+        </div>
+      </div>
 
-        {/* ===== ADDRESS ===== */}
-        <fieldset className="mb-3">
-          <legend>Address</legend>
+      {/* ===== ADDRESS ===== */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4">
+        <div className="card-body p-4">
+          <h5 className="fw-bold mb-3">
+            <i className="bi bi-geo-alt-fill text-primary me-2"></i>
+            Address
+          </h5>
 
           <div className="row g-3">
             <div className="col-md-4">
-              <label>City</label>
+              <label className="form-label fw-semibold">City</label>
               <input
                 name="city"
                 value={formData.city}
@@ -484,7 +576,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>State</label>
+              <label className="form-label fw-semibold">State</label>
               <input
                 name="state"
                 value={formData.state}
@@ -495,7 +587,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Pincode</label>
+              <label className="form-label fw-semibold">Pincode</label>
               <input
                 name="pincode"
                 value={formData.pincode}
@@ -505,15 +597,20 @@ function StuProfile() {
               />
             </div>
           </div>
-        </fieldset>
+        </div>
+      </div>
 
-        {/* ===== PARENTS ===== */}
-        <fieldset className="mb-3">
-          <legend>Parent Details</legend>
+      {/* ===== PARENT DETAILS ===== */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4">
+        <div className="card-body p-4">
+          <h5 className="fw-bold mb-3">
+            <i className="bi bi-people-fill text-primary me-2"></i>
+            Parent Details
+          </h5>
 
           <div className="row g-3">
             <div className="col-md-4">
-              <label>Father Name</label>
+              <label className="form-label fw-semibold">Father Name</label>
               <input
                 name="fatherName"
                 value={formData.fatherName}
@@ -524,7 +621,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Father Phone</label>
+              <label className="form-label fw-semibold">Father Phone</label>
               <input
                 name="fatherPhone"
                 value={formData.fatherPhone}
@@ -535,7 +632,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Father Occupation</label>
+              <label className="form-label fw-semibold">Father Occupation</label>
               <input
                 name="fatherOccupation"
                 value={formData.fatherOccupation}
@@ -546,7 +643,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Mother Name</label>
+              <label className="form-label fw-semibold">Mother Name</label>
               <input
                 name="motherName"
                 value={formData.motherName}
@@ -557,7 +654,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Mother Phone</label>
+              <label className="form-label fw-semibold">Mother Phone</label>
               <input
                 name="motherPhone"
                 value={formData.motherPhone}
@@ -568,7 +665,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Mother Occupation</label>
+              <label className="form-label fw-semibold">Mother Occupation</label>
               <input
                 name="motherOccupation"
                 value={formData.motherOccupation}
@@ -578,15 +675,20 @@ function StuProfile() {
               />
             </div>
           </div>
-        </fieldset>
+        </div>
+      </div>
 
-        {/* ===== GUARDIAN ===== */}
-        <fieldset className="mb-3">
-          <legend>Guardian Details</legend>
+      {/* ===== GUARDIAN ===== */}
+      <div className="card border-0 shadow-sm rounded-4 mb-4">
+        <div className="card-body p-4">
+          <h5 className="fw-bold mb-3">
+            <i className="bi bi-person-hearts text-primary me-2"></i>
+            Guardian Details
+          </h5>
 
           <div className="row g-3">
             <div className="col-md-4">
-              <label>Guardian Name</label>
+              <label className="form-label fw-semibold">Guardian Name</label>
               <input
                 name="guardianName"
                 value={formData.guardianName}
@@ -597,7 +699,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Relation</label>
+              <label className="form-label fw-semibold">Relation</label>
               <input
                 name="guardianRelation"
                 value={formData.guardianRelation}
@@ -608,7 +710,7 @@ function StuProfile() {
             </div>
 
             <div className="col-md-4">
-              <label>Guardian Phone</label>
+              <label className="form-label fw-semibold">Guardian Phone</label>
               <input
                 name="guardianPhone"
                 value={formData.guardianPhone}
@@ -618,15 +720,20 @@ function StuProfile() {
               />
             </div>
           </div>
-        </fieldset>
+        </div>
+      </div>
 
-        {/* ===== DOCUMENTS ===== */}
-        <fieldset className="mb-3">
-          <legend>Documents</legend>
+      {/* ===== DOCUMENTS ===== */}
+      <div className="card border-0 shadow-sm rounded-4">
+        <div className="card-body p-4">
+          <h5 className="fw-bold mb-3">
+            <i className="bi bi-file-earmark-text-fill text-primary me-2"></i>
+            Documents
+          </h5>
 
           <div className="row g-3">
             <div className="col-md-4">
-              <label>Aadhaar Number</label>
+              <label className="form-label fw-semibold">Aadhaar Number</label>
               <input
                 name="aadhaarNumber"
                 value={formData.aadhaarNumber}
@@ -636,10 +743,14 @@ function StuProfile() {
               />
             </div>
           </div>
-        </fieldset>
+        </div>
       </div>
+
+      {/* Bottom spacing */}
+      <div className="py-3"></div>
     </div>
-  );
+  </div>
+);
 }
 
 export default StuProfile;

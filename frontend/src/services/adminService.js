@@ -26,3 +26,41 @@ export const deleteNotice = async (id) => {
   const res = await API.delete(`/admin/delete-notice/${id}`);
   return res.data;
 };
+
+export const getAllGrievancesByAdmin = async (params) => {
+  const res = await API.get("/admin/get-all-grivence", { params });
+  return res.data; 
+};
+
+// =====================
+export const getAllTeachersForAssign = async () => {
+  const res = await API.get("/admin/teachers");
+  return res.data;
+};
+
+
+export const replyToGrievanceByAdmin = async (grievanceId, payload) => {
+  const res = await API.post(
+    `/admin/grievances/${grievanceId}/reply`,
+    payload
+  );
+  return res.data;
+};
+
+
+export const updateGrievanceStatus = async (grievanceId, payload) => {
+  const res = await API.patch(
+    `/admin/grievances/${grievanceId}/status`,
+    payload
+  );
+  return res.data;
+};
+
+
+export const assignTeacherToGrievance = async (grievanceId, payload) => {
+  const res = await API.patch(
+    `/admin/grievances/${grievanceId}/assign`,
+    payload
+  );
+  return res.data;
+};

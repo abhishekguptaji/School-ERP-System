@@ -130,7 +130,7 @@ const handleUpdateStatus = async () => {
 
     Swal.fire("Success", "Status updated", "success");
   } catch (error) {
-    Swal.fire("Error", error?.response?.data?.message || "Failed", "error");
+    // Swal.fire("Error", error?.response?.data?.message || "Failed", "error");
   } finally {
     setSubmitting(false);
   }
@@ -150,7 +150,8 @@ const handleAssignTeacher = async () => {
 
     Swal.fire("Success", "Teacher assigned", "success");
   } catch (error) {
-    Swal.fire("Error", error?.response?.data?.message || "Failed", "error");
+    console.log("In VS Code GrivancePanel of Admin Line number 154")
+    // Swal.fire("Error", error?.response?.data?.message || "Failed", "error");
   } finally {
     setSubmitting(false);
   }
@@ -346,7 +347,7 @@ const handleAssignTeacher = async () => {
 
                       <td>
                         <div className="fw-semibold">
-                          {g?.createdBy?.fullName || "N/A"}
+                          {g?.createdBy?.name || "N/A"}
                         </div>
                         <div className="small text-muted">
                           {g?.createdBy?.email || ""}

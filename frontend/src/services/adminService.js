@@ -64,3 +64,14 @@ export const assignTeacherToGrievance = async (grievanceId, payload) => {
   );
   return res.data;
 };
+
+export const getAllStudentProfilesByAdmin = async()=>{
+   const res = await API.get("/admin/students");
+  return  res.data.data;
+}
+
+export const getCompleteStudentProfileByAdmin = async (profileId) => {
+  const res = await API.get(`/admin/students/${profileId}/complete`);
+  return res.data;
+};
+

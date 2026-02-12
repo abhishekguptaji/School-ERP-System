@@ -15,6 +15,11 @@ import {
   updateGrievanceStatus,
 } from "../controllers/grievancePanel.controller.js";
 
+import {
+  getAllStudentProfilesByAdmin,
+  getCompleteStudentProfileByAdmin
+} from "../controllers/studentProfile.controller.js";
+
 const router = Router();
 
 router.get("/admin-profile", verifyJWT, adminProfile);
@@ -44,4 +49,17 @@ router.patch(
   updateGrievanceStatus,
 );
 
+// --------------
+
+router.get(
+  "/students",
+  verifyJWT,
+  getAllStudentProfilesByAdmin
+);
+
+router.get(
+  "/students/:studentProfileId/complete",
+  verifyJWT,
+  getCompleteStudentProfileByAdmin
+);
 export default router;

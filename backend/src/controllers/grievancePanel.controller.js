@@ -123,7 +123,7 @@ const getAllGrievanceByAdmin = asyncHandler(async(req,res)=>{
   const total = await GrievancePanel.countDocuments(filter);
 
   const grievances = await GrievancePanel.find(filter)
-    .populate("createdBy", "fullName email role studentId teacherId")
+    .populate("createdBy", "name email role studentId teacherId")
     .populate("assignedTo", "fullName email role")
     .populate("replies.sender", "fullName email role")
     .sort({ createdAt: -1 })

@@ -1,160 +1,135 @@
+import React from "react";
 import "./css/TeacherNavbar.css";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { logoutUser } from "../../services/authService";
 
 function TeacherNavbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const handleLogout = async () => {
-    await logoutUser({});
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/", { replace: true });
+    try {
+      await logoutUser({});
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
-    <nav className="navbar navbar-expand-lg admin-navbar sticky-top">
-      <div className="container-fluid">
-        <div className="d-flex align-items-center">
-          <span className="school-brand">
-            <Link className="nav-link " to="">
+      {/* TOP NAVBAR: Global Navigation */}
+      <nav className="navbar navbar-expand-lg teacher-navbar sticky-top">
+        <div className="container-fluid">
+          {/* BRAND */}
+          <div className="d-flex align-items-center gap-2">
+            <Link className="teacher-brand" to="/teacher/dashboard">
               Gupta Ji Public School
             </Link>
-          </span>
-          <span className="erp-brand ms-2">Teacher ERP</span>
-        </div>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#adminNavbar"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="adminNavbar">
-          <ul className="navbar-nav mx-auto admin-menu">
-            <li className="nav-item">
-              <Link className="nav-link" to="/teacher/tea-classes">
-                My Class
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link " to="/teacher/tea-attendence">
-               My Attendence
-              </Link>
-            </li>
+            <span className="teacher-subBrand">Teacher ERP</span>
+          </div>
 
-            <li className="nav-item">
-              <Link className="nav-link " to="/teacher/studentview">
-              Student View
-              </Link>
-            </li>
+          {/* TOGGLER */}
+          <button
+            className="navbar-toggler teacher-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#teacherNavbarTop"
+          >
+            <i className="bi bi-list text-white"></i>
+          </button>
 
-            <li className="nav-item">
-              <Link className="nav-link" to="/teacher/teacher-notice">
-                Teacher Notice
-              </Link>
-            </li>
+          {/* TOP RIGHT */}
+          <div className="collapse navbar-collapse" id="teacherNavbarTop">
+            <ul className="navbar-nav ms-auto align-items-lg-center gap-lg-2 mt-3 mt-lg-0">
+              <li className="nav-item">
+                <Link className={`nav-link teacher-topLink ${isActive("/teacher/dashboard") ? "active" : ""}`} to="/teacher/dashboard">
+                  <i className="bi bi-speedometer2 me-1"></i> Dashboard
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className={`nav-link teacher-topLink ${isActive("/teacher/attendance") ? "active" : ""}`} to="/teacher/attendance">
+                  <i className="bi bi-calendar-check me-1"></i> Attendance
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className={`nav-link teacher-topLink ${isActive("/teacher/students") ? "active" : ""}`} to="/teacher/students">
+                  <i className="bi bi-people me-1"></i> Students
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className={`nav-link teacher-topLink ${isActive("/teacher/notices") ? "active" : ""}`} to="/teacher/notices">
+                  <i className="bi bi-megaphone me-1"></i> Notices
+                </Link>
+              </li>
+               <li className="nav-item">
+                <Link className={`nav-link teacher-topLink ${isActive("/teacher/grievances") ? "active" : ""}`} to="/teacher/grievances">
+                  <i className="bi bi-exclamation-circle me-1"></i> Grievances
+                </Link>
+              </li>
 
-          </ul>
-          <div className="d-flex align-items-center gap-3">
-            <div className="notification-icon">
-              <i className="bi bi-bell"></i>
-              <span className="notification-dot"></span>
-            </div>
-            <div className="dropdown">
-              <Link
-                href="#"
-                className="d-flex align-items-center admin-profile dropdown-toggle"
-                data-bs-toggle="dropdown"
-              >
-                <span className="ms-2">Teacher</span>
-              </Link>
+              {/* ACTION GROUP */}
+              <li className="nav-item d-flex align-items-center gap-3 ms-lg-3 mt-3 mt-lg-0 border-lg-start ps-lg-3">
+                <button className="teacher-iconBtn" title="Notifications">
+                  <i className="bi bi-bell"></i>
+                  <span className="teacher-dot"></span>
+                </button>
 
-              <ul className="dropdown-menu dropdown-menu-end">
-                <li>
-                  <Link className="dropdown-item" to="/teacher/my-profile">
-                    My Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item text-danger" to="#">
-                    <button type="button" onClick={handleLogout}>
-                      Logout
-                    </button>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+                <button className="teacher-logoutBtn" onClick={handleLogout}>
+                  <i className="bi bi-box-arrow-right me-2"></i> Logout
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
-    </nav>
-        
-{/* ================================================== */}
-   <nav className="navbar admin-navbar">
-  <div className="container-fluid">
-    <ul className="navbar-nav flex-row admin-menu mx-auto">
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/dashboard">
-          Dashboard
-        </Link>
-      </li>
+      </nav>
 
-      <li className="nav-item ">
-        <Link className="nav-link" to="/teacher/my-profile">
-          My Profile
-        </Link>
-      </li>
+      {/* SECONDARY MENU: Operational Tools */}
+      <nav className="teacher-subNavbar px-4">
+        <div className="container-fluid">
+          <div className="teacher-subMenu">
+            <Link className={`teacher-subLink ${isActive("/teacher/profile") ? "active" : ""}`} to="/teacher/profile">
+              <i className="bi bi-person-badge me-2"></i> Profile
+            </Link>
+            <Link className={`teacher-subLink ${isActive("/teacher/timetable") ? "active" : ""}`} to="/teacher/timetable">
+              <i className="bi bi-clock-history me-2"></i> Timetable
+            </Link>
 
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/tea-classes">
-          Classes 
-        </Link>
-      </li>
+            <Link className={`teacher-subLink ${isActive("/teacher/material") ? "active" : ""}`} to="/teacher/material">
+              <i className="bi bi-book me-2"></i> Study Material
+            </Link>
 
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/tea-attendence">
-          Attendence
-        </Link>
-      </li>
+            <Link className={`teacher-subLink ${isActive("/teacher/assignments") ? "active" : ""}`} to="/teacher/assignments">
+              <i className="bi bi-journal-text me-2"></i> Assignments
+            </Link>
 
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/tea-exams">
-          Exams
-        </Link>
-      </li>
+            <Link className={`teacher-subLink ${isActive("/teacher/attendance/report") ? "active" : ""}`} to="/teacher/attendance/report">
+              <i className="bi bi-file-earmark-text me-2"></i> Attendance Report
+            </Link>
 
-      <li className="nav-item ">
-        <Link className="nav-link" to="/teacher/tea-results">
-          Result
-        </Link>
-      </li>
+            <Link className={`teacher-subLink ${isActive("/teacher/marks") ? "active" : ""}`} to="/teacher/marks">
+              <i className="bi bi-graph-up-arrow me-2"></i> Marks Upload
+            </Link>
 
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/tea-study-material">
-          Study Material
-        </Link>
-      </li>
+            <Link className={`teacher-subLink ${isActive("/teacher/results") ? "active" : ""}`} to="/teacher/results">
+              <i className="bi bi-clipboard-check me-2"></i> Result Sheet
+            </Link>
 
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/tea-notices">
-          Notice
-        </Link>
-      </li>
+            <Link className={`teacher-subLink ${isActive("/teacher/leave") ? "active" : ""}`} to="/teacher/leave">
+              <i className="bi bi-envelope-paper me-2"></i> Leave
+            </Link>
 
-      <li className="nav-item">
-        <Link className="nav-link" to="/teacher/tea-leave">
-          Leave
-        </Link>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
-{/* ===================================================== */}
-
+            <Link className={`teacher-subLink ${isActive("/teacher/change-password") ? "active" : ""}`} to="/teacher/change-password">
+              <i className="bi bi-shield-lock me-2"></i> 
+              Password Change
+            </Link>
+          </div>
+        </div>
+      </nav>
     </>
   );
 }

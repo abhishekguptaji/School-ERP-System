@@ -29,18 +29,21 @@ import {
 
 /* ===== TEACHER ===== */
 import {
-  TeacherLayout,
-  TeacherDashboard,
-  TeaAttendence,
-  TeaNotices,
-  TeaExams,
-  TeaLeave,
-  TeaResults,
-  TeaStudyMaterial,
-  StudentView,
-  TeaClasses,
-  TeacherProfile,
-  TeacherNotice,
+  TAssignment,
+  TAttendence,
+  TAttendenceReport,
+  TDashboard,
+  TGrievances,
+  TLeave,
+  TMarksUploads,
+  TNotices,
+  TPasswordChange,
+  TProfile,
+  TResultSheet,
+  TStudents,
+  TStudyMaterial,
+  TTimeTable,
+  TeacherLayout
 } from "./TeacherImports";
 
 /* ===== STUDENT ===== */
@@ -107,18 +110,20 @@ function App() {
           }
         >
           <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<TeacherDashboard />} />
-          <Route path="my-profile" element={<TeacherProfile />} />
-          <Route path="teacher-notice" element={<TeacherNotice />} />
-          <Route path="studentview" element={<StudentView />} />
-          <Route path="tea-attendence" element={<TeaAttendence />} />
-          <Route path="tea-notices" element={<TeaNotices />} />
-          <Route path="tea-classes" element={<TeaClasses />} />
-          <Route path="tea-exams" element={<TeaExams />} />
-          <Route path="tea-leave" element={<TeaLeave />} />
-          <Route path="tea-notices" element={<TeaNotices />} />
-          <Route path="tea-results" element={<TeaResults />} />
-          <Route path="tea-study-material" element={<TeaStudyMaterial />} />
+          <Route path="dashboard" element={<TDashboard />} />
+          <Route path="assignments" element={<TAssignment />} />
+          <Route path="attendance" element={<TAttendence />} />
+          <Route path="attendance/report" element={<TAttendenceReport />} />
+          <Route path="grievances" element={<TGrievances />} />
+          <Route path="leave" element={<TLeave />} />
+          <Route path="marks" element={<TMarksUploads />} />
+          <Route path="notices" element={<TNotices />} />
+          <Route path="profile" element={<TProfile />} />
+          <Route path="students" element={<TStudents />} />
+          <Route path="results" element={<TResultSheet />} />
+          <Route path="material" element={<TStudyMaterial />} />
+          <Route path="timetable" element={<TTimeTable />} />
+          <Route path="change-password" element={<  TPasswordChange/>} />
         </Route>
 
         {/* ================ STUDENT ================= */}

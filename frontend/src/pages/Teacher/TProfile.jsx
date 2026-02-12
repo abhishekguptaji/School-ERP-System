@@ -11,7 +11,7 @@ const DESIGNATION_MAP = {
   PGT: "Post Graduate Teacher",
 };
 
-function TeacherProfile() {
+function TProfile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -840,4 +840,4 @@ function TeacherProfile() {
   );
 }
 
-export default TeacherProfile;
+export default TProfile;

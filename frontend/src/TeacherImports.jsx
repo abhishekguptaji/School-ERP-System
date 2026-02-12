@@ -1,27 +1,33 @@
+import TAssignment from "./pages/Teacher/TAssignment";
+import TAttendence from "./pages/Teacher/TAttendence";
+import TAttendenceReport from "./pages/Teacher/TAttendenceReport";
+import TDashboard from "./pages/Teacher/TDashboard";
+import TGrievances from "./pages/Teacher/TGrievances";
+import TLeave from "./pages/Teacher/TLeave";
+import TMarksUploads from "./pages/Teacher/TMarksUploads";
+import TNotices from "./pages/Teacher/TNotices";
+import TPasswordChange from "./pages/Teacher/TPasswordChange";
+import TProfile from "./pages/Teacher/TProfile";
+import TResultSheet from "./pages/Teacher/TResultSheet";
+import TStudents from "./pages/Teacher/TStudents";
+import TStudyMaterial from "./pages/Teacher/TStudyMaterial";
+import TTimeTable from "./pages/Teacher/TTimeTable";
 import TeacherLayout from "./pages/Teacher/TeacherLayout";
-import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
-import TeaAttendence from "./pages/Teacher/TeaAttendence";
-import TeaNotices from "./pages/Teacher/TeaNotices";
-import TeaExams from "./pages/Teacher/TeaExams";
-import TeaLeave from "./pages/Teacher/TeaLeave";
-import TeaResults from "./pages/Teacher/TeaResults";
-import TeaStudyMaterial from "./pages/Teacher/TeaStudyMaterial";
-import StudentView from "./pages/Teacher/StudentView";
-import TeaClasses from "./pages/Teacher/TeaClasses";
-import TeacherProfile from "./pages/Teacher/TeacherProfile";
-import TeacherNotice from "./pages/Teacher/TeacherNotice";
 
 export {
-  TeacherLayout,
-  TeacherDashboard,
-  TeaAttendence,
-  TeaNotices,
-  TeaExams,
-  TeaLeave,
-  TeaResults,
-  TeaStudyMaterial,
-  StudentView,
-  TeaClasses,
-  TeacherProfile,
-  TeacherNotice,
-};
+  TAssignment,
+  TAttendence,
+  TAttendenceReport,
+  TDashboard,
+  TGrievances,
+  TLeave,
+  TMarksUploads,
+  TNotices,
+  TPasswordChange,
+  TProfile,
+  TResultSheet,
+  TStudents,
+  TStudyMaterial,
+  TTimeTable,
+  TeacherLayout
+}

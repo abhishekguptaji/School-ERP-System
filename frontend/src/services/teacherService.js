@@ -31,6 +31,12 @@ export const getNewPassword = async (payload) => {
   return res.data;
 };
 
+export const getDashboardProfile = async() =>{
+  const res = await API.get("/teacher/teacher-dashboard");
+  return res.data;
+}
+
+
 
 export const getTeacherNotices = async () =>{
   

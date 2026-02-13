@@ -1,9 +1,9 @@
-import axios from "axios";
+import API from "./api.js";
 
-const API = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
-  withCredentials: true, 
-});
+export const getNewPassword = async (payload) => {
+  const res = await API.post("/teacher/password-change", payload);
+  return res.data;
+};
 
 
 export const getTeacherNotices = async () =>{

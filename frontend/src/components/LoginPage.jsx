@@ -12,57 +12,47 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // UI ONLY
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const payload = { password, role };
+    const payload = {
+      email: loginId.trim(),
+      password: password.trim(),
+      role,
+    };
 
-      if (loginId.includes("@")) {
-        payload.email = loginId;
-      } else {
-        payload.rollNumber = loginId;
-      }
+    const res = await loginUser(payload);
 
-      const res = await loginUser(payload);
+    localStorage.setItem("token", res.data.accessToken);
+    localStorage.setItem("role", res.data.user.role);
+    localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      localStorage.setItem("token", res.token);
-      localStorage.setItem("role", res.data.user.role);
-      localStorage.setItem("user", JSON.stringify(res.user));
-
-      if (res.data.user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (res.data.user.role === "teacher") {
-        navigate("/teacher/dashboard");
-      } else {
-        navigate("/student/dashboard");
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text:
-          error?.response?.data?.message ||
-          "Invalid email or password. Please try again.",
-        confirmButtonText: "Try Again",
-        confirmButtonColor: "#d33",
-        background: "#ffffff",
-        backdrop: "rgba(0,0,0,0.6)",
-        allowOutsideClick: false,
-      });
-      console.error(error);
-    } finally {
-      setLoginId("");
-      setPassword("");
-      setLoading(false);
+    if (res.data.user.role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (res.data.user.role === "teacher") {
+      navigate("/teacher/dashboard");
+    } else {
+      navigate("/student/dashboard");
     }
-  };
-
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Login Failed",
+      text:
+        error?.response?.data?.message ||
+        "Invalid email or password. Please try again.",
+    });
+  } finally {
+    setLoginId("");
+    setPassword("");
+    setLoading(false);
+  }
+};
   return (
     <div className="erp-login-container">
       <div className="row g-0 min-vh-100">

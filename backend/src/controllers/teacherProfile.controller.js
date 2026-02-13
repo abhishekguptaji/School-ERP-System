@@ -1,5 +1,4 @@
 import TeacherProfile from "../models/teacherProfile.model.js";
-import User from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -10,12 +9,12 @@ const getTeacherProfile = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Only teachers can access teacher profile");
   }
 
- const profile = await TeacherProfile.findOne({ user: req.user._id }).populate(
+  const profile = await TeacherProfile.findOne({ user: req.user._id }).populate(
     "user",
-    "name email campusId role"
+    "name email campusId role",
   );
- 
-    if (!profile) {
+
+  if (!profile) {
     return res.status(200).json(
       new ApiResponse(
         200,
@@ -29,11 +28,10 @@ const getTeacherProfile = asyncHandler(async (req, res) => {
           profile: null,
           isProfileCreated: false,
         },
-        "Profile not created yet, basic user data sent"
-      )
+        "Profile not created yet, basic user data sent",
+      ),
     );
   }
- 
 
   return res.status(200).json(
     new ApiResponse(
@@ -43,8 +41,8 @@ const getTeacherProfile = asyncHandler(async (req, res) => {
         profile,
         isProfileCreated: true,
       },
-      profile ? "Complete Profile Fetched of Teacher" : "Profile not created"
-    )
+      profile ? "Complete Profile Fetched of Teacher" : "Profile not created",
+    ),
   );
 });
 
@@ -125,13 +123,13 @@ const createOrUpdateTeacherProfile = asyncHandler(async (req, res) => {
         new: true,
         runValidators: true,
       },
-    ).populate("user", "name email employeeId");
+    ).populate("user", "name email campusId");
   } else {
     profile = await TeacherProfile.create(payload);
 
     profile = await TeacherProfile.findById(profile._id).populate(
       "user",
-      "name email employeeId",
+      "name email campusId",
     );
   }
 

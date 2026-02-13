@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   createOrUpdateTeacherProfile,
   getTeacherProfile,
-} from "../../services/authService.js";
+} from "../../services/teacherService.js";
 import "./css/TeacherProfile.css";
 
 const DESIGNATION_MAP = {
@@ -95,7 +95,6 @@ function TProfile() {
 
     const profile = res?.data?.profile;
 
-    // If profile not created -> auto edit mode
     if (!profile) {
       setIsEditing(true);
       setPreview("");
@@ -223,7 +222,6 @@ function TProfile() {
     setError("");
     setSuccessMsg("");
 
-    // required validations
     if (!form.department?.trim()) {
       setError("Department is required");
       setSaving(false);
@@ -277,30 +275,67 @@ function TProfile() {
   };
 
   /* ================= UI ================= */
-  if (loading) return <div className="tp-loading">Loading...</div>;
+  if (loading) {
+    return (
+      <div className="container py-5">
+        <div className="card border-0 shadow-sm rounded-4">
+          <div className="card-body p-4">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  const statusBadge =
+    form.status === "active"
+      ? "bg-success"
+      : form.status === "resigned"
+      ? "bg-secondary"
+      : form.status === "terminated"
+      ? "bg-danger"
+      : "bg-warning text-dark";
 
   return (
-    <div className="tp-container">
-      {/* HEADER */}
-      <div className="tp-header">
-        <h2 className="tp-title">Teacher Profile</h2>
+    <div className="container py-4">
+      {/* TOP HEADER */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div>
+          <h3 className="fw-bold mb-0">Teacher Profile</h3>
+          <small className="text-muted">
+            View and manage your profile information
+          </small>
+        </div>
 
-        <div className="tp-actions">
+        <div className="d-flex gap-2">
           {!isEditing ? (
-            <button className="btn-edit" onClick={() => setIsEditing(true)}>
-              Edit
+            <button
+              className="btn btn-outline-dark rounded-3 fw-semibold"
+              onClick={() => setIsEditing(true)}
+            >
+              <i className="bi bi-pencil-square me-2"></i>
+              Edit Profile
             </button>
           ) : (
             <>
               <button
-                className="btn-save"
+                className="btn btn-dark rounded-3 fw-semibold"
                 onClick={handleSave}
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2"></span>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-check2-circle me-2"></i>
+                    Save
+                  </>
+                )}
               </button>
+
               <button
-                className="btn-cancel"
+                className="btn btn-outline-secondary rounded-3 fw-semibold"
                 onClick={handleCancel}
                 disabled={saving}
               >
@@ -311,529 +346,654 @@ function TProfile() {
         </div>
       </div>
 
-      {error && <div className="tp-error">{error}</div>}
-      {successMsg && <div className="tp-success">{successMsg}</div>}
+      {/* ALERTS */}
+      {error && (
+        <div className="alert alert-danger rounded-4">
+          <i className="bi bi-exclamation-triangle me-2"></i>
+          {error}
+        </div>
+      )}
 
-      {/* TOP CARD (IMAGE + NAME/EMAIL/EMPLOYEEID) */}
-      <div className="tp-topCard">
-        <div className="tp-topLeft">
-          <img
-            className="tp-topImg"
-            src={preview || "/default-user.png"}
-            alt="teacher"
-          />
+      {successMsg && (
+        <div className="alert alert-success rounded-4">
+          <i className="bi bi-check-circle me-2"></i>
+          {successMsg}
+        </div>
+      )}
 
-          {isEditing && (
-            <input type="file" accept="image/*" onChange={handleImage} />
-          )}
+      <div className="row g-3">
+        {/* LEFT PROFILE CARD */}
+        <div className="col-lg-4">
+          <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div className="bg-dark text-white p-4">
+              <div className="d-flex align-items-center gap-3">
+                <div
+                  className="bg-white text-dark rounded-3 d-flex align-items-center justify-content-center"
+                  style={{ width: 48, height: 48 }}
+                >
+                  <i className="bi bi-person-badge fs-4"></i>
+                </div>
+
+                <div>
+                  <h5 className="mb-0 fw-semibold">My Profile</h5>
+                  <small className="text-white-50">
+                    Teacher account information
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div className="card-body p-4">
+              <div className="text-center">
+                <img
+                  src={preview || "/default-user.png"}
+                  alt="teacher"
+                  className="rounded-circle shadow-sm"
+                  style={{
+                    width: 120,
+                    height: 120,
+                    objectFit: "cover",
+                    border: "4px solid #f1f1f1",
+                  }}
+                />
+
+                {isEditing && (
+                  <div className="mt-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="form-control"
+                      onChange={handleImage}
+                    />
+                  </div>
+                )}
+
+                <h5 className="fw-bold mt-3 mb-0">{user?.name || "-"}</h5>
+                <small className="text-muted">{user?.email || "-"}</small>
+
+                <div className="mt-3 d-flex justify-content-center gap-2 flex-wrap">
+                  <span className="badge bg-primary px-3 py-2 rounded-pill">
+                    {DESIGNATION_MAP[form.designation]}
+                  </span>
+
+                  <span className={`badge ${statusBadge} px-3 py-2 rounded-pill`}>
+                    {form.status}
+                  </span>
+                </div>
+              </div>
+
+              <hr />
+
+              <div className="d-flex justify-content-between">
+                <span className="text-muted">Employee ID</span>
+                <span className="fw-semibold">{user?.campusId || "-"}</span>
+              </div>
+
+              <div className="d-flex justify-content-between mt-2">
+                <span className="text-muted">Profile Created</span>
+                <span className="fw-semibold">
+                  {isProfileCreated ? "Yes" : "No"}
+                </span>
+              </div>
+
+              <div className="d-flex justify-content-between mt-2">
+                <span className="text-muted">Account Active</span>
+                <span className="fw-semibold">
+                  {form.isActive ? "Yes" : "No"}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="tp-topRight">
-          <h3 className="tp-topName">{user?.name || "-"}</h3>
-
-          <p>
-            <b>Email:</b> {user?.email || "-"}
-          </p>
-
-          <p>
-            <b>Employee ID:</b> {user?.employeeId || "-"}
-          </p>
-
-          <p>
-            <b>Profile Created:</b> {isProfileCreated ? " Yes" : " No"}
-          </p>
-        </div>
-      </div>
-
-      {/* FULL DETAILS CARD */}
-      <div className="tp-card">
-        <div className="tp-right">
+        {/* RIGHT DETAILS */}
+        <div className="col-lg-8">
           {/* PROFESSIONAL */}
-          <div className="tp-sectionTitle">Professional Details</div>
+          <div className="card border-0 shadow-sm rounded-4 mb-3">
+            <div className="card-body p-4">
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <h5 className="fw-bold mb-0">
+                  <i className="bi bi-briefcase me-2"></i>
+                  Professional Details
+                </h5>
+              </div>
 
-          <div className="tp-grid">
-            <div className="tp-field">
-              <label>Designation</label>
-              {!isEditing ? (
-                <p>{DESIGNATION_MAP[form.designation]}</p>
-              ) : (
-                <select
-                  name="designation"
-                  value={form.designation}
-                  onChange={handleChange}
-                >
-                  <option value="PRT">PRT - Primary Teacher</option>
-                  <option value="TGT">TGT - Trained Graduate Teacher</option>
-                  <option value="PGT">PGT - Post Graduate Teacher</option>
-                </select>
-              )}
-            </div>
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Designation</label>
+                  {!isEditing ? (
+                    <div className="form-control bg-light">
+                      {DESIGNATION_MAP[form.designation]}
+                    </div>
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="designation"
+                      value={form.designation}
+                      onChange={handleChange}
+                    >
+                      <option value="PRT">PRT - Primary Teacher</option>
+                      <option value="TGT">TGT - Trained Graduate Teacher</option>
+                      <option value="PGT">PGT - Post Graduate Teacher</option>
+                    </select>
+                  )}
+                </div>
 
-            <div className="tp-field">
-              <label>Department</label>
-              {!isEditing ? (
-                <p>{form.department || "-"}</p>
-              ) : (
-                <input
-                  name="department"
-                  value={form.department}
-                  onChange={handleChange}
-                  placeholder="Science / Maths / English"
-                />
-              )}
-            </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Department</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="department"
+                    value={form.department}
+                    onChange={handleChange}
+                    placeholder="Science / Maths / English"
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Date of Joining</label>
-              {!isEditing ? (
-                <p>
-                  {form.dateOfJoining
-                    ? new Date(form.dateOfJoining).toLocaleDateString()
-                    : "-"}
-                </p>
-              ) : (
-                <input
-                  type="date"
-                  name="dateOfJoining"
-                  value={form.dateOfJoining}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">
+                    Date of Joining
+                  </label>
+                  <input
+                    type={isEditing ? "date" : "text"}
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="dateOfJoining"
+                    value={
+                      isEditing
+                        ? form.dateOfJoining
+                        : form.dateOfJoining
+                        ? new Date(form.dateOfJoining).toLocaleDateString()
+                        : ""
+                    }
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Employment Type</label>
-              {!isEditing ? (
-                <p>{form.employmentType}</p>
-              ) : (
-                <select
-                  name="employmentType"
-                  value={form.employmentType}
-                  onChange={handleChange}
-                >
-                  <option value="Permanent">Permanent</option>
-                  <option value="Contract">Contract</option>
-                  <option value="Guest">Guest</option>
-                  <option value="Part-time">Part-time</option>
-                </select>
-              )}
-            </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">
+                    Employment Type
+                  </label>
+                  {!isEditing ? (
+                    <input
+                      className="form-control bg-light"
+                      disabled
+                      value={form.employmentType}
+                    />
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="employmentType"
+                      value={form.employmentType}
+                      onChange={handleChange}
+                    >
+                      <option value="Permanent">Permanent</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Guest">Guest</option>
+                      <option value="Part-time">Part-time</option>
+                    </select>
+                  )}
+                </div>
 
-            <div className="tp-field">
-              <label>Qualification</label>
-              {!isEditing ? (
-                <p>{form.qualification || "-"}</p>
-              ) : (
-                <input
-                  name="qualification"
-                  value={form.qualification}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Qualification</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="qualification"
+                    value={form.qualification}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Experience (Years)</label>
-              {!isEditing ? (
-                <p>{form.experienceYears ?? 0}</p>
-              ) : (
-                <input
-                  type="number"
-                  min={0}
-                  name="experienceYears"
-                  value={form.experienceYears}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-3">
+                  <label className="form-label fw-semibold">
+                    Experience (Years)
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="experienceYears"
+                    value={form.experienceYears}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Status</label>
-              {!isEditing ? (
-                <p>{form.status}</p>
-              ) : (
-                <select
-                  name="status"
-                  value={form.status}
-                  onChange={handleChange}
-                >
-                  <option value="active">Active</option>
-                  <option value="resigned">Resigned</option>
-                  <option value="terminated">Terminated</option>
-                  <option value="onLeave">On Leave</option>
-                </select>
-              )}
-            </div>
+                <div className="col-md-3">
+                  <label className="form-label fw-semibold">Status</label>
+                  {!isEditing ? (
+                    <input
+                      className="form-control bg-light"
+                      disabled
+                      value={form.status}
+                    />
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                    >
+                      <option value="active">Active</option>
+                      <option value="resigned">Resigned</option>
+                      <option value="terminated">Terminated</option>
+                      <option value="onLeave">On Leave</option>
+                    </select>
+                  )}
+                </div>
 
-            <div className="tp-field">
-              <label>Active Account</label>
-              {!isEditing ? (
-                <p>{form.isActive ? "Yes" : "No"}</p>
-              ) : (
-                <input
-                  type="checkbox"
-                  name="isActive"
-                  checked={form.isActive}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-6">
+                  <div className="form-check mt-4">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="isClassTeacher"
+                      checked={form.isClassTeacher}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      id="isClassTeacher"
+                    />
+                    <label className="form-check-label" htmlFor="isClassTeacher">
+                      I am a Class Teacher
+                    </label>
+                  </div>
+                </div>
 
-            <div className="tp-field">
-              <label>Class Teacher?</label>
-              {!isEditing ? (
-                <p>{form.isClassTeacher ? "Yes" : "No"}</p>
-              ) : (
-                <input
-                  type="checkbox"
-                  name="isClassTeacher"
-                  checked={form.isClassTeacher}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
-
-            <div className="tp-field">
-              <label>Class Teacher Of</label>
-              {!isEditing ? (
-                <p>{form.classTeacherOf || "-"}</p>
-              ) : (
-                <input
-                  name="classTeacherOf"
-                  value={form.classTeacherOf}
-                  onChange={handleChange}
-                  placeholder="ex: 10-A"
-                  disabled={!form.isClassTeacher}
-                />
-              )}
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">
+                    Class Teacher Of
+                  </label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing || !form.isClassTeacher}
+                    name="classTeacherOf"
+                    value={form.classTeacherOf}
+                    onChange={handleChange}
+                    placeholder="ex: 10-A"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* PERSONAL */}
-          <div className="tp-sectionTitle">Personal Details</div>
+          <div className="card border-0 shadow-sm rounded-4 mb-3">
+            <div className="card-body p-4">
+              <h5 className="fw-bold mb-3">
+                <i className="bi bi-person-heart me-2"></i>
+                Personal Details
+              </h5>
 
-          <div className="tp-grid">
-            <div className="tp-field">
-              <label>DOB</label>
-              {!isEditing ? (
-                <p>
-                  {form.dob ? new Date(form.dob).toLocaleDateString() : "-"}
-                </p>
-              ) : (
-                <input
-                  type="date"
-                  name="dob"
-                  value={form.dob}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+              <div className="row g-3">
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">DOB</label>
+                  <input
+                    type={isEditing ? "date" : "text"}
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="dob"
+                    value={
+                      isEditing
+                        ? form.dob
+                        : form.dob
+                        ? new Date(form.dob).toLocaleDateString()
+                        : ""
+                    }
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Gender</label>
-              {!isEditing ? (
-                <p>{form.gender}</p>
-              ) : (
-                <select
-                  name="gender"
-                  value={form.gender}
-                  onChange={handleChange}
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Gender</label>
+                  {!isEditing ? (
+                    <input
+                      className="form-control bg-light"
+                      disabled
+                      value={form.gender}
+                    />
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="gender"
+                      value={form.gender}
+                      onChange={handleChange}
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  )}
+                </div>
 
-            <div className="tp-field">
-              <label>Blood Group</label>
-              {!isEditing ? (
-                <p>{form.bloodGroup}</p>
-              ) : (
-                <select
-                  name="bloodGroup"
-                  value={form.bloodGroup}
-                  onChange={handleChange}
-                >
-                  <option value="A+">A+</option>
-                  <option value="A-">A-</option>
-                  <option value="B+">B+</option>
-                  <option value="B-">B-</option>
-                  <option value="AB+">AB+</option>
-                  <option value="AB-">AB-</option>
-                  <option value="O+">O+</option>
-                  <option value="O-">O-</option>
-                </select>
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Blood Group</label>
+                  {!isEditing ? (
+                    <input
+                      className="form-control bg-light"
+                      disabled
+                      value={form.bloodGroup}
+                    />
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="bloodGroup"
+                      value={form.bloodGroup}
+                      onChange={handleChange}
+                    >
+                      {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(
+                        (bg) => (
+                          <option key={bg} value={bg}>
+                            {bg}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  )}
+                </div>
 
-            <div className="tp-field">
-              <label>Marital Status</label>
-              {!isEditing ? (
-                <p>{form.maritalStatus}</p>
-              ) : (
-                <select
-                  name="maritalStatus"
-                  value={form.maritalStatus}
-                  onChange={handleChange}
-                >
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                </select>
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">
+                    Marital Status
+                  </label>
+                  {!isEditing ? (
+                    <input
+                      className="form-control bg-light"
+                      disabled
+                      value={form.maritalStatus}
+                    />
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="maritalStatus"
+                      value={form.maritalStatus}
+                      onChange={handleChange}
+                    >
+                      {["Single", "Married", "Divorced", "Widowed"].map((m) => (
+                        <option key={m} value={m}>
+                          {m}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
 
-            <div className="tp-field">
-              <label>Category</label>
-              {!isEditing ? (
-                <p>{form.category || "-"}</p>
-              ) : (
-                <select
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                >
-                  <option value="">Select</option>
-                  <option value="General">General</option>
-                  <option value="OBC">OBC</option>
-                  <option value="SC">SC</option>
-                  <option value="ST">ST</option>
-                  <option value="EWS">EWS</option>
-                </select>
-              )}
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Category</label>
+                  {!isEditing ? (
+                    <input
+                      className="form-control bg-light"
+                      disabled
+                      value={form.category || "-"}
+                    />
+                  ) : (
+                    <select
+                      className="form-select"
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select</option>
+                      {["General", "OBC", "SC", "ST", "EWS"].map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* CONTACT */}
-          <div className="tp-sectionTitle">Contact Details</div>
+          <div className="card border-0 shadow-sm rounded-4 mb-3">
+            <div className="card-body p-4">
+              <h5 className="fw-bold mb-3">
+                <i className="bi bi-telephone me-2"></i>
+                Contact Details
+              </h5>
 
-          <div className="tp-grid">
-            <div className="tp-field">
-              <label>Phone</label>
-              {!isEditing ? (
-                <p>{form.phone || "-"}</p>
-              ) : (
-                <input
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">Phone</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Alternate Phone</label>
-              {!isEditing ? (
-                <p>{form.alternatePhone || "-"}</p>
-              ) : (
-                <input
-                  name="alternatePhone"
-                  value={form.alternatePhone}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-6">
+                  <label className="form-label fw-semibold">
+                    Alternate Phone
+                  </label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="alternatePhone"
+                    value={form.alternatePhone}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>City</label>
-              {!isEditing ? (
-                <p>{form.address.city || "-"}</p>
-              ) : (
-                <input
-                  name="address.city"
-                  value={form.address.city}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">City</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="address.city"
+                    value={form.address.city}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>State</label>
-              {!isEditing ? (
-                <p>{form.address.state || "-"}</p>
-              ) : (
-                <input
-                  name="address.state"
-                  value={form.address.state}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">State</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="address.state"
+                    value={form.address.state}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Pincode</label>
-              {!isEditing ? (
-                <p>{form.address.pincode || "-"}</p>
-              ) : (
-                <input
-                  name="address.pincode"
-                  value={form.address.pincode}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Pincode</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="address.pincode"
+                    value={form.address.pincode}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Full Address</label>
-              {!isEditing ? (
-                <p>{form.address.fullAddress || "-"}</p>
-              ) : (
-                <input
-                  name="address.fullAddress"
-                  value={form.address.fullAddress}
-                  onChange={handleChange}
-                />
-              )}
+                <div className="col-12">
+                  <label className="form-label fw-semibold">Full Address</label>
+                  <textarea
+                    rows={2}
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="address.fullAddress"
+                    value={form.address.fullAddress}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* EMERGENCY */}
-          <div className="tp-sectionTitle">Emergency Contact</div>
+          <div className="card border-0 shadow-sm rounded-4 mb-3">
+            <div className="card-body p-4">
+              <h5 className="fw-bold mb-3">
+                <i className="bi bi-exclamation-diamond me-2"></i>
+                Emergency Contact
+              </h5>
 
-          <div className="tp-grid">
-            <div className="tp-field">
-              <label>Name</label>
-              {!isEditing ? (
-                <p>{form.emergencyContact.name || "-"}</p>
-              ) : (
-                <input
-                  name="emergencyContact.name"
-                  value={form.emergencyContact.name}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+              <div className="row g-3">
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Name</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="emergencyContact.name"
+                    value={form.emergencyContact.name}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Relation</label>
-              {!isEditing ? (
-                <p>{form.emergencyContact.relation || "-"}</p>
-              ) : (
-                <input
-                  name="emergencyContact.relation"
-                  value={form.emergencyContact.relation}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Relation</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="emergencyContact.relation"
+                    value={form.emergencyContact.relation}
+                    onChange={handleChange}
+                  />
+                </div>
 
-            <div className="tp-field">
-              <label>Phone</label>
-              {!isEditing ? (
-                <p>{form.emergencyContact.phone || "-"}</p>
-              ) : (
-                <input
-                  name="emergencyContact.phone"
-                  value={form.emergencyContact.phone}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* DOCUMENTS */}
-          <div className="tp-sectionTitle">Documents</div>
-
-          <div className="tp-grid">
-            <div className="tp-field">
-              <label>Aadhaar</label>
-              {!isEditing ? (
-                <p>{form.documents.aadhaarNumber || "-"}</p>
-              ) : (
-                <input
-                  name="documents.aadhaarNumber"
-                  value={form.documents.aadhaarNumber}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
-
-            <div className="tp-field">
-              <label>PAN</label>
-              {!isEditing ? (
-                <p>{form.documents.panNumber || "-"}</p>
-              ) : (
-                <input
-                  name="documents.panNumber"
-                  value={form.documents.panNumber}
-                  onChange={handleChange}
-                />
-              )}
+                <div className="col-md-4">
+                  <label className="form-label fw-semibold">Phone</label>
+                  <input
+                    className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                    disabled={!isEditing}
+                    name="emergencyContact.phone"
+                    value={form.emergencyContact.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* BANK */}
-          <div className="tp-sectionTitle">Bank Details</div>
+          {/* DOCUMENTS + BANK */}
+          <div className="row g-3">
+            <div className="col-md-6">
+              <div className="card border-0 shadow-sm rounded-4 h-100">
+                <div className="card-body p-4">
+                  <h5 className="fw-bold mb-3">
+                    <i className="bi bi-file-earmark-text me-2"></i>
+                    Documents
+                  </h5>
 
-          <div className="tp-grid">
-            <div className="tp-field">
-              <label>Account Holder</label>
-              {!isEditing ? (
-                <p>{form.bankDetails.accountHolderName || "-"}</p>
-              ) : (
-                <input
-                  name="bankDetails.accountHolderName"
-                  value={form.bankDetails.accountHolderName}
-                  onChange={handleChange}
-                />
-              )}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">Aadhaar</label>
+                    <input
+                      className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                      disabled={!isEditing}
+                      name="documents.aadhaarNumber"
+                      value={form.documents.aadhaarNumber}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="form-label fw-semibold">PAN</label>
+                    <input
+                      className={`form-control ${!isEditing ? "bg-light" : ""}`}
+                      disabled={!isEditing}
+                      name="documents.panNumber"
+                      value={form.documents.panNumber}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="tp-field">
-              <label>Account Number</label>
-              {!isEditing ? (
-                <p>{form.bankDetails.accountNumber || "-"}</p>
-              ) : (
-                <input
-                  name="bankDetails.accountNumber"
-                  value={form.bankDetails.accountNumber}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+            <div className="col-md-6">
+              <div className="card border-0 shadow-sm rounded-4 h-100">
+                <div className="card-body p-4">
+                  <h5 className="fw-bold mb-3">
+                    <i className="bi bi-bank me-2"></i>
+                    Bank Details
+                  </h5>
 
-            <div className="tp-field">
-              <label>IFSC</label>
-              {!isEditing ? (
-                <p>{form.bankDetails.ifscCode || "-"}</p>
-              ) : (
-                <input
-                  name="bankDetails.ifscCode"
-                  value={form.bankDetails.ifscCode}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                  <div className="row g-3">
+                    <div className="col-12">
+                      <label className="form-label fw-semibold">
+                        Account Holder Name
+                      </label>
+                      <input
+                        className={`form-control ${
+                          !isEditing ? "bg-light" : ""
+                        }`}
+                        disabled={!isEditing}
+                        name="bankDetails.accountHolderName"
+                        value={form.bankDetails.accountHolderName}
+                        onChange={handleChange}
+                      />
+                    </div>
 
-            <div className="tp-field">
-              <label>Bank Name</label>
-              {!isEditing ? (
-                <p>{form.bankDetails.bankName || "-"}</p>
-              ) : (
-                <input
-                  name="bankDetails.bankName"
-                  value={form.bankDetails.bankName}
-                  onChange={handleChange}
-                />
-              )}
-            </div>
+                    <div className="col-12">
+                      <label className="form-label fw-semibold">
+                        Account Number
+                      </label>
+                      <input
+                        className={`form-control ${
+                          !isEditing ? "bg-light" : ""
+                        }`}
+                        disabled={!isEditing}
+                        name="bankDetails.accountNumber"
+                        value={form.bankDetails.accountNumber}
+                        onChange={handleChange}
+                      />
+                    </div>
 
-            <div className="tp-field">
-              <label>Branch</label>
-              {!isEditing ? (
-                <p>{form.bankDetails.branch || "-"}</p>
-              ) : (
-                <input
-                  name="bankDetails.branch"
-                  value={form.bankDetails.branch}
-                  onChange={handleChange}
-                />
-              )}
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold">IFSC</label>
+                      <input
+                        className={`form-control ${
+                          !isEditing ? "bg-light" : ""
+                        }`}
+                        disabled={!isEditing}
+                        name="bankDetails.ifscCode"
+                        value={form.bankDetails.ifscCode}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold">Bank Name</label>
+                      <input
+                        className={`form-control ${
+                          !isEditing ? "bg-light" : ""
+                        }`}
+                        disabled={!isEditing}
+                        name="bankDetails.bankName"
+                        value={form.bankDetails.bankName}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="col-12">
+                      <label className="form-label fw-semibold">Branch</label>
+                      <input
+                        className={`form-control ${
+                          !isEditing ? "bg-light" : ""
+                        }`}
+                        disabled={!isEditing}
+                        name="bankDetails.branch"
+                        value={form.bankDetails.branch}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* BOTTOM SPACE */}
+          <div className="py-2"></div>
         </div>
       </div>
     </div>

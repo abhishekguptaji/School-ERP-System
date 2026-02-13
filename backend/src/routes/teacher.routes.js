@@ -1,19 +1,23 @@
 import { Router } from "express";
-
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { 
+
+import {
   getTeacherProfile,
-  createOrUpdateTeacherProfile
+  createOrUpdateTeacherProfile,
 } from "../controllers/teacherProfile.controller.js";
 
-import {getTeacherNotice} from "../controllers/notice.controller.js";
+import { 
+  getTeacherNotice 
+} from "../controllers/notice.controller.js";
 
-import {passwordChangeTeacher} from "../controllers/passwordChange.controller.js";
+import { 
+  passwordChangeTeacher 
+} from "../controllers/passwordChange.controller.js";
+
 const router = Router();
 
-router.post("/password-change",verifyJWT,passwordChangeTeacher);
-
+router.post("/password-change", verifyJWT, passwordChangeTeacher);
 
 router.get("/teacher-profile", verifyJWT, getTeacherProfile);
 router.post(
@@ -23,6 +27,6 @@ router.post(
   createOrUpdateTeacherProfile,
 );
 
-router.get("/get-notice",verifyJWT,getTeacherNotice);
+router.get("/get-notice", verifyJWT, getTeacherNotice);
 
 export default router;

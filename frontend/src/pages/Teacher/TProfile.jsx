@@ -295,14 +295,11 @@ function TProfile() {
       : "bg-warning text-dark";
 
   return (
-    <div className="container py-4">
+    <div className="container ">
       {/* TOP HEADER */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <div>
           <h3 className="fw-bold mb-0">Teacher Profile</h3>
-          <small className="text-muted">
-            View and manage your profile information
-          </small>
         </div>
 
         <div className="d-flex gap-2">

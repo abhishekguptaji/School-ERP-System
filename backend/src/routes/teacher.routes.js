@@ -15,6 +15,9 @@ import {
   passwordChangeTeacher 
 } from "../controllers/passwordChange.controller.js";
 
+import {
+  getTeacherProfileShort
+} from "../controllers/teacherDashboard.controller.js";
 const router = Router();
 
 router.post("/password-change", verifyJWT, passwordChangeTeacher);
@@ -28,5 +31,7 @@ router.post(
 );
 
 router.get("/get-notice", verifyJWT, getTeacherNotice);
+
+router.get("/teacher-dashboard",verifyJWT,getTeacherProfileShort);
 
 export default router;

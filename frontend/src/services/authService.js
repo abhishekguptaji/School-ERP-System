@@ -125,6 +125,7 @@ export const getMyGrievance = async () =>{
 
 
 
-export const getTeacherNotices = async () =>{
-  
+export const getStudentNotices = async () =>{
+  const res = await API.get("/student/get-notice");
+  return res.data;
 }

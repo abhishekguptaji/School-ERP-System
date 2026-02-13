@@ -1,0 +1,69 @@
+.tn-wrap {
+  max-width: 1200px;
+}
+
+.tn-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #f6f7fb;
+}
+
+.tn-search i {
+  font-size: 18px;
+  color: #6c757d;
+}
+
+.tn-card {
+  transition: 0.2s ease;
+}
+
+.tn-card:hover {
+  transform: translateY(-2px);
+}
+
+.tn-attachCard {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  transition: 0.2s ease;
+  display: block;
+  color: inherit;
+}
+
+.tn-attachCard:hover {
+  border-color: #111827;
+}
+
+.tn-attachCard img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.tn-fileIcon {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: #f6f7fb;
+}
+
+.tn-fileMeta {
+  padding: 10px 12px;
+}
+
+.tn-fileName {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

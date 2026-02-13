@@ -93,7 +93,7 @@ const getTeacherNotice = asyncHandler(async (req, res) => {
 
   const notices = await Notice.find({
     isActive: true,
-    audience: { $in: ["Teacher", "Both"] },
+    audience: { $in: ["Teacher", "All"] },
   }).sort({ createdAt: -1 });
 
   return res

@@ -37,7 +37,7 @@ export const getDashboardProfile = async() =>{
 }
 
 
-
 export const getTeacherNotices = async () =>{
-  
+  const res = await API.get("/teacher/get-notice");
+  return res.data;
 }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { getStudentNotices } from "../../services/authService.js";
-import "./css/TeacherNotice.css";
+import "../Teacher/css/TeacherNotice.css";
 
 const PRIORITY_BADGE = {
   Normal: "bg-secondary",

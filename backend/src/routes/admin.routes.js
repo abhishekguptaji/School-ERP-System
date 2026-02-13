@@ -20,6 +20,14 @@ import {
   getCompleteStudentProfileByAdmin
 } from "../controllers/studentProfile.controller.js";
 
+import {
+  createSubjectByAdmin,
+  getAllSubjectsByAdmin,
+  deleteSubjectByAdmin,
+  getAllClassesWithSubjectsByAdmin,
+  allocateSubjectsToClassByAdmin,
+} from "../controllers/subjectClass.controller.js";
+
 const router = Router();
 
 router.get("/admin-profile", verifyJWT, adminProfile);
@@ -62,4 +70,17 @@ router.get(
   verifyJWT,
   getCompleteStudentProfileByAdmin
 );
+
+
+// --------------------------------//
+
+// SUBJECT MASTER
+router.post("/subjects", createSubjectByAdmin);
+router.get("/subjects", getAllSubjectsByAdmin);
+router.delete("/subjects/:id", deleteSubjectByAdmin);
+
+// CLASS SUBJECT ALLOCATION
+router.get("/classes-subjects", getAllClassesWithSubjectsByAdmin);
+router.put("/classes/:classId/subjects", allocateSubjectsToClassByAdmin);
+// -------------------------------------//
 export default router;

@@ -75,3 +75,31 @@ export const getCompleteStudentProfileByAdmin = async (profileId) => {
   return res.data;
 };
 
+// ------------------------------------------------///
+
+
+export const createSubjectByAdmin = async (data) => {
+  const res = await API.post("/admin/subjects", data);
+  return res.data;
+};
+
+export const getAllSubjectsByAdmin = async () => {
+  const res = await API.get("/admin/subjects");
+  return res.data;
+};
+
+export const deleteSubjectByAdmin = async (id) => {
+  const res = await API.delete(`/admin/subjects/${id}`);
+  return res.data;
+};
+
+
+export const getAllClassesWithSubjectsByAdmin = async () => {
+  const res = await API.get("/admin/classes-subjects");
+  return res.data;
+};
+
+export const allocateSubjectsToClassByAdmin = async (classId, data) => {
+  const res = await API.put(`/admin/classes/${classId}/subjects`, data);
+  return res.data;
+};

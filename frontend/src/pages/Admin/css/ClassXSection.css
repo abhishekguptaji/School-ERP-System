@@ -1,0 +1,46 @@
+.adminAllocateWrap {
+  min-height: 80vh;
+  background: #f6f8fc;
+}
+
+.adminPageTitle {
+  font-weight: 900;
+  color: #0b2c5f;
+}
+
+.adminCard {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.adminCardTitle {
+  font-weight: 900;
+  color: #0b2c5f;
+  font-size: 16px;
+}
+
+.subjectTile {
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: 0.2s;
+  background: #fbfbff;
+}
+
+.subjectTile:hover {
+  transform: translateY(-2px);
+}
+
+.subjectTile.active {
+  border: 1px solid rgba(13, 110, 253, 0.5);
+  background: rgba(13, 110, 253, 0.07);
+}
+
+.subjectName {
+  font-weight: 900;
+  color: #0b2c5f;
+  font-size: 14px;
+}

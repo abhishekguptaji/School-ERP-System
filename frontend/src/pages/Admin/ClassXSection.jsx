@@ -20,49 +20,74 @@ function ClassXSection() {
   const [selectedClassId, setSelectedClassId] = useState("");
   const [selectedSubjectIds, setSelectedSubjectIds] = useState([]);
 
-  // subject form
+  // subject form (ONLY NAME)
   const [newSubjectName, setNewSubjectName] = useState("");
-  const [newSubjectCode, setNewSubjectCode] = useState("");
   const [creatingSubject, setCreatingSubject] = useState(false);
 
   const selectedClassObj = useMemo(() => {
     return classes.find((c) => c._id === selectedClassId);
   }, [classes, selectedClassId]);
 
-  const fetchAll = async () => {
-    try {
-      setLoading(true);
+  // ==============================
+  // FETCH FUNCTIONS (IMPORTANT FIX)
+  // ==============================
 
-      const [subRes, classRes] = await Promise.all([
-        getAllSubjectsByAdmin(),
-        getAllClassesWithSubjectsByAdmin(),
-      ]);
+  const fetchSubjects = async () => {
+    const subRes = await getAllSubjectsByAdmin();
+    setSubjects(subRes?.data || []);
+  };
 
-      setSubjects(subRes.data || []);
-      setClasses(classRes.data || []);
+  const fetchClasses = async (firstTime = false) => {
+    const classRes = await getAllClassesWithSubjectsByAdmin();
+    const classList = classRes?.data || [];
 
-      const first = classRes.data?.[0];
-      if (first) {
-        setSelectedClassId(first._id);
-        setSelectedSubjectIds((first.subjects || []).map((s) => s._id));
-      }
-    } catch (err) {
-      Swal.fire("Error", err?.response?.data?.message || "Failed to load", "error");
-    } finally {
-      setLoading(false);
+    setClasses(classList);
+
+    // auto select first class only on first load
+    if (firstTime && classList.length > 0) {
+      setSelectedClassId(classList[0]._id);
+      setSelectedSubjectIds([]); // start empty
     }
   };
 
+  // ==============================
+  // INITIAL LOAD
+  // ==============================
   useEffect(() => {
-    fetchAll();
+    const init = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([fetchSubjects(), fetchClasses(true)]);
+      } catch (err) {
+        Swal.fire(
+          "Error",
+          err?.response?.data?.message || "Failed to load",
+          "error"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
+    // eslint-disable-next-line
   }, []);
 
-  // when class changes
-  useEffect(() => {
-    if (!selectedClassObj) return;
-    setSelectedSubjectIds((selectedClassObj.subjects || []).map((s) => s._id));
-  }, [selectedClassObj]);
+  // ==============================
+  // CLASS CHANGE
+  // ==============================
+  const handleChangeClass = (classId) => {
+    setSelectedClassId(classId);
 
+    const cls = classes.find((c) => c._id === classId);
+    const ids = (cls?.subjects || []).map((s) => s._id);
+
+    setSelectedSubjectIds(ids);
+  };
+
+  // ==============================
+  // SUBJECT TOGGLE
+  // ==============================
   const toggleSubject = (id) => {
     setSelectedSubjectIds((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id);
@@ -70,8 +95,13 @@ function ClassXSection() {
     });
   };
 
+  // ==============================
+  // SAVE ALLOCATION
+  // ==============================
   const handleSave = async () => {
-    if (!selectedClassId) return;
+    if (!selectedClassId) {
+      return Swal.fire("Warning", "Please select a class first", "warning");
+    }
 
     try {
       setSaving(true);
@@ -81,14 +111,26 @@ function ClassXSection() {
       });
 
       Swal.fire("Saved", res.message || "Saved successfully", "success");
-      fetchAll();
+
+      // refresh BOTH after saving
+      await Promise.all([fetchSubjects(), fetchClasses(false)]);
+
+      // clear selection after save
+      setSelectedSubjectIds([]);
     } catch (err) {
-      Swal.fire("Error", err?.response?.data?.message || "Save failed", "error");
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Save failed",
+        "error"
+      );
     } finally {
       setSaving(false);
     }
   };
 
+  // ==============================
+  // CREATE SUBJECT (AUTO SELECT)
+  // ==============================
   const handleCreateSubject = async (e) => {
     e.preventDefault();
 
@@ -96,18 +138,37 @@ function ClassXSection() {
       return Swal.fire("Warning", "Subject name is required", "warning");
     }
 
+    // Optional local check
+    const already = subjects.some(
+      (s) => s.name.toLowerCase() === newSubjectName.trim().toLowerCase()
+    );
+
+    if (already) {
+      return Swal.fire("Warning", "Subject already exists", "warning");
+    }
+
     try {
       setCreatingSubject(true);
 
       const res = await createSubjectByAdmin({
-        name: newSubjectName,
-        code: newSubjectCode,
+        name: newSubjectName.trim(), // example: "Maths (MTH)"
       });
+
+      const createdSubject = res.data;
 
       Swal.fire("Created", res.message || "Created", "success");
       setNewSubjectName("");
-      setNewSubjectCode("");
-      fetchAll();
+
+      // ✅ refresh ONLY subjects list
+      await fetchSubjects();
+
+      // ✅ keep previous selection + select new one
+      if (createdSubject?._id) {
+        setSelectedSubjectIds((prev) => {
+          if (prev.includes(createdSubject._id)) return prev;
+          return [...prev, createdSubject._id];
+        });
+      }
     } catch (err) {
       Swal.fire("Error", err?.response?.data?.message || "Failed", "error");
     } finally {
@@ -115,6 +176,9 @@ function ClassXSection() {
     }
   };
 
+  // ==============================
+  // DELETE SUBJECT
+  // ==============================
   const handleDeleteSubject = async (id) => {
     const confirm = await Swal.fire({
       title: "Delete Subject?",
@@ -129,12 +193,20 @@ function ClassXSection() {
     try {
       const res = await deleteSubjectByAdmin(id);
       Swal.fire("Deleted", res.message || "Deleted", "success");
-      fetchAll();
+
+      // refresh both
+      await Promise.all([fetchSubjects(), fetchClasses(false)]);
+
+      // remove from selection
+      setSelectedSubjectIds((prev) => prev.filter((x) => x !== id));
     } catch (err) {
       Swal.fire("Error", err?.response?.data?.message || "Failed", "error");
     }
   };
 
+  // ==============================
+  // UI
+  // ==============================
   if (loading) {
     return (
       <div className="container-fluid p-3">
@@ -146,11 +218,12 @@ function ClassXSection() {
 
   return (
     <div className="container-fluid p-3 adminAllocateWrap">
+      {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
           <h4 className="adminPageTitle mb-0">Class Subject Allocation</h4>
           <p className="text-muted mb-0">
-            Allocate subjects class-wise for Class 1 to 12
+            Create subjects like: <b>Maths (MTH)</b> and allocate class-wise
           </p>
         </div>
       </div>
@@ -164,8 +237,10 @@ function ClassXSection() {
             <select
               className="form-select mt-2"
               value={selectedClassId}
-              onChange={(e) => setSelectedClassId(e.target.value)}
+              onChange={(e) => handleChangeClass(e.target.value)}
             >
+              <option value="">-- Select Class --</option>
+
               {classes.map((c) => (
                 <option key={c._id} value={c._id}>
                   Class {c.className}
@@ -174,7 +249,7 @@ function ClassXSection() {
             </select>
 
             <div className="mt-3 small text-muted">
-              <b>Allocated:</b> {selectedSubjectIds.length} subjects
+              <b>Selected:</b> {selectedSubjectIds.length} subjects
             </div>
 
             <button
@@ -184,24 +259,25 @@ function ClassXSection() {
             >
               {saving ? "Saving..." : "Save Allocation"}
             </button>
+
+            <button
+              className="btn btn-outline-secondary w-100 mt-2"
+              onClick={() => setSelectedSubjectIds([])}
+            >
+              Clear Selection
+            </button>
           </div>
 
+          {/* SUBJECT MASTER */}
           <div className="adminCard p-3 mt-3">
             <div className="adminCardTitle">Subject Master</div>
 
             <form onSubmit={handleCreateSubject} className="mt-2">
               <input
                 className="form-control mb-2"
-                placeholder="Subject Name"
+                placeholder="Example: Maths (MTH)"
                 value={newSubjectName}
                 onChange={(e) => setNewSubjectName(e.target.value)}
-              />
-
-              <input
-                className="form-control mb-2"
-                placeholder="Subject Code (optional)"
-                value={newSubjectCode}
-                onChange={(e) => setNewSubjectCode(e.target.value)}
               />
 
               <button
@@ -211,6 +287,10 @@ function ClassXSection() {
                 {creatingSubject ? "Creating..." : "Add Subject"}
               </button>
             </form>
+
+            <div className="text-muted small mt-2">
+              Tip: Write subject like <b>SubjectName (Code)</b>
+            </div>
           </div>
         </div>
 
@@ -221,7 +301,8 @@ function ClassXSection() {
               <div>
                 <div className="adminCardTitle mb-0">Subjects</div>
                 <div className="text-muted small">
-                  Tick subjects for <b>Class {selectedClassObj?.className}</b>
+                  Tick subjects for{" "}
+                  <b>Class {selectedClassObj?.className || "-"}</b>
                 </div>
               </div>
 
@@ -243,9 +324,6 @@ function ClassXSection() {
                       <div className="d-flex justify-content-between align-items-start gap-2">
                         <div>
                           <div className="subjectName">{s.name}</div>
-                          <div className="subjectCode">
-                            {s.code ? `Code: ${s.code}` : "No code"}
-                          </div>
                         </div>
 
                         <div className="d-flex flex-column gap-2 align-items-end">
@@ -302,7 +380,7 @@ function ClassXSection() {
 
               {selectedSubjectIds.length === 0 && (
                 <div className="text-muted">
-                  No subjects allocated for this class.
+                  No subjects selected for allocation.
                 </div>
               )}
             </div>

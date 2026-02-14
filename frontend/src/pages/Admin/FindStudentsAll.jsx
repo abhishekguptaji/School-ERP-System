@@ -58,7 +58,6 @@ function FindStudentsAll() {
         limit,
       });
 
-      // ApiResponse format (because service returns `data`)
       const studentsArr = res?.data?.students || [];
 
       const pag = {
@@ -146,7 +145,7 @@ function FindStudentsAll() {
         <div>
           <h3 className="mb-1 fw-bold">Students</h3>
           <p className="mb-0 text-muted">
-            Search + filter + pagination + view student profile (Backend Data).
+            Search, view and filter Student profiles.
           </p>
         </div>
 

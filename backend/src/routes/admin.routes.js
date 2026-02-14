@@ -17,7 +17,9 @@ import {
 
 import {
   getAllStudentProfilesByAdmin,
-  getCompleteStudentProfileByAdmin
+  getCompleteStudentProfileByAdmin,
+    getAllStudentsByAdmin,
+  getStudentByIdByAdmin
 } from "../controllers/studentProfile.controller.js";
 
 import {
@@ -64,17 +66,17 @@ router.patch(
 
 // --------------
 
-router.get(
-  "/students",
-  verifyJWT,
-  getAllStudentProfilesByAdmin
-);
+// router.get(
+//   "/students",
+//   verifyJWT,
+//   getAllStudentProfilesByAdmin
+// );
 
-router.get(
-  "/students/:studentProfileId/complete",
-  verifyJWT,
-  getCompleteStudentProfileByAdmin
-);
+// router.get(
+//   "/students/:studentProfileId/complete",
+//   verifyJWT,
+//   getCompleteStudentProfileByAdmin
+// );
 
 
 // --------------------------------//
@@ -92,6 +94,9 @@ router.put("/classes/:classId/subjects", allocateSubjectsToClassByAdmin);
 
 router.get("/teachers", verifyJWT, getAllTeachersByAdmin);
 router.get("/teachers/:id", verifyJWT, getTeacherByIdByAdmin);
+
+router.get("/students", verifyJWT,getAllStudentsByAdmin);
+router.get("/students/:id", verifyJWT,getStudentByIdByAdmin);
 
 
 export default router;

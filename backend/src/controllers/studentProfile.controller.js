@@ -1,4 +1,5 @@
 import StudentProfile from "../models/studentProfile.model.js";
+import User from "../models/user.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -226,8 +227,6 @@ const getAllStudentProfilesByAdmin = asyncHandler(async (req, res) => {
   );
 });
 
-
-
 const getCompleteStudentProfileByAdmin = asyncHandler(async (req, res) => {
   const adminId = req.user?._id;
   const role = req.user?.role;
@@ -259,10 +258,100 @@ const getCompleteStudentProfileByAdmin = asyncHandler(async (req, res) => {
   );
 });
 
+// ***********************************************************************/
+const getAllStudentsByAdmin = asyncHandler(async (req, res) => {
+  const {
+    search = "",
+    status = "all",
+    className = "all",
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+  const query = {};
+
+  if (status !== "all") {
+    query.isActive = status === "active";
+  }
+
+  if (className !== "all") {
+    query.className = className;
+  }
+
+  if (search.trim()) {
+    const keyword = search.trim();
+
+    const matchedUsers = await User.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { email: { $regex: keyword, $options: "i" } },
+        { campusId: { $regex: keyword, $options: "i" } },
+      ],
+    }).select("_id");
+
+    const userIds = matchedUsers.map((u) => u._id);
+
+    query.$or = [
+      { user: { $in: userIds } },
+      { admissionNumber: { $regex: keyword, $options: "i" } },
+      // { className: { $regex: keyword, $options: "i" } },
+    ];
+  }
+
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
+
+  const skip = (pageNum - 1) * limitNum;
+
+  const total = await StudentProfile.countDocuments(query);
+
+  const students = await StudentProfile.find(query)
+    .populate("user", "name email role campusId")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNum);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+        students,
+      },
+      "Students fetched successfully"
+    )
+  );
+});
+
+ const getStudentByIdByAdmin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const student = await StudentProfile.findById(id).populate(
+    "user",
+    "name email role campusId"
+  );
+
+  if (!student) {
+    throw new ApiError(404, "Student not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, student, "Student fetched successfully"));
+});
+
+// ***********************************************************************/
 
 export { 
   getMyStudentProfile, 
   createOrUpdateStudentProfile,
   getAllStudentProfilesByAdmin,
   getCompleteStudentProfileByAdmin,
+   getAllStudentsByAdmin,
+   getStudentByIdByAdmin
+
+
 };

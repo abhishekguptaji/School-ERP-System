@@ -17,14 +17,15 @@ import {
   RegisterTeacher,
   Attendence,
   ClassXSection,
-  ManageStudent,
+  FindStudentsAll,
   ManageTeacher,
   Exams,
   Fees,
   Reports,
   Settings,
   Search_UpdateStudentProfile,
-  NoticePanel
+  NoticePanel,
+  FindTeacherAll
 } from "./AdminImports";
 
 /* ===== TEACHER ===== */
@@ -88,7 +89,7 @@ function App() {
           <Route path="grievance-profile" element={<GrievancePanel />} />
           <Route path="add-student" element={<RegisterStu />} />
           <Route path="add-teacher" element={<RegisterTeacher />} />
-          <Route path="manage-student" element={<ManageStudent />} />
+          <Route path="find-students-all" element={<FindStudentsAll />} />
           <Route path="manage-teacher" element={<ManageTeacher />} />
           <Route path="classes-subject" element={<ClassXSection />} />
           <Route path="attendence" element={<Attendence />} />
@@ -98,6 +99,7 @@ function App() {
           <Route path="notices-panel" element={<NoticePanel />}/>
           <Route path="settings" element={<Settings />} />
           <Route path="show-classes" element={<Search_UpdateStudentProfile />}/>
+          <Route path="find-teacher-all" element={<FindTeacherAll />}/>
         </Route>
 
         {/* ================= TEACHER ================= */}

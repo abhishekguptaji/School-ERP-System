@@ -107,14 +107,22 @@ function AdminNavbar() {
             <li className="nav-item">
               <Link className="nav-link" to="/admin/dashboard">
                 <i className="bi bi-speedometer2 me-2"></i>
-                Dashboard
+                Dashboard 
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/manage-student">
+              
+              <Link className="nav-link" to="/admin/find-students-all">
                 <i className="bi bi-people-fill me-2"></i>
-                Manage Student
+                Find Students
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link" to="/admin/find-teacher-all">
+                <i className="bi bi-people-fill me-2"></i>
+                Find Teachers
               </Link>
             </li>
 

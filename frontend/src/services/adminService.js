@@ -113,3 +113,24 @@ export const getIdTeacherByAdmin = async (id) => {
   const { data } = await API.get(`/admin/teachers/${id}`);
   return data;
 };
+
+export const getAllStudentsByAdmin = async ({
+  search = "",
+  status = "all",
+  className = "all",
+  page = 1,
+  limit = 10,
+} = {}) => {
+  const { data } = await API.get("/admin/students", {
+    params: { search, status, className, page, limit },
+  });
+
+  return data;
+};
+
+export const getIdStudentByAdmin = async (id) => {
+  if (!id) throw new Error("Student ID is required");
+
+  const { data } = await API.get(`/admin/students/${id}`);
+  return data;
+};

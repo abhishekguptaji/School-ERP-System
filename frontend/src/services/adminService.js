@@ -2,25 +2,22 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "http://localhost:8000/api/v1",
-  withCredentials: true, 
+  withCredentials: true,
 });
 
-
-export const createNoticesByAdmin = async(payload) =>{
-  const res = await API.post("/admin/create-notice",
-    payload,{
-      headers:{
-        "Content-Type":"multipart/form-data",
-      },
-    }
-  );
+export const createNoticesByAdmin = async (payload) => {
+  const res = await API.post("/admin/create-notice", payload, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
-}
+};
 
-export const getAdminNotice = async() =>{
+export const getAdminNotice = async () => {
   const res = await API.get("/admin/get-notice");
   return res.data;
-}  
+};
 
 export const deleteNotice = async (id) => {
   const res = await API.delete(`/admin/delete-notice/${id}`);
@@ -29,7 +26,7 @@ export const deleteNotice = async (id) => {
 
 export const getAllGrievancesByAdmin = async (params) => {
   const res = await API.get("/admin/get-all-grivence", { params });
-  return res.data; 
+  return res.data;
 };
 
 // =====================
@@ -38,37 +35,31 @@ export const getAllTeachersForAssign = async () => {
   return res.data;
 };
 
-
 export const replyToGrievanceByAdmin = async (grievanceId, payload) => {
-  const res = await API.post(
-    `/admin/grievances/${grievanceId}/reply`,
-    payload
-  );
+  const res = await API.post(`/admin/grievances/${grievanceId}/reply`, payload);
   return res.data;
 };
-
 
 export const updateGrievanceStatus = async (grievanceId, payload) => {
   const res = await API.patch(
     `/admin/grievances/${grievanceId}/status`,
-    payload
+    payload,
   );
   return res.data;
 };
-
 
 export const assignTeacherToGrievance = async (grievanceId, payload) => {
   const res = await API.patch(
     `/admin/grievances/${grievanceId}/assign`,
-    payload
+    payload,
   );
   return res.data;
 };
 
-export const getAllStudentProfilesByAdmin = async()=>{
-   const res = await API.get("/admin/students");
-  return  res.data.data;
-}
+export const getAllStudentProfilesByAdmin = async () => {
+  const res = await API.get("/admin/students");
+  return res.data.data;
+};
 
 export const getCompleteStudentProfileByAdmin = async (profileId) => {
   const res = await API.get(`/admin/students/${profileId}/complete`);
@@ -76,7 +67,6 @@ export const getCompleteStudentProfileByAdmin = async (profileId) => {
 };
 
 // ------------------------------------------------///
-
 
 export const createSubjectByAdmin = async (data) => {
   const res = await API.post("/admin/subjects", data);
@@ -93,7 +83,6 @@ export const deleteSubjectByAdmin = async (id) => {
   return res.data;
 };
 
-
 export const getAllClassesWithSubjectsByAdmin = async () => {
   const res = await API.get("/admin/classes-subjects");
   return res.data;
@@ -102,4 +91,25 @@ export const getAllClassesWithSubjectsByAdmin = async () => {
 export const allocateSubjectsToClassByAdmin = async (classId, data) => {
   const res = await API.put(`/admin/classes/${classId}/subjects`, data);
   return res.data;
+};
+
+export const getAllTeacherByAdmin = async ({
+  search = "",
+  status = "all",
+  department = "all",
+  page = 1,
+  limit = 10,
+} = {}) => {
+  const { data } = await API.get("/admin/teachers", {
+    params: { search, status, department, page, limit },
+  });
+
+  return data;
+};
+
+export const getIdTeacherByAdmin = async (id) => {
+  if (!id) throw new Error("Teacher ID is required");
+
+  const { data } = await API.get(`/admin/teachers/${id}`);
+  return data;
 };

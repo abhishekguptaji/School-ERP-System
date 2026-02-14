@@ -138,4 +138,86 @@ const createOrUpdateTeacherProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, profile, "Teacher Profile Saved Successfully"));
 });
 
-export { getTeacherProfile, createOrUpdateTeacherProfile };
+ const getAllTeachersByAdmin = asyncHandler(async (req, res) => {
+  const {
+    search = "",
+    status = "all",
+    department = "all",
+    page = 1,
+    limit = 10,
+  } = req.query;
+
+  const query = {};
+
+  if (status !== "all") query.status = status;
+
+  if (department !== "all") query.department = department;
+
+  if (search.trim()) {
+    query.$or = [
+      { fullName: { $regex: search, $options: "i" } },
+      { campusId: { $regex: search, $options: "i" } },
+      { email: { $regex: search, $options: "i" } },
+      { phone: { $regex: search, $options: "i" } },
+      { qualification: { $regex: search, $options: "i" } },
+      { department: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
+
+  const skip = (pageNum - 1) * limitNum;
+
+  const total = await TeacherProfile.countDocuments(query);
+
+  const teachers = await TeacherProfile.find(query)
+    .populate("user", "name email role campusId")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNum);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+        teachers,
+      },
+      "Teachers fetched successfully",
+    ),
+  );
+});
+
+
+const getTeacherByIdByAdmin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const teacher = await TeacherProfile.findById(id).populate(
+    "user",
+    "name email",
+  );
+
+  if (!teacher) {
+    throw new ApiError(404, "Teacher not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, teacher, "Teacher fetched successfully"));
+});
+
+
+
+
+
+export { 
+  getTeacherProfile, 
+  createOrUpdateTeacherProfile,
+  getAllTeachersByAdmin,
+  getTeacherByIdByAdmin,
+  
+};

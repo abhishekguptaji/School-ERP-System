@@ -28,6 +28,11 @@ import {
   allocateSubjectsToClassByAdmin,
 } from "../controllers/subjectClass.controller.js";
 
+import {
+  getAllTeachersByAdmin,
+  getTeacherByIdByAdmin,
+} from "../controllers/teacherProfile.controller.js";
+
 const router = Router();
 
 router.get("/admin-profile", verifyJWT, adminProfile);
@@ -83,4 +88,10 @@ router.delete("/subjects/:id", deleteSubjectByAdmin);
 router.get("/classes-subjects", getAllClassesWithSubjectsByAdmin);
 router.put("/classes/:classId/subjects", allocateSubjectsToClassByAdmin);
 // -------------------------------------//
+
+
+router.get("/teachers", verifyJWT, getAllTeachersByAdmin);
+router.get("/teachers/:id", verifyJWT, getTeacherByIdByAdmin);
+
+
 export default router;

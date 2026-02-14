@@ -34,4 +34,7 @@ router.get("/get-notice", verifyJWT, getTeacherNotice);
 
 router.get("/teacher-dashboard",verifyJWT,getTeacherProfileShort);
 
+
+
+
 export default router;

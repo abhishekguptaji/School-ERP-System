@@ -15,7 +15,7 @@ import {
   GrievancePanel,
   RegisterStu,
   RegisterTeacher,
-  Attendence,
+  SubjectTeacher,
   ClassXSection,
   FindStudentsAll,
   ManageTeacher,
@@ -92,7 +92,7 @@ function App() {
           <Route path="find-students-all" element={<FindStudentsAll />} />
           <Route path="manage-teacher" element={<ManageTeacher />} />
           <Route path="classes-subject" element={<ClassXSection />} />
-          <Route path="attendence" element={<Attendence />} />
+          <Route path="subject-teacher" element={<SubjectTeacher />} />
           <Route path="exams" element={<Exams />} />
           <Route path="fees" element={<Fees />} />
           <Route path="reports" element={<Reports />} />

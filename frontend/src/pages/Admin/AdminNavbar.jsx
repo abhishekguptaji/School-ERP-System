@@ -134,9 +134,9 @@ function AdminNavbar() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/attendence">
+              <Link className="nav-link" to="/admin/subject-teacher">
                 <i className="bi bi-calendar-check-fill me-2"></i>
-                Attendence
+                Subject-Teacher
               </Link>
             </li>
 

@@ -114,7 +114,7 @@ const getStudentNotice = asyncHandler(async (req, res) => {
 
   const notices = await Notice.find({
     isActive: true,
-    audience: { $in: ["Student", "Both"] },
+    audience: { $in: ["Student", "All"] },
   }).sort({ createdAt: -1 });
 
   return res

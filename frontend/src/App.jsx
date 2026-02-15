@@ -140,7 +140,7 @@ function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="notice-board" element={<NoticeBoard />} />
-          <Route path="password-change" element={<PasswordChange />} />
+          <Route path="password-change" element={<TPasswordChange />} />
           <Route path="assignment" element={<Assignment />} />
           <Route path="attendence" element={<StuAttendence />} />
           <Route path="leave-permission" element={<LeavePermission />} />

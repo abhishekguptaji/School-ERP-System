@@ -1,81 +1,224 @@
-.dash-container {
-  padding: 20px;
-  max-width: 900px;
-  margin: auto;
-  font-family: Arial, sans-serif;
+.stuDPage {
+  background: #f8fafc;
+  min-height: 100vh;
+  /* padding: 20px 0; */
 }
 
-.dash-title {
-  font-size: 26px;
-  margin-bottom: 20px;
-  text-align: center;
+.stuDContainer {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
-.dash-card {
-  display: flex;
-  gap: 20px;
-  padding: 18px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+/* Header */
+.stuDHeader h3 {
+  font-weight: 900;
+  color: #0f172a;
 }
 
-.dash-left {
-  width: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.stuDHeader .text-muted {
+  font-weight: 600;
 }
 
-.dash-img {
-  width: 170px;
-  height: 170px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #eee;
-}
-
-.dash-right {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  justify-content: center;
-}
-
-.dash-row {
-  display: flex;
-  gap: 10px;
-  font-size: 16px;
-}
-
-.label {
-  font-weight: bold;
-  width: 150px;
-  color: #333;
-}
-
-.value {
-  color: #444;
-}
-
-.dash-loading {
-  padding: 30px;
-  text-align: center;
-  font-size: 18px;
-}
-
-.dash-error {
-  padding: 30px;
-  text-align: center;
-}
-
-.dash-error button {
-  margin-top: 10px;
-  padding: 10px 16px;
+/* Top card */
+.stuDTopCard {
+  border-radius: 16px;
+  overflow: hidden;
   border: none;
-  background: black;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
+
+.stuDTopCardHeader {
+  background: #0f172a;
+  color: #fff;
+  padding: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stuDAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.stuDAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stuDName {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.stuDEmail {
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+/* Badges */
+.stuDBadge {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 10px 14px;
+}
+
+/* Body */
+.stuDBody {
+  padding: 22px;
+  background: #fff;
+}
+
+/* Info boxes */
+.stuDInfoBox {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+  padding: 14px;
+  height: 100%;
+}
+
+.stuDInfoLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.stuDInfoValue {
+  font-weight: 900;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+/* Note */
+.stuDNote {
+  border-radius: 14px;
+  font-weight: 700;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 12px 14px;
+  color: #0f172a;
+}
+
+/* Quick cards */
+.stuDQuickCard {
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+  padding: 18px;
+  height: 100%;
+  transition: 0.2s ease;
+}
+
+.stuDQuickCard:hover {
+  transform: translateY(-2px);
+}
+
+.stuDQuickIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.stuDQuickTitle {
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.stuDQuickText {
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
+  font-size: 0.9rem;
+}
+
+/* Error UI */
+.stuDErrorWrap {
+  min-height: 100vh;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.stuDErrorCard {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  text-align: center;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.stuDErrorIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 30px;
+}
+
+.stuDRetryBtn {
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 900;
+  transition: 0.2s ease;
+}
+
+.stuDRetryBtn:hover {
+  background: #111c33;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .stuDPage {
+    padding: 12px 0;
+  }
+
+  .stuDTopCardHeader {
+    padding: 16px;
+  }
+
+  .stuDName {
+    font-size: 18px;
+  }
+
+  .stuDContainer {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+
+
+
+

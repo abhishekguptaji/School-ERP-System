@@ -312,7 +312,7 @@ function StuProfile() {
           {!isEditing ? (
             <button
               type="button"
-              className="btn btn-primary px-4"
+              className="btn btn-dark px-4"
               onClick={() => setIsEditing(true)}
             >
               <i className="bi bi-pencil-square me-2"></i>

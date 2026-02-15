@@ -1,19 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { getStudentNotices } from "../../services/authService.js";
-import "../Teacher/css/TeacherNotice.css";
+import "./css/NoticeBoard.css";
 
-const PRIORITY_BADGE = {
-  Normal: "bg-secondary",
-  Important: "bg-warning text-dark",
-  Urgent: "bg-danger",
+const PRIORITY_META = {
+  Normal: { badge: "secondary", icon: "bi-dot" },
+  Important: { badge: "warning", icon: "bi-exclamation-circle" },
+  Urgent: { badge: "danger", icon: "bi-exclamation-triangle" },
 };
 
 function NoticeBoard() {
   const [loading, setLoading] = useState(true);
   const [notices, setNotices] = useState([]);
   const [error, setError] = useState("");
-
   const [search, setSearch] = useState("");
 
   const fetchNotices = async () => {
@@ -63,215 +62,254 @@ function NoticeBoard() {
     });
   }, [notices, search]);
 
+  // ================= LOADING =================
   if (loading) {
     return (
-      <div className="container">
-        <div className="card border-0 shadow-sm rounded-4">
-          <div className="card-body p-4">Loading notices...</div>
+      <div className="nb-page">
+        <div className="container-fluid nb-container">
+          <div className="card border-0 shadow-sm rounded-4">
+            <div className="card-body p-4 d-flex align-items-center gap-3">
+              <div className="spinner-border text-primary"></div>
+              <div className="fw-semibold">Loading notices...</div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
+  // ================= ERROR =================
   if (error) {
     return (
-      <div className="container">
-        <div className="alert alert-danger rounded-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <div>
-            <b>Error:</b> {error}
+      <div className="nb-page">
+        <div className="container-fluid nb-container">
+          <div className="nb-errorCard">
+            <div className="nb-errorIcon">
+              <i className="bi bi-exclamation-triangle-fill"></i>
+            </div>
+
+            <h4 className="fw-bold mb-1">Failed to load notices</h4>
+            <p className="text-muted mb-3">{error}</p>
+
+            <button className="nb-retryBtn" onClick={fetchNotices}>
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Retry
+            </button>
           </div>
-          <button className="btn btn-dark rounded-3" onClick={fetchNotices}>
-            Retry
-          </button>
         </div>
       </div>
     );
   }
 
+  // ================= MAIN UI =================
   return (
-    <div className="container tn-wrap">
-      {/* HEADER */}
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-        <div>
-          <h3 className="fw-bold mb-0">Notices</h3>
-        </div>
-
-        <button className="btn btn-outline-dark rounded-3" onClick={fetchNotices}>
-          <i className="bi bi-arrow-clockwise me-2"></i>
-          Refresh
-        </button>
-      </div>
-
-      {/* SEARCH */}
-      <div className="card border-0 shadow-sm rounded-4 mb-3">
-        <div className="card-body p-3">
-          <div className="tn-search">
-            <i className="bi bi-search"></i>
-            <input
-              type="text"
-              className="form-control border-0 shadow-none"
-              placeholder="Search by title, description, category, priority..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+    <div className="nb-page">
+      <div className="container-fluid nb-container">
+        {/* HEADER */}
+        <div className="nb-header mb-4">
+          <div>
+            <h3 className="nb-title">
+              Notice Board
+            </h3>
           </div>
+
+          <button className="nb-refreshBtn" onClick={fetchNotices}>
+            <i className="bi bi-arrow-clockwise me-2"></i>
+            Refresh
+          </button>
         </div>
-      </div>
 
-      {/* COUNT */}
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <small className="text-muted">
-          Showing <b>{filteredNotices.length}</b> of <b>{notices.length}</b>
-        </small>
-      </div>
+        {/* SEARCH */}
+        <div className="card border-0 shadow-sm rounded-4 mb-3">
+          <div className="card-body p-3">
+            <div className="nb-search">
+              <i className="bi bi-search"></i>
+              <input
+                type="text"
+                className="form-control border-0 shadow-none"
+                placeholder="Search by title, category, priority, audience..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
 
-      {/* LIST */}
-      {filteredNotices.length === 0 ? (
-        <div className="card border-0 shadow-sm rounded-4">
-          <div className="card-body p-4 text-center">
-            <h5 className="fw-bold mb-1">No notices found</h5>
-            <p className="text-muted mb-0">
-              Try searching with different keywords.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="row g-3">
-          {filteredNotices.map((notice) => {
-            const attachments = notice?.attachement || [];
-            const publishDate = notice?.publishAt
-              ? new Date(notice.publishAt).toLocaleDateString()
-              : "N/A";
-
-            return (
-<div className="col-6" key={notice._id}>
-  <div className="card border-0 shadow-sm rounded-4 tn-card">
-    <div className="card-body p-4">
-      {/* TOP */}
-      <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
-        <div>
-          <h5 className="fw-bold mb-1">{notice?.title || "-"}</h5>
-
-          <div className="d-flex gap-2 flex-wrap">
-            <span className="badge bg-dark rounded-pill px-3 py-2">
-              {notice?.category || "General"}
-            </span>
-
-            <span className="badge bg-info text-dark rounded-pill px-3 py-2">
-              Audience: {notice?.audience || "All"}
-            </span>
-
-            <span
-              className={`badge rounded-pill px-3 py-2 ${
-                PRIORITY_BADGE[notice?.priority] || "bg-secondary"
-              }`}
-            >
-              {notice?.priority || "Normal"}
-            </span>
+              {search.trim() && (
+                <button
+                  className="nb-clearBtn"
+                  type="button"
+                  onClick={() => setSearch("")}
+                  title="Clear"
+                >
+                  <i className="bi bi-x-lg"></i>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="text-end">
-          <small className="text-muted d-block">
-            <i className="bi bi-calendar-event me-1"></i>
-            {publishDate}
+        {/* COUNT */}
+        <div className="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+          <small className="text-muted">
+            Showing <b>{filteredNotices.length}</b> of <b>{notices.length}</b>
           </small>
 
-          {notice?.isActive ? (
-            <span className="badge bg-success rounded-pill px-3 py-2 mt-2">
-              Active
-            </span>
-          ) : (
-            <span className="badge bg-secondary rounded-pill px-3 py-2 mt-2">
-              Inactive
-            </span>
-          )}
+          <span className="nb-countBadge">
+            <i className="bi bi-list-ul me-2"></i>
+            Total Notices: <b>{notices.length}</b>
+          </span>
         </div>
-      </div>
 
-      {/* DESC */}
-      <p className="text-muted mt-3 mb-3 tn-desc">
-        {notice?.description || "No description"}
-      </p>
+        {/* LIST */}
+        {filteredNotices.length === 0 ? (
+          <div className="card border-0 shadow-sm rounded-4">
+            <div className="card-body p-4 text-center">
+              <div className="nb-emptyIcon">
+                <i className="bi bi-inboxes-fill"></i>
+              </div>
+              <h5 className="fw-bold mb-1">No notices found</h5>
+              <p className="text-muted mb-0">
+                Try searching with different keywords.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="row g-4">
+            {filteredNotices.map((notice) => {
+              const attachments = notice?.attachement || [];
+              const publishDate = notice?.publishAt
+                ? new Date(notice.publishAt).toLocaleDateString()
+                : "N/A";
 
-      {/* SMALL INFO */}
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <small className="text-muted">
-          <i className="bi bi-paperclip me-1"></i>
-          Attachments: <b>{(notice?.attachement || []).length}</b>
-        </small>
+              const priority = notice?.priority || "Normal";
+              const priorityMeta = PRIORITY_META[priority] || PRIORITY_META.Normal;
 
-        {/* ACTION */}
-        <button
-          className="btn btn-dark rounded-3 fw-semibold"
-          onClick={() => {
-            const attachments = notice?.attachement || [];
+              return (
+                <div className="col-12 col-md-6" key={notice._id}>
+                  <div className="nb-card">
+                    {/* TOP */}
+                    <div className="nb-cardTop">
+                      <div className="nb-cardTitleWrap">
+                        <h5 className="nb-cardTitle">
+                          {notice?.title || "-"}
+                        </h5>
 
-            Swal.fire({
-              title: notice?.title || "Notice",
-              html: `
-                <div style="text-align:left">
+                        <div className="nb-tags">
+                          <span className="nb-tag dark">
+                            {notice?.category || "General"}
+                          </span>
 
-                  <p style="margin:0 0 10px 0; color:#555;">
-                    ${notice?.description || ""}
-                  </p>
+                          <span className="nb-tag info">
+                            Audience: {notice?.audience || "All"}
+                          </span>
 
-                  ${
-                    attachments.length > 0
-                      ? `
-                        <hr/>
-                        <h6 style="margin:0 0 10px 0;">Attachments</h6>
+                          <span
+                            className={`nb-tag priority text-bg-${priorityMeta.badge}`}
+                          >
+                            <i className={`bi ${priorityMeta.icon} me-1`}></i>
+                            {priority}
+                          </span>
+                        </div>
+                      </div>
 
-                        ${attachments
-                          .map(
-                            (f) => `
-                              <a 
-                                href="${f.fileUrl}?dl=1"
-                                target="_blank"
-                                rel="noreferrer"
-                                style="
-                                  display:block;
-                                  padding:10px 12px;
-                                  margin-bottom:8px;
-                                  border:1px solid #eee;
-                                  border-radius:12px;
-                                  text-decoration:none;
-                                  color:#111;
-                                  font-weight:600;
-                                  background:#f9fafb;
-                                "
-                              >
-                                📎 ${f.fileName}
-                                <div style="font-size:12px; color:#777; font-weight:400;">
-                                  (${f.fileType || "file"}) Click to download
-                                </div>
-                              </a>
-                            `
-                          )
-                          .join("")}
-                      `
-                      : `<p style="color:#777;margin:0;">No attachments</p>`
-                  }
+                      <div className="nb-rightMeta">
+                        <div className="nb-date">
+                          <i className="bi bi-calendar-event me-1"></i>
+                          {publishDate}
+                        </div>
 
+                        {notice?.isActive ? (
+                          <span className="nb-activeBadge">
+                            <i className="bi bi-check-circle me-1"></i> Active
+                          </span>
+                        ) : (
+                          <span className="nb-inactiveBadge">
+                            <i className="bi bi-slash-circle me-1"></i> Inactive
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* DESC */}
+                    <p className="nb-desc">
+                      {notice?.description || "No description"}
+                    </p>
+
+                    {/* FOOTER */}
+                    <div className="nb-cardFooter">
+                      <div className="nb-attachInfo">
+                        <i className="bi bi-paperclip me-2"></i>
+                        Attachments: <b>{attachments.length}</b>
+                      </div>
+
+                      <button
+                        className="nb-viewBtn"
+                        onClick={() => {
+                          Swal.fire({
+                            title: notice?.title || "Notice",
+                            html: `
+                              <div style="text-align:left">
+
+                                <p style="margin:0 0 12px 0; color:#334155; font-weight:600;">
+                                  ${notice?.description || ""}
+                                </p>
+
+                                ${
+                                  attachments.length > 0
+                                    ? `
+                                      <hr/>
+                                      <h6 style="margin:0 0 10px 0; font-weight:800;">Attachments</h6>
+
+                                      ${attachments
+                                        .map(
+                                          (f) => `
+                                            <a 
+                                              href="${f.fileUrl}?dl=1"
+                                              target="_blank"
+                                              rel="noreferrer"
+                                              style="
+                                                display:block;
+                                                padding:12px 14px;
+                                                margin-bottom:10px;
+                                                border:1px solid rgba(15,23,42,0.08);
+                                                border-radius:14px;
+                                                text-decoration:none;
+                                                color:#0f172a;
+                                                font-weight:800;
+                                                background:#f8fafc;
+                                              "
+                                            >
+                                              📎 ${f.fileName}
+                                              <div style="font-size:12px; color:#64748b; font-weight:600;">
+                                                (${f.fileType || "file"}) Click to download
+                                              </div>
+                                            </a>
+                                          `
+                                        )
+                                        .join("")}
+                                    `
+                                    : `<p style="color:#64748b;margin:0;font-weight:600;">No attachments</p>`
+                                }
+
+                              </div>
+                            `,
+                            icon: "info",
+                            confirmButtonText: "Close",
+                            width: 750,
+                          });
+                        }}
+                      >
+                        <i className="bi bi-eye me-2"></i>
+                        View
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              `,
-              icon: "info",
-              confirmButtonText: "Close",
-              width: 700,
-            });
-          }}
-        >
-          <i className="bi bi-eye me-2"></i>
-          View
-        </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ height: 10 }}></div>
       </div>
-    </div>
-  </div>
-</div>
-            );
-          })}
-        </div>
-      )}
     </div>
   );
 }

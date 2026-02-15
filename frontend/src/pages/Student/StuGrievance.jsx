@@ -185,7 +185,7 @@ function StuGrievance() {
 
           <button
             type="button"
-            className="btn btn-outline-primary px-4"
+            className="btn btn-outline-dark px-4"
             onClick={() => {
               fetchStudent();
               fetchMyGrievances();

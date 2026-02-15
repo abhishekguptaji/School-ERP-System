@@ -1,113 +1,179 @@
-/* Background */
-.stu-bg {
-  background-color: #f4f6f9;
+/* Page */
+.stuProfilePage {
+  background: #f8fafc;
   min-height: 100vh;
 }
 
-/* Full width card */
-.profile-card-full {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 24px;
-  width: 100%;
+.stuProfileContainer {
+  max-width: 1250px;
 }
 
 /* Header */
-.profile-header h4 {
-  font-weight: 700;
+.stuProfileHeader h3 {
+  font-weight: 900;
+  color: #0f172a;
 }
 
-.profile-header small {
-  font-size: 13px;
-}
-
-/* Fieldset */
-fieldset {
-  border: 1px solid #dee2e6;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-legend {
-  font-size: 14px;
+.stuProfileHeader .text-muted {
   font-weight: 600;
-  padding: 0 10px;
 }
 
-/* Labels */
-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #444;
+.stuProfileHeader .btn {
+  font-weight: 800;
+  border-radius: 10px;
 }
 
-/* Inputs */
-.form-control,
-.form-select {
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-/* Image box */
-.image-box {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 14px;
-  transition: 0.3s;
-}
-
-.image-box:hover {
-  background: #eef2ff;
-}
-
-.image-preview {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
+/* Top profile card */
+.stuTopCard {
+  border-radius: 16px;
   overflow: hidden;
+  border: none;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.stuTopCardHeader {
+  background: #0f172a;
+  color: #fff;
+  padding: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stuAvatarIcon {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.image-preview img {
+.stuAvatarIcon i {
+  font-size: 28px;
+  color: #ffffff;
+}
+
+.stuName {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.stuEmail {
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+.stuBadge {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 10px 14px;
+}
+
+/* Section cards */
+.stuCard {
+  border-radius: 16px;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.stuCard .card-body {
+  padding: 22px;
+}
+
+.stuCard h5 {
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 18px;
+}
+
+/* Form */
+.stuCard label {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.stuCard .form-control,
+.stuCard .form-select {
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.stuCard .form-control:focus,
+.stuCard .form-select:focus {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.stuCard .form-control:disabled,
+.stuCard .form-select:disabled {
+  background: #f1f5f9;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+/* Image card */
+.stuImageCard {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  padding: 16px;
+}
+
+.stuImageTitle {
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.stuImageBox {
+  height: 220px;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.stuImageBox img {
   width: 100%;
   height: 100%;
-  object-fit: cover;   /* ✅ image fits perfectly */
+  object-fit: cover;
 }
 
-
-.image-label {
-  margin-top: 8px;
-  font-weight: 600;
+.stuNoPhoto {
+  color: #64748b;
+  font-weight: 700;
 }
 
-/* Save button */
-.btn-save-sm {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: white;
-  border-radius: 20px;
-  padding: 8px 24px;
-  font-weight: 600;
-  border: none;
+.stuAlert {
+  border-radius: 14px;
+  font-weight: 700;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.btn-save-sm:hover {
-  opacity: 0.9;
-}
-.btn-edit {
-  background: #0d6efd;
-  color: white;
-  border-radius: 20px;
-  padding: 8px 20px;
-  border: none;
-}
+/* Mobile */
+@media (max-width: 576px) {
+  .stuProfilePage {
+    padding: 12px 0;
+  }
 
-.btn-cancel {
-  background: #6c757d;
-  color: white;
-  border-radius: 20px;
-  padding: 8px 20px;
-  border: none;
+  .stuCard .card-body {
+    padding: 16px;
+  }
+
+  .stuTopCardHeader {
+    padding: 16px;
+  }
+
+  .stuName {
+    font-size: 18px;
+  }
 }

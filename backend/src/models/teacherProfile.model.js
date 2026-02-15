@@ -10,39 +10,46 @@ const teacherProfileSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
+
     teacherImage: {
       type: String,
       trim: true,
       default: "",
     },
+
     status: {
       type: String,
       enum: ["active", "resigned", "terminated", "onLeave"],
       default: "active",
       index: true,
     },
+
     isActive: {
       type: Boolean,
       default: true,
       index: true,
     },
+
     designation: {
       type: String,
       required: true,
       enum: ["PRT", "TGT", "PGT"],
       index: true,
     },
+
     department: {
       type: String,
       required: true,
       trim: true,
       index: true,
     },
+
     dateOfJoining: {
       type: Date,
       required: true,
       index: true,
     },
+
     employmentType: {
       type: String,
       required: true,
@@ -50,27 +57,32 @@ const teacherProfileSchema = new mongoose.Schema(
       default: "Permanent",
       index: true,
     },
+
     qualification: {
       type: String,
       trim: true,
       default: "",
     },
+
     experienceYears: {
       type: Number,
       default: 0,
       min: 0,
     },
-    
+
+    /* ================= CLASS TEACHER ================= */
     isClassTeacher: {
       type: Boolean,
       default: false,
       index: true,
     },
+
+    // FIXED: classTeacherOf should be Number not String
     classTeacherOf: {
-      type: String,
-      enum:[1,2,3,4,5,6,7,8,9,10,11,12],
-      trim: true,
-      default: "",
+      type: Number,
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      default: null,
+      index: true,
     },
 
     /* ================= PERSONAL ================= */
@@ -98,7 +110,7 @@ const teacherProfileSchema = new mongoose.Schema(
       enum: ["Single", "Married", "Divorced", "Widowed"],
       default: "Single",
     },
-    
+
     category: {
       type: String,
       enum: ["General", "OBC", "SC", "ST", "EWS", ""],
@@ -168,7 +180,9 @@ const teacherProfileSchema = new mongoose.Schema(
     /* ================= BANK DETAILS ================= */
     bankDetails: {
       accountHolderName: { type: String, trim: true, default: "" },
+
       accountNumber: { type: String, trim: true, default: "" },
+
       ifscCode: {
         type: String,
         trim: true,
@@ -176,7 +190,9 @@ const teacherProfileSchema = new mongoose.Schema(
         default: "",
         match: [/^$|^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC Code"],
       },
+
       bankName: { type: String, trim: true, default: "" },
+
       branch: { type: String, trim: true, default: "" },
     },
   },
@@ -186,11 +202,22 @@ const teacherProfileSchema = new mongoose.Schema(
   }
 );
 
+/* ================= AUTO FIXES ================= */
+
+// if not class teacher => classTeacherOf must be null
+teacherProfileSchema.pre("validate", async function () {
+  if (!this.isClassTeacher) {
+    this.classTeacherOf = null;
+  }
+
+  if (this.bankDetails?.ifscCode) {
+    this.bankDetails.ifscCode = this.bankDetails.ifscCode.toUpperCase();
+  }
+});
 /* ================= INDEXES ================= */
 teacherProfileSchema.index({ department: 1, designation: 1 });
 teacherProfileSchema.index({ isActive: 1, status: 1 });
 
-/* ================= VIRTUALS ================= */
 
 // service years from dateOfJoining
 teacherProfileSchema.virtual("serviceYears").get(function () {

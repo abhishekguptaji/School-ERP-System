@@ -5,16 +5,20 @@ import "./css/StudentLayout.css";
 
 function StudentLayout() {
   return (
-    <div className="page">
-      <StudentNavbar />
+    <div className="studentLayout">
+      {/* FIXED NAVBAR */}
+      <header className="studentHeader">
+        <StudentNavbar />
+      </header>
 
       {/* SCROLLABLE CONTENT */}
-      <main className="content">
+      <main className="studentMain">
         <Outlet />
       </main>
 
-      <footer className="footer">
-      <StudentFooter />
+      {/* FIXED FOOTER */}
+      <footer className="studentFooterFixed">
+        <StudentFooter />
       </footer>
     </div>
   );

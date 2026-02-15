@@ -2,19 +2,27 @@ import "./css/StudentFooter.css";
 
 function StudentFooter() {
   return (
-    <footer className="erp-footer text-center student-footer">
+    <footer className="studentFooter">
       <div className="container-fluid">
-        <p className="mb-1">
-          Copyright © {new Date().getFullYear()}{" "}
-          <strong>GUPTA'S GROUP ERP</strong>
-        </p>
-        <p className="mb-0">
-          Designed & Developed by:{" "}
-          <strong>Abhishek Gupta</strong> – Developer |{" "}
-          <a href="mailto:abhishekgupta1864@gmail.com">
-            abhishekgupta1864@gmail.com
-          </a>
-        </p>
+        <div className="footerInner">
+          <span className="footerText text-center">
+            © {new Date().getFullYear()}{" "}
+            <span className="footerBrand">GUPTA'S GROUP ERP</span>
+          </span>
+
+          <span className="footerDivider">|</span>
+
+          <span className="footerText">
+            Designed & Developed by{" "}
+            <span className="footerDev">Abhishek Gupta</span> – Developer |{" "}
+            <a
+              className="footerMail"
+              href="mailto:abhishekgupta1864@gmail.com"
+            >
+              abhishekgupta1864@gmail.com
+            </a>
+          </span>
+        </div>
       </div>
     </footer>
   );

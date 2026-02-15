@@ -1,20 +1,22 @@
-.erp-footer {
-  background: linear-gradient(90deg, #1e3a8a, #2563eb);
-  color: #ffffff;
-  padding: 12px 10px;
-  font-size: 0.9rem;
+.studentFooter {
+  width: 100%;
+  background-color: var(--erp-primary); /* same as navbar */
+  color: rgba(255, 255, 255, 0.85);
+  padding: 14px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: "Segoe UI", sans-serif;
+}
+.footerDivider {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
 }
 
-.erp-footer a {
-  color: #ffdd57;
-  text-decoration: none;
-}
-
-.erp-footer a:hover {
-  text-decoration: underline;
-}
-
-
-.student-footer{
-  
+.footerInner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  text-align: center;
+  width: 100%;
 }

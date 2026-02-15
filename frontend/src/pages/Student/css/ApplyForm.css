@@ -1,190 +1,193 @@
-.erpProfileCard {
-  background: #fff;
-  border: 1px solid #e6e6e6;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.06);
-  width: 100%;
+.applyPage {
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
-.erpProfileImg {
-  width: 160px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 12px;
-  border: 2px solid #f1f1f1;
-  background: #fafafa;
-}
-
-.erpInfoBox {
-  background: #f8f9fa;
-  border: 1px solid #ececec;
-  border-radius: 12px;
-  padding: 12px 14px;
-  height: 100%;
-}
-
-/* SINGLE LABEL CLASS */
-.erpLabel {
-  margin: 0;
-  font-size: 12px;
-  color: #6c757d;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.erpValue {
-  margin: 6px 0 0 0;
-  font-size: 15px;
-  font-weight: 700;
-  color: #212529;
-}
-
-/* FORM CARD */
-.erpFormCard {
-  background: #fff;
-  border: 1px solid #e7e7e7;
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.06);
-  width: 100%;
-}
-
-/* SINGLE TITLE */
-.erpFormTitle {
-  margin: 0 0 14px 0;
-  font-size: 15px;
-  font-weight: 800;
-  color: #111;
-}
-
-/* INPUT */
-.erpInput {
-  border-radius: 12px !important;
-  border: 1px solid #dedede !important;
-  padding: 10px 12px !important;
-  font-weight: 600;
-}
-
-.erpInput:focus {
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15) !important;
-}
-
-/* BUTTON */
-.erpApplyBtn {
-  background: #003a8c !important;
-  color: #fff !important;
-  font-weight: 800 !important;
-  border-radius: 12px !important;
-  padding: 12px 22px !important;
-  border: none !important;
-  min-width: 220px;
-}
-
-.erpApplyBtn:hover {
-  background: #002d6d !important;
-}
-@media (max-width: 768px) {
-  .erpProfileImg {
-    width: 130px;
-    height: 130px;
-  }
-}
-
-
-.applyFormTable {
-  width: 100%;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid #e6e6e6;
-  background: white;
-  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.05);
+.applyContainer {
+  max-width: 1250px;
 }
 
 /* Header */
-.headerRow {
-  background: #003a8c;
-  color: #fff;
-  padding: 12px 10px;
-  text-align: center;
+.applyHeader h3 {
+  font-weight: 900;
+  color: #0f172a;
 }
 
-.headerRow h4 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-}
-
-/* Body row */
-.bodyRow {
-  padding: 14px 10px;
-  border-top: 1px solid #eee;
-  text-align: center;
-  font-size: 14px;
+.applyHeader .text-muted {
   font-weight: 600;
-  color: #222;
-  background: #fafafa;
+}
+
+/* Profile top card */
+.applyTopCard {
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.applyTopCardHeader {
+  background: #0f172a;
+  color: #fff;
+  padding: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.applyAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.applyAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.applyName {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.applyEmail {
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+/* Badges */
+.applyBadge {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 10px 14px;
+}
+
+/* Main cards */
+.applyCard {
+  border-radius: 16px;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.applyCard .card-body {
+  padding: 22px;
+}
+
+.applyCard h5 {
+  font-weight: 900;
+  color: #0f172a;
+}
+
+/* Form */
+.applyCard label {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.applyCard .form-control,
+.applyCard .form-select {
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  font-weight: 600;
   transition: 0.2s ease;
 }
 
-.bodyRow:nth-child(even) {
-  background: #f4f6ff;
+.applyCard .form-control:focus,
+.applyCard .form-select:focus {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
-.bodyRow:hover {
-  background: #eef3ff;
+/* Table */
+.applyTable thead th {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #475569;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
 }
 
-/* Reason column truncate */
-.reasonCol {
-  max-width: 260px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.applyTable tbody td {
+  font-weight: 600;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.06);
 }
 
-/* Status Badge */
-.statusBadge {
-  padding: 6px 14px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: 800;
-  display: inline-block;
-  text-transform: uppercase;
+/* Error UI */
+.applyErrorWrap {
+  min-height: 100vh;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-/* Status Colors */
-.statusBadge.pending {
-  background: #fff3cd;
-  color: #856404;
+.applyErrorCard {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  text-align: center;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.statusBadge.approved {
-  background: #d4edda;
-  color: #155724;
+.applyErrorIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 30px;
 }
 
-.statusBadge.rejected {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-/* Attachment button */
-.attachBtn {
-  display: inline-block;
-  padding: 7px 14px;
-  border-radius: 10px;
-  background: #0057ff;
-  color: #fff;
-  font-weight: 800;
+.applyProfileBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
-  font-size: 13px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: #fff;
+  font-weight: 900;
+  transition: 0.2s ease;
 }
 
-.attachBtn:hover {
-  background: #003a8c;
+.applyProfileBtn:hover {
+  background: #111c33;
   color: #fff;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .applyPage {
+    padding: 12px 0;
+  }
+
+  .applyCard .card-body {
+    padding: 16px;
+  }
+
+  .applyTopCardHeader {
+    padding: 16px;
+  }
+
+  .applyName {
+    font-size: 18px;
+  }
 }

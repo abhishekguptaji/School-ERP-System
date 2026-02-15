@@ -1,17 +1,35 @@
-.page {
-  min-height: 100vh;
+.studentLayout {
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  /* position:fixed; */
+  overflow: hidden; /* important */
 }
 
-.content {
-  flex: 1;          
+/* Navbar stays fixed */
+.studentHeader {
+  flex-shrink: 0;
 }
 
-.footer {
-  
-  color: white;
-  padding: 10px;
-  text-align: center;
+/* Footer stays fixed */
+.studentFooterFixed {
+  flex-shrink: 0;
+}
+
+/* Only this section scrolls */
+.studentMain {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f8fafc;
+  padding: 18px 14px;
+}
+
+/* Smooth scroll look */
+.studentMain::-webkit-scrollbar {
+  width: 8px;
+}
+
+.studentMain::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.25);
+  border-radius: 10px;
 }

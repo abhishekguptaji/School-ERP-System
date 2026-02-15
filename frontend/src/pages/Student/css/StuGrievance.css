@@ -1,53 +1,211 @@
-/* ====== GRIEVANCE TABLE DESIGN ====== */
+.stuGPage {
+  background: #f8fafc;
+  min-height: 100vh;
+}
 
-.grievanceCard {
+.stuGContainer {
+  max-width: 1250px;
+}
+
+/* Header */
+.stuGHeader h3 {
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.stuGHeader .text-muted {
+  font-weight: 600;
+}
+
+/* Main cards */
+.stuGCard {
+  border-radius: 16px;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.stuGCard .card-body {
+  padding: 22px;
+}
+
+.stuGCard h5 {
+  font-weight: 900;
+  color: #0f172a;
+}
+
+/* Student top card */
+.stuGTopCard {
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
 
-/* table spacing + smooth look */
-.grievanceTable {
-  margin: 0;
+.stuGTopCardHeader {
+  background: #0f172a;
+  color: #fff;
+  padding: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.grievanceTable tbody tr {
+.stuGAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.stuGAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stuGName {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+
+.stuGEmail {
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+/* Info boxes */
+.stuGInfoBox {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.stuGInfoLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.stuGInfoValue {
+  font-weight: 900;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+/* Alert */
+.stuGAlert {
+  border-radius: 14px;
+  font-weight: 700;
+  background: #f8fafc;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 12px 14px;
+  color: #0f172a;
+}
+
+/* Form */
+.stuGCard label {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.stuGCard .form-control,
+.stuGCard .form-select {
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  font-weight: 600;
   transition: 0.2s ease;
 }
 
-.grievanceTable tbody tr:hover {
-  background: rgba(13, 110, 253, 0.06);
+.stuGCard .form-control:focus,
+.stuGCard .form-select:focus {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
-/* Blue header */
-.grievanceTableHead {
-  background: linear-gradient(90deg, #0d6efd, #0a58ca);
+/* Table */
+.stuGTable thead th {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #475569;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.stuGTable tbody td {
+  font-weight: 600;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.06);
+}
+
+/* Error UI */
+.stuGErrorWrap {
+  min-height: 100vh;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.stuGErrorCard {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 26px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  text-align: center;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.stuGErrorIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 30px;
+}
+
+.stuGRetryBtn {
+  border: none;
+  background: #0f172a;
   color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 900;
+  transition: 0.2s ease;
 }
 
-.grievanceTableHead th {
-  border: none !important;
-  padding: 14px 12px;
-  font-weight: 600;
-  font-size: 14px;
+.stuGRetryBtn:hover {
+  background: #111c33;
 }
 
-/* body cells */
-.grievanceTable td {
-  padding: 14px 12px;
-  font-size: 14px;
-  vertical-align: middle;
-}
+/* Mobile */
+@media (max-width: 576px) {
+  .stuGPage {
+    padding: 12px 0;
+  }
 
-/* badge improvements */
-.grievanceTable .badge {
-  font-size: 12px;
-  padding: 7px 10px;
-  border-radius: 999px;
-}
+  .stuGCard .card-body {
+    padding: 16px;
+  }
 
-/* view button look */
-.grievanceTable .btn {
-  border-radius: 10px;
-  font-weight: 600;
+  .stuGTopCardHeader {
+    padding: 16px;
+  }
+
+  .stuGName {
+    font-size: 18px;
+  }
 }

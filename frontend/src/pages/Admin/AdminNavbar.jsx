@@ -63,9 +63,9 @@ function AdminNavbar() {
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/admin/show-classes">
-                  <i className="bi bi-search me-2"></i>
-                  Find Students
+                <Link className="nav-link" to="/admin/library">
+                  <i className="bi bi-book me-2"></i>
+                  Library
                 </Link>
               </li>
 

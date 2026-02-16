@@ -134,3 +134,52 @@ export const getIdStudentByAdmin = async (id) => {
   const { data } = await API.get(`/admin/students/${id}`);
   return data;
 };
+
+
+//**=============================================================== */
+
+
+export const adminAddBook = async (data) => {
+  const res = await API.post("/admin/addBook", data);
+  return res.data;
+};
+
+export const adminGetAllBooks = async () => {
+  const res = await API.get("/admin/seeAllBooks");
+  return res.data;
+};
+
+export const adminGetBookCopies = async (bookId) => {
+  const res = await API.get(`/admin/book/${bookId}/copies`);
+  return res.data;
+};
+
+export const adminAddMoreCopies = async (bookId, data) => {
+  const res = await API.post(`/admin/book/${bookId}/copies`, data);
+  return res.data;
+};
+
+export const adminIssueCopy = async (copyId, data) => {
+  const res = await API.put(`/admin/copy/${copyId}/issue`, data);
+  return res.data;
+};
+
+export const adminDeleteBook = async (bookId) => {
+  const res = await API.delete(`/admin/book/${bookId}`);
+  return res.data;
+};
+
+export const adminGetReturnRequests = async () => {
+  const res = await API.get("/admin/return-requests");
+  return res.data;
+};
+
+export const adminAcceptReturn = async (requestId) => {
+  const res = await API.put(`/admin/return-requests/${requestId}/accept`);
+  return res.data;
+};
+
+export const adminRejectReturn = async (requestId) => {
+  const res = await API.put(`/admin/return-requests/${requestId}/reject`);
+  return res.data;
+};

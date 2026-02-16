@@ -129,3 +129,19 @@ export const getStudentNotices = async () =>{
   const res = await API.get("/student/get-notice");
   return res.data;
 }
+
+
+export const studentGetAllBooks = async () => {
+  const res = await axios.get(`${API}/student/all`);
+  return res;
+};
+
+export const studentGetMyIssued = async () => {
+  const res = await API.get("/student/my-issued");
+  return res;
+};
+
+export const studentRequestReturn = async (data) => {
+  const res = await API.post("/student/request-return");
+  return res;
+};

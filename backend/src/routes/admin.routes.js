@@ -35,6 +35,19 @@ import {
   getTeacherByIdByAdmin,
 } from "../controllers/teacherProfile.controller.js";
 
+import {
+  addBookByAdmin,
+  getAllBooksAdmin,
+  getCopiesOfBookAdmin,
+  addMoreCopiesAdmin,
+  issueCopyToStudentAdmin,
+  deleteBookAdmin,
+
+  getReturnRequestsAdmin,
+  acceptReturnAdmin,
+  rejectReturnAdmin,
+} from "../controllers/libraryAdmin.controller.js";
+
 const router = Router();
 
 router.get("/admin-profile", verifyJWT, adminProfile);
@@ -64,22 +77,6 @@ router.patch(
   updateGrievanceStatus,
 );
 
-// --------------
-
-// router.get(
-//   "/students",
-//   verifyJWT,
-//   getAllStudentProfilesByAdmin
-// );
-
-// router.get(
-//   "/students/:studentProfileId/complete",
-//   verifyJWT,
-//   getCompleteStudentProfileByAdmin
-// );
-
-
-// --------------------------------//
 
 // SUBJECT MASTER
 router.post("/subjects", createSubjectByAdmin);
@@ -98,5 +95,19 @@ router.get("/teachers/:id", verifyJWT, getTeacherByIdByAdmin);
 router.get("/students", verifyJWT,getAllStudentsByAdmin);
 router.get("/students/:id", verifyJWT,getStudentByIdByAdmin);
 
+
+// -----------------------------------------------//
+
+router.post("/addBook",verifyJWT,addBookByAdmin);
+router.get("/seeAllBooks",verifyJWT, getAllBooksAdmin);
+router.get("/book/:bookId/copies", verifyJWT, getCopiesOfBookAdmin);
+router.post("/book/:bookId/copies", verifyJWT, addMoreCopiesAdmin);
+router.put("/copy/:copyId/issue", verifyJWT, issueCopyToStudentAdmin);
+router.delete("/book/:bookId", verifyJWT, deleteBookAdmin);
+
+// // return requests
+router.get("/return-requests", verifyJWT, getReturnRequestsAdmin);
+router.put("/return-requests/:requestId/accept", verifyJWT, acceptReturnAdmin);
+router.put("/return-requests/:requestId/reject", verifyJWT, rejectReturnAdmin);
 
 export default router;

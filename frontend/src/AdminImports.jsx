@@ -12,7 +12,7 @@ import Exams from "./pages/Admin/Exams";
 import Fees from "./pages/Admin/Fees";
 import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Reports";
-import Search_UpdateStudentProfile from "./pages/Admin/Search_UpdateStudentProfile";
+import AdminLibrary from "./pages/Admin/AdminLibrary";
 import NoticePanel from "./pages/Admin/NoticePanel";
 import FindTeacherAll from "./pages/Admin/FindTeacherAll";
 export {
@@ -30,7 +30,7 @@ export {
   Fees,
   Reports,
   Settings,
-  Search_UpdateStudentProfile,
+  AdminLibrary,
   NoticePanel,
   FindTeacherAll
 };

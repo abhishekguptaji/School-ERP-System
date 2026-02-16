@@ -17,6 +17,11 @@ import {
   getOurGrievanceByStudent,
 } from "../controllers/grievancePanel.controller.js";
 
+import {
+  getMyIssuedCopiesStudent,
+  requestReturnStudent,
+} from "../controllers/libraryAdmin.controller.js";
+
 import {getStudentNotice} from "../controllers/notice.controller.js";
 
 const router = Router();
@@ -55,6 +60,12 @@ router.post(
 router.get("/apply-grievance",verifyJWT,getOurGrievanceByStudent);
 
 router.get("/get-notice",verifyJWT,getStudentNotice);
+
+
+router.get("/my-issued", verifyJWT, getMyIssuedCopiesStudent);
+
+
+router.post("/copy/:copyId/return-request", verifyJWT, requestReturnStudent);
 
 
 export default router;

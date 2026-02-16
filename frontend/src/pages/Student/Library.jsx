@@ -1,316 +1,373 @@
-import { useMemo, useState } from "react";
+import "./css/Library.css";
 
-function Library() {
-  // Demo Data (API se replace karna later)
-  const books = [
-    {
-      id: 1,
-      title: "Compiler Design",
-      author: "Aho & Ullman",
-      category: "Computer Science",
-      bookId: "LIB-0001",
-      status: "Available",
-      description:
-        "A complete reference for lexical analysis, parsing, syntax-directed translation, and code generation.",
-    },
-    {
-      id: 2,
-      title: "Database Management Systems",
-      author: "Ramakrishnan",
-      category: "Computer Science",
-      bookId: "LIB-0002",
-      status: "Issued",
-      description:
-        "Covers relational databases, SQL, normalization, indexing, transactions, and concurrency control.",
-    },
-    {
-      id: 3,
-      title: "Operating System Concepts",
-      author: "Silberschatz",
-      category: "Computer Science",
-      bookId: "LIB-0003",
-      status: "Available",
-      description:
-        "A strong foundation on processes, memory management, file systems, and CPU scheduling.",
-    },
-    {
-      id: 4,
-      title: "NCERT Physics (Class 12)",
-      author: "NCERT",
-      category: "School",
-      bookId: "LIB-0104",
-      status: "Issued",
-      description:
-        "NCERT Physics book for Class 12 students, useful for boards and competitive exams.",
-    },
-    {
-      id: 5,
-      title: "English Grammar",
-      author: "Wren & Martin",
-      category: "School",
-      bookId: "LIB-0210",
-      status: "Available",
-      description:
-        "A classic English grammar reference with exercises and clear explanations.",
-    },
-  ];
+import { useEffect, useMemo, useState } from "react";
+import Swal from "sweetalert2";
 
+import {
+  studentGetMyIssued,
+  studentRequestReturn,
+} from "../../services/authService.js";
+
+const StudentLibrary = () => {
+  const [issued, setIssued] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  const [selectedBook, setSelectedBook] = useState(null);
 
-  const categories = useMemo(() => {
-    const unique = Array.from(new Set(books.map((b) => b.category)));
-    return ["All", ...unique];
-  }, [books]);
+  const fetchIssued = async () => {
+    try {
+      setLoading(true);
 
-  const filteredBooks = useMemo(() => {
-    return books.filter((b) => {
-      const matchSearch =
-        b.title.toLowerCase().includes(search.toLowerCase()) ||
-        b.author.toLowerCase().includes(search.toLowerCase()) ||
-        b.bookId.toLowerCase().includes(search.toLowerCase());
-
-      const matchCategory = category === "All" ? true : b.category === category;
-
-      return matchSearch && matchCategory;
-    });
-  }, [search, category, books]);
-
-  const statusBadge = (status) => {
-    if (status === "Available") return "success";
-    if (status === "Issued") return "danger";
-    return "secondary";
+      const res = await studentGetMyIssued();
+      console.log(res);
+      const list = Array.isArray(res.data?.data) ? res.data.data : [];
+      setIssued(list);
+    } catch (err) {
+      console.log(err);
+      setIssued([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    fetchIssued();
+  }, []);
+
+  const requestReturnHandler = async (copyMongoId) => {
+    try {
+      const confirm = await Swal.fire({
+        title: "Request Return?",
+        text: "Admin will accept after verification.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Request",
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      const res = await studentRequestReturn(copyMongoId);
+      
+      Swal.fire("Success", res.data?.message || "Return request sent", "success");
+      fetchIssued();
+    } catch (err) {
+      console.log(err);
+
+      // Swal.fire(
+      //   "Error",
+      //   err.response?.data?.message || err.message || "Something went wrong",
+      //   "error"
+      // );
+    }
+  };
+
+  const filteredIssued = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return issued;
+
+    return issued.filter((c) => {
+      const title = c.book?.title?.toLowerCase() || "";
+      const copyId = c.copyId?.toLowerCase() || "";
+      return title.includes(q) || copyId.includes(q);
+    });
+  }, [issued, search]);
+
   return (
-    <div className="min-vh-100 bg-light py-4">
-      <div className="container" style={{ maxWidth: 1150 }}>
-        {/* Header */}
-        <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
-          <div>
-            <h3 className="fw-bold mb-1">
-              <i className="bi bi-book-half text-primary me-2"></i>
-              Library
-            </h3>
-            <div className="text-muted">
-              Search books, check availability & details
-            </div>
-          </div>
-
-          <div className="d-flex gap-2">
-            <a href="/" className="btn btn-outline-secondary rounded-3">
-              <i className="bi bi-arrow-left me-2"></i>Back
-            </a>
-
-            <button className="btn btn-primary rounded-3">
-              <i className="bi bi-arrow-clockwise me-2"></i>Refresh
-            </button>
-          </div>
+    <div className="container-fulid px-5">
+      {/* TOP HEADER */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h3 className="mb-0 fw-bold text-dark">My Library</h3>
+          <p className="text-muted mb-0">
+            View your issued books and request returns.
+          </p>
         </div>
 
-        {/* Controls */}
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-3 p-md-4">
-            <div className="row g-3 align-items-center">
-              {/* Search */}
-              <div className="col-md-7">
-                <label className="form-label fw-semibold">Search Book</label>
-                <div className="input-group">
-                  <span className="input-group-text bg-white">
-                    <i className="bi bi-search"></i>
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search by title, author, or book ID..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
+        <button
+          className="btn btn-outline-dark btn-sm"
+          onClick={fetchIssued}
+          disabled={loading}
+        >
+          <i className="bi bi-arrow-clockwise me-1"></i>
+          Refresh
+        </button>
+      </div>
+
+      {/* STATS CARDS */}
+      <div className="row g-3 mt-2">
+        <div className="col-12 col-md-4">
+          <div className="erpMiniCard">
+            <div className="d-flex align-items-center gap-3">
+              <div className="erpMiniIcon bg-primary-subtle text-primary">
+                <i className="bi bi-journal-bookmark"></i>
               </div>
-
-              {/* Filter */}
-              <div className="col-md-5">
-                <label className="form-label fw-semibold">
-                  Filter by Category
-                </label>
-                <select
-                  className="form-select"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+              <div>
+                <div className="text-muted small">Total Issued</div>
+                <div className="fw-bold fs-4">{issued.length}</div>
               </div>
-            </div>
-
-            {/* Summary */}
-            <div className="d-flex flex-wrap gap-2 mt-3">
-              <span className="badge text-bg-light border text-dark px-3 py-2 rounded-pill">
-                Total Books: <b>{books.length}</b>
-              </span>
-
-              <span className="badge text-bg-light border text-dark px-3 py-2 rounded-pill">
-                Showing: <b>{filteredBooks.length}</b>
-              </span>
-
-              <span className="badge text-bg-light border text-dark px-3 py-2 rounded-pill">
-                Category: <b>{category}</b>
-              </span>
             </div>
           </div>
         </div>
 
-        {/* Book List */}
-        <div className="row g-4">
-          {filteredBooks.length === 0 ? (
-            <div className="col-12">
-              <div className="alert alert-info rounded-4 border">
-                <i className="bi bi-info-circle me-2"></i>
-                No books found.
+        <div className="col-12 col-md-4">
+          <div className="erpMiniCard">
+            <div className="d-flex align-items-center gap-3">
+              <div className="erpMiniIcon bg-warning-subtle text-warning">
+                <i className="bi bi-clock-history"></i>
               </div>
-            </div>
-          ) : (
-            filteredBooks.map((book) => (
-              <div key={book.id} className="col-md-6 col-lg-4">
-                <div className="card border-0 shadow-sm rounded-4 h-100">
-                  <div className="card-body p-4">
-                    <div className="d-flex justify-content-between align-items-start gap-3">
-                      <div>
-                        <h5 className="fw-bold mb-1">{book.title}</h5>
-                        <div className="text-muted small">
-                          <i className="bi bi-person me-2"></i>
-                          {book.author}
-                        </div>
-                        <div className="text-muted small">
-                          <i className="bi bi-upc-scan me-2"></i>
-                          {book.bookId}
-                        </div>
-                      </div>
-
-                      <span
-                        className={`badge text-bg-${statusBadge(
-                          book.status
-                        )} rounded-pill`}
-                      >
-                        {book.status}
-                      </span>
-                    </div>
-
-                    <div className="mt-3">
-                      <span className="badge text-bg-light border text-dark rounded-pill">
-                        <i className="bi bi-tag me-1"></i>
-                        {book.category}
-                      </span>
-                    </div>
-
-                    <p className="text-muted mt-3 mb-0" style={{ lineHeight: 1.6 }}>
-                      {book.description.length > 110
-                        ? book.description.slice(0, 110) + "..."
-                        : book.description}
-                    </p>
-
-                    <div className="d-flex justify-content-end mt-4">
-                      <button
-                        className="btn btn-outline-primary rounded-3"
-                        onClick={() => setSelectedBook(book)}
-                      >
-                        View Details <i className="bi bi-arrow-right ms-1"></i>
-                      </button>
-                    </div>
-                  </div>
+              <div>
+                <div className="text-muted small">Due Soon</div>
+                <div className="fw-bold fs-4">
+                  {
+                    issued.filter((c) => {
+                      if (!c.dueDate) return false;
+                      const due = new Date(c.dueDate).getTime();
+                      const now = Date.now();
+                      const diffDays = Math.ceil(
+                        (due - now) / (1000 * 60 * 60 * 24)
+                      );
+                      return diffDays >= 0 && diffDays <= 3;
+                    }).length
+                  }
                 </div>
               </div>
-            ))
-          )}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 col-md-4">
+          <div className="erpMiniCard">
+            <div className="d-flex align-items-center gap-3">
+              <div className="erpMiniIcon bg-success-subtle text-success">
+                <i className="bi bi-shield-check"></i>
+              </div>
+              <div>
+                <div className="text-muted small">Status</div>
+                <div className="fw-bold fs-6">
+                  {issued.length > 0 ? "Active Issued Books" : "No Pending Issues"}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Modal */}
-      {selectedBook && (
-        <div
-          className="modal fade show"
-          style={{ display: "block", background: "rgba(0,0,0,0.6)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 rounded-4">
-              <div className="modal-header border-0 pb-0">
-                <h5 className="modal-title fw-bold">{selectedBook.title}</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setSelectedBook(null)}
-                ></button>
+      {/* MAIN CARD */}
+      <div className="erpProfileCard mt-3">
+        <div className="p-3 p-md-4">
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <h5 className="fw-bold mb-0">My Issued Books</h5>
+              <div className="text-muted small">
+                Request return for any issued copy.
               </div>
+            </div>
 
-              <div className="modal-body pt-2">
-                <div className="d-flex flex-wrap gap-2 mb-3">
-                  <span className="badge text-bg-light border text-dark rounded-pill">
-                    <i className="bi bi-person me-1"></i>
-                    {selectedBook.author}
-                  </span>
-
-                  <span className="badge text-bg-light border text-dark rounded-pill">
-                    <i className="bi bi-tag me-1"></i>
-                    {selectedBook.category}
-                  </span>
-
-                  <span className="badge text-bg-light border text-dark rounded-pill">
-                    <i className="bi bi-upc-scan me-1"></i>
-                    {selectedBook.bookId}
-                  </span>
-
-                  <span
-                    className={`badge text-bg-${statusBadge(
-                      selectedBook.status
-                    )} rounded-pill`}
-                  >
-                    {selectedBook.status}
-                  </span>
-                </div>
-
-                <div className="p-3 bg-light rounded-4" style={{ lineHeight: 1.7 }}>
-                  {selectedBook.description}
-                </div>
-
-                {/* Extra Info Section */}
-                <div className="mt-3 small text-muted">
-                  <i className="bi bi-info-circle me-2"></i>
-                  If book is issued, contact librarian for availability date.
-                </div>
-              </div>
-
-              <div className="modal-footer border-0">
-                <button
-                  className="btn btn-secondary rounded-3"
-                  onClick={() => setSelectedBook(null)}
-                >
-                  Close
-                </button>
-
-                {selectedBook.status === "Available" ? (
-                  <button className="btn btn-primary rounded-3">
-                    <i className="bi bi-journal-arrow-up me-2"></i>
-                    Issue Request
-                  </button>
-                ) : (
-                  <button className="btn btn-outline-danger rounded-3" disabled>
-                    <i className="bi bi-x-circle me-2"></i>
-                    Not Available
-                  </button>
-                )}
+            <div className="d-flex align-items-center gap-2">
+              <div className="input-group input-group-sm" style={{ width: 280 }}>
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-search"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search by book title / copyId"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
             </div>
           </div>
+
+          {loading ? (
+            <div className="py-4 text-muted">Loading issued books...</div>
+          ) : (
+            <>
+              {/* TABLE VIEW (Desktop) */}
+              <div className="table-responsive d-none d-md-block">
+                <table className="table table-bordered align-middle mb-0">
+                  <thead className="table-light">
+                    <tr>
+                      <th style={{ width: "34%" }}>Book</th>
+                      <th style={{ width: "14%" }}>Copy ID</th>
+                      <th style={{ width: "14%" }}>Issued</th>
+                      <th style={{ width: "14%" }}>Due</th>
+                      <th style={{ width: "12%" }}>Status</th>
+                      <th style={{ width: "12%" }}>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {filteredIssued.map((c) => {
+                      const dueDays = c.dueDate
+                        ? Math.ceil(
+                            (new Date(c.dueDate).getTime() - Date.now()) /
+                              (1000 * 60 * 60 * 24)
+                          )
+                        : null;
+
+                      const dueBadge =
+                        dueDays === null
+                          ? "bg-secondary"
+                          : dueDays < 0
+                          ? "bg-danger"
+                          : dueDays <= 3
+                          ? "bg-warning text-dark"
+                          : "bg-success";
+
+                      return (
+                        <tr key={c._id}>
+                          <td>
+                            <div className="fw-semibold">{c.book?.title}</div>
+                            <div className="text-muted small">
+                              {c.book?.author || "—"}
+                            </div>
+                          </td>
+
+                          <td className="fw-semibold">{c.copyId}</td>
+
+                          <td>
+                            {c.issuedAt
+                              ? new Date(c.issuedAt).toLocaleDateString()
+                              : "-"}
+                          </td>
+
+                          <td>
+                            <div className="d-flex flex-column">
+                              <span>
+                                {c.dueDate
+                                  ? new Date(c.dueDate).toLocaleDateString()
+                                  : "-"}
+                              </span>
+
+                              {dueDays !== null && (
+                                <span className={`badge ${dueBadge} mt-1 w-fit`}>
+                                  {dueDays < 0
+                                    ? `${Math.abs(dueDays)} days late`
+                                    : `${dueDays} days left`}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+
+                          <td>
+                            <span className="badge bg-danger-subtle text-danger">
+                              Issued
+                            </span>
+                          </td>
+
+                          <td>
+                            <button
+                              className="btn btn-sm btn-warning"
+                              onClick={() => requestReturnHandler(c._id)}
+                            >
+                              <i className="bi bi-arrow-return-left me-1"></i>
+                              Return
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+                    {filteredIssued.length === 0 && (
+                      <tr>
+                        <td colSpan="6" className="text-center text-muted py-4">
+                          No issued books found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* CARD VIEW (Mobile) */}
+              <div className="d-md-none">
+                {filteredIssued.length === 0 ? (
+                  <div className="text-center text-muted py-4">
+                    No issued books found.
+                  </div>
+                ) : (
+                  <div className="row g-3">
+                    {filteredIssued.map((c) => {
+                      const dueDays = c.dueDate
+                        ? Math.ceil(
+                            (new Date(c.dueDate).getTime() - Date.now()) /
+                              (1000 * 60 * 60 * 24)
+                          )
+                        : null;
+
+                      const dueBadge =
+                        dueDays === null
+                          ? "bg-secondary"
+                          : dueDays < 0
+                          ? "bg-danger"
+                          : dueDays <= 3
+                          ? "bg-warning text-dark"
+                          : "bg-success";
+
+                      return (
+                        <div className="col-12" key={c._id}>
+                          <div className="erpMobileCard">
+                            <div className="d-flex justify-content-between gap-2">
+                              <div>
+                                <div className="fw-bold">{c.book?.title}</div>
+                                <div className="text-muted small">
+                                  Copy: <span className="fw-semibold">{c.copyId}</span>
+                                </div>
+                              </div>
+                              <span className="badge bg-danger-subtle text-danger h-fit">
+                                Issued
+                              </span>
+                            </div>
+
+                            <hr className="my-2" />
+
+                            <div className="d-flex justify-content-between">
+                              <div>
+                                <div className="text-muted small">Issued</div>
+                                <div className="fw-semibold">
+                                  {c.issuedAt
+                                    ? new Date(c.issuedAt).toLocaleDateString()
+                                    : "-"}
+                                </div>
+                              </div>
+
+                              <div className="text-end">
+                                <div className="text-muted small">Due</div>
+                                <div className="fw-semibold">
+                                  {c.dueDate
+                                    ? new Date(c.dueDate).toLocaleDateString()
+                                    : "-"}
+                                </div>
+                                {dueDays !== null && (
+                                  <span className={`badge ${dueBadge} mt-1`}>
+                                    {dueDays < 0
+                                      ? `${Math.abs(dueDays)} days late`
+                                      : `${dueDays} days left`}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <button
+                              className="btn btn-warning btn-sm w-100 mt-3"
+                              onClick={() => requestReturnHandler(c._id)}
+                            >
+                              <i className="bi bi-arrow-return-left me-1"></i>
+                              Request Return
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
 
-export default Library;
+export default StudentLibrary;

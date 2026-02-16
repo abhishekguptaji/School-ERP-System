@@ -141,9 +141,9 @@ function AdminNavbar() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/exams">
+              <Link className="nav-link" to="/admin/admin-time-table">
                 <i className="bi bi-clipboard-check-fill me-2"></i>
-                Exams
+                Time-Table
               </Link>
             </li>
 

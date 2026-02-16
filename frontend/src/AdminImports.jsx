@@ -8,7 +8,7 @@ import SubjectTeacher from "./pages/Admin/SubjectTeacher";
 import ClassXSection from "./pages/Admin/ClassXSection";
 import FindStudentsAll from "./pages/Admin/FindStudentsAll";
 import ManageTeacher from "./pages/Admin/ManageTeacher";
-import Exams from "./pages/Admin/Exams";
+import AdTimeTable from "./pages/Admin/AdTimeTable";
 import Fees from "./pages/Admin/Fees";
 import Reports from "./pages/Admin/Reports";
 import Settings from "./pages/Admin/Reports";
@@ -26,7 +26,7 @@ export {
   ClassXSection,
   FindStudentsAll,
   ManageTeacher,
-  Exams,
+  AdTimeTable,
   Fees,
   Reports,
   Settings,

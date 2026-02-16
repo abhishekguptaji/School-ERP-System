@@ -2,11 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import "./css/Exams.css";
 
-/**
- * ---------------------------
- * DEMO MASTER DATA
- * ---------------------------
- */
 const DEMO_CLASSES = [
   { _id: "c1", className: "Class 6" },
   { _id: "c2", className: "Class 7" },
@@ -85,8 +80,8 @@ const PERIODS = [
   { no: 4, time: "11:00 - 11:40" },
   { no: 5, time: "11:40 - 12:20" },
   { no: 6, time: "12:20 - 01:00" },
-  { no: 7, time: "01:00 - 01:40" },
-  { no: 8, time: "01:40 - 02:20" },
+  // { no: 7, time: "01:00 - 01:40" },
+  // { no: 8, time: "01:40 - 02:20" },
 ];
 
 /**
@@ -137,7 +132,7 @@ function findTeacherClash({ timetable, teacherId, day, periodNo, ignoreKey }) {
   return null;
 }
 
-function Exams() {
+function AdTimeTable() {
   const [classId, setClassId] = useState("c3");
   const [sectionId, setSectionId] = useState("s1");
 
@@ -522,13 +517,7 @@ function Exams() {
         </table>
       </div>
 
-      {/* FOOTER NOTE */}
-      <div className="ttFooter">
-        Next step after timetable:{" "}
-        <span className="fw-bold text-primary">
-          Attendance + Teacher Substitution + Student Timetable View
-        </span>
-      </div>
+     
 
       {/* EDITOR MODAL */}
       {editorOpen && activeCell && (
@@ -607,4 +596,4 @@ function Exams() {
   );
 }
 
-export default Exams;
+export default AdTimeTable;

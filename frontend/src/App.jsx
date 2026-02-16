@@ -19,7 +19,7 @@ import {
   ClassXSection,
   FindStudentsAll,
   ManageTeacher,
-  Exams,
+  AdTimeTable,
   Fees,
   Reports,
   Settings,
@@ -93,7 +93,7 @@ function App() {
           <Route path="manage-teacher" element={<ManageTeacher />} />
           <Route path="classes-subject" element={<ClassXSection />} />
           <Route path="subject-teacher" element={<SubjectTeacher />} />
-          <Route path="exams" element={<Exams />} />
+          <Route path="admin-time-table" element={<AdTimeTable />} />
           <Route path="fees" element={<Fees />} />
           <Route path="reports" element={<Reports />} />
           <Route path="notices-panel" element={<NoticePanel />}/>

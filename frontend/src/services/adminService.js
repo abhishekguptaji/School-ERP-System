@@ -216,3 +216,27 @@ export const getSubjectsByClass = async(classId)=>{
   return res.data;
 }
 /********************************************************************************** */
+
+
+//      Time table api hai  
+
+export const getTimeTable = async(classId)=>{
+  const res = await API.get(`/admin/timetable/${classId}`);
+  return res.data;
+}
+
+export const saveTimeTableCell = async(payload) =>{
+  const res =await API.post(`/admin/timetable/save`, payload);
+  return res.data;
+}
+  
+export const deleteTimeTableCell = async(classId, day, periodNo) =>{
+  const res = await API.delete(`/admin/timetable/${classId}/${day}/${periodNo}`);
+  return res.data;
+}
+  
+export const clearTimeTable = async(classId) =>{
+  const res = await API.delete(`/admin/timetable/clear/${classId}`);
+  return res.data;
+}
+  

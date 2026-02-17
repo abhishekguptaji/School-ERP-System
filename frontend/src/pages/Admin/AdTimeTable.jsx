@@ -2,76 +2,24 @@ import React, { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import "./css/Exams.css";
 
-const DEMO_CLASSES = [
-  { _id: "c1", className: "Class 6" },
-  { _id: "c2", className: "Class 7" },
-  { _id: "c3", className: "Class 8" },
+import {
+  getAllClassesSubjectTimeTable,
+  getSubjectsByClass,
+  getAllocatedClass,
+  getTimeTable,
+  saveTimeTableCell,
+  deleteTimeTableCell,
+  clearTimeTable,
+} from "../../services/adminService.js";
+
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ];
-
-const DEMO_SECTIONS = [
-  { _id: "s1", sectionName: "A" },
-  { _id: "s2", sectionName: "B" },
-];
-
-const DEMO_TEACHERS = [
-  { _id: "t1", name: "Rahul Sharma", email: "rahul@school.com" },
-  { _id: "t2", name: "Neha Verma", email: "neha@school.com" },
-  { _id: "t3", name: "Amit Singh", email: "amit@school.com" },
-  { _id: "t4", name: "Pooja Gupta", email: "pooja@school.com" },
-];
-
-const DEMO_SUBJECTS_BY_CLASS = {
-  c1: [
-    { _id: "sub1", subjectName: "Maths" },
-    { _id: "sub2", subjectName: "English" },
-    { _id: "sub3", subjectName: "Science" },
-    { _id: "sub4", subjectName: "SST" },
-  ],
-  c2: [
-    { _id: "sub1", subjectName: "Maths" },
-    { _id: "sub2", subjectName: "English" },
-    { _id: "sub3", subjectName: "Science" },
-    { _id: "sub5", subjectName: "Computer" },
-  ],
-  c3: [
-    { _id: "sub1", subjectName: "Maths" },
-    { _id: "sub2", subjectName: "English" },
-    { _id: "sub3", subjectName: "Science" },
-    { _id: "sub4", subjectName: "SST" },
-    { _id: "sub6", subjectName: "Hindi" },
-  ],
-};
-
-/**
- * ---------------------------
- * DEMO SUBJECT -> TEACHER ALLOCATION
- * key: `${classId}_${sectionId}_${subjectId}`
- * value: { teacherId, weeklyPeriods }
- * ---------------------------
- */
-const DEMO_ALLOCATIONS = {
-  // Class 8A
-  "c3_s1_sub1": { teacherId: "t1", weeklyPeriods: 6 }, // Maths
-  "c3_s1_sub2": { teacherId: "t2", weeklyPeriods: 5 }, // English
-  "c3_s1_sub3": { teacherId: "t3", weeklyPeriods: 4 }, // Science
-  "c3_s1_sub4": { teacherId: "t4", weeklyPeriods: 3 }, // SST
-  "c3_s1_sub6": { teacherId: "t2", weeklyPeriods: 3 }, // Hindi (same teacher demo)
-
-  // Class 8B
-  "c3_s2_sub1": { teacherId: "t3", weeklyPeriods: 6 },
-  "c3_s2_sub2": { teacherId: "t4", weeklyPeriods: 5 },
-  "c3_s2_sub3": { teacherId: "t1", weeklyPeriods: 4 },
-  "c3_s2_sub4": { teacherId: "t2", weeklyPeriods: 3 },
-  "c3_s2_sub6": { teacherId: "t4", weeklyPeriods: 3 },
-
-  // Class 7A
-  "c2_s1_sub1": { teacherId: "t1", weeklyPeriods: 6 },
-  "c2_s1_sub2": { teacherId: "t2", weeklyPeriods: 5 },
-  "c2_s1_sub3": { teacherId: "t3", weeklyPeriods: 4 },
-  "c2_s1_sub5": { teacherId: "t4", weeklyPeriods: 2 },
-};
-
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 const PERIODS = [
   { no: 1, time: "09:00 - 09:40" },
@@ -80,141 +28,121 @@ const PERIODS = [
   { no: 4, time: "11:00 - 11:40" },
   { no: 5, time: "11:40 - 12:20" },
   { no: 6, time: "12:20 - 01:00" },
-  // { no: 7, time: "01:00 - 01:40" },
-  // { no: 8, time: "01:40 - 02:20" },
 ];
 
-/**
- * ---------------------------
- * HELPERS
- * ---------------------------
- */
-const getClassName = (classId) =>
-  DEMO_CLASSES.find((c) => c._id === classId)?.className || "N/A";
-
-const getSectionName = (sectionId) =>
-  DEMO_SECTIONS.find((s) => s._id === sectionId)?.sectionName || "N/A";
-
-const getTeacher = (teacherId) =>
-  DEMO_TEACHERS.find((t) => t._id === teacherId) || null;
-
-const getSubject = (classId, subjectId) =>
-  (DEMO_SUBJECTS_BY_CLASS[classId] || []).find((s) => s._id === subjectId) ||
-  null;
-
-const makeCellKey = ({ classId, sectionId, day, periodNo }) =>
-  `${classId}_${sectionId}_${day}_${periodNo}`;
-
-const allocationKey = ({ classId, sectionId, subjectId }) =>
-  `${classId}_${sectionId}_${subjectId}`;
-
-/**
- * Check if teacher is busy at same day+period in ANY class/section.
- * Returns conflict object or null.
- */
-function findTeacherClash({ timetable, teacherId, day, periodNo, ignoreKey }) {
-  if (!teacherId) return null;
-
-  for (const key of Object.keys(timetable)) {
-    if (ignoreKey && key === ignoreKey) continue;
-
-    const entry = timetable[key];
-    if (!entry) continue;
-
-    if (
-      entry.teacherId === teacherId &&
-      entry.day === day &&
-      Number(entry.periodNo) === Number(periodNo)
-    ) {
-      return entry;
-    }
-  }
-  return null;
-}
+const makeCellKey = ({ day, periodNo }) => `${day}_${periodNo}`;
 
 function AdTimeTable() {
-  const [classId, setClassId] = useState("c3");
-  const [sectionId, setSectionId] = useState("s1");
+  const [classes, setClasses] = useState([]);
+  const [classId, setClassId] = useState("");
 
-  // This is like DB for timetable
-  // key: `${classId}_${sectionId}_${day}_${periodNo}`
-  // value: { classId, sectionId, day, periodNo, subjectId, teacherId }
-  const [timetable, setTimetable] = useState(() => ({
-    // Pre-filled demo entries (Class 8A)
-    [makeCellKey({ classId: "c3", sectionId: "s1", day: "Mon", periodNo: 1 })]: {
-      classId: "c3",
-      sectionId: "s1",
-      day: "Mon",
-      periodNo: 1,
-      subjectId: "sub1",
-      teacherId: "t1",
-    },
-    [makeCellKey({ classId: "c3", sectionId: "s1", day: "Mon", periodNo: 2 })]: {
-      classId: "c3",
-      sectionId: "s1",
-      day: "Mon",
-      periodNo: 2,
-      subjectId: "sub2",
-      teacherId: "t2",
-    },
+  const [subjects, setSubjects] = useState([]);
+  const [allocations, setAllocations] = useState({});
+  // subjectId => { teacherId, periodsPerWeek, teacherName, teacherEmail }
 
-    // Another class same teacher same slot (for clash demo)
-    [makeCellKey({ classId: "c2", sectionId: "s1", day: "Mon", periodNo: 3 })]: {
-      classId: "c2",
-      sectionId: "s1",
-      day: "Mon",
-      periodNo: 3,
-      subjectId: "sub1",
-      teacherId: "t1",
-    },
-  }));
+  const [timetable, setTimetable] = useState({});
+  // key: day_periodNo => { day, periodNo, subjectId, teacherId, subjectName, teacherName }
 
-  // Modal / editor state
+  const [loading, setLoading] = useState(false);
+
+  // editor
   const [editorOpen, setEditorOpen] = useState(false);
   const [activeCell, setActiveCell] = useState(null);
-
-  // editor form
   const [subjectId, setSubjectId] = useState("");
-  const [teacherId, setTeacherId] = useState("");
 
-  const className = getClassName(classId);
-  const sectionName = getSectionName(sectionId);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const clsRes = await getAllClassesSubjectTimeTable();
+        const cls = clsRes.data || [];
+        setClasses(cls);
 
-  const subjects = useMemo(() => {
-    return DEMO_SUBJECTS_BY_CLASS[classId] || [];
+        if (cls.length > 0) setClassId(cls[0]._id);
+      } catch (err) {
+        Swal.fire("Error", "Failed to load classes", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  useEffect(() => {
+    if (!classId) return;
+
+    const load = async () => {
+      try {
+        setLoading(true);
+
+        // subjects
+        const subRes = await getSubjectsByClass(classId);
+        const subs = subRes.data || [];
+        setSubjects(subs);
+
+        // allocations
+        const allocRes = await getAllocatedClass(classId);
+        const allocList = allocRes.data || [];
+
+        const allocMap = {};
+        for (const row of allocList) {
+          const sid = row.subjectId?._id;
+          allocMap[sid] = {
+            teacherId: row.teacherId?._id || "",
+            teacherName: row.teacherId?.user?.name || "",
+            teacherEmail: row.teacherId?.user?.email || "",
+            periodsPerWeek: row.periodsPerWeek || 0,
+          };
+        }
+        setAllocations(allocMap);
+
+        // timetable
+        const ttRes = await getTimeTable(classId);
+        const list = ttRes.data || [];
+
+        const ttMap = {};
+        for (const row of list) {
+          const key = makeCellKey({ day: row.day, periodNo: row.periodNo });
+          ttMap[key] = {
+            day: row.day,
+            periodNo: row.periodNo,
+            subjectId: row.subjectId?._id,
+            subjectName: row.subjectId?.name || "N/A",
+            teacherId: row.teacherId?._id,
+            teacherName: row.teacherId?.user?.name || "N/A",
+          };
+        }
+        setTimetable(ttMap);
+      } catch (err) {
+        setSubjects([]);
+        setAllocations({});
+        setTimetable({});
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
   }, [classId]);
 
+  const className = classes.find((c) => c._id === classId)?.className || "N/A";
+
   const allocatedSubjects = useMemo(() => {
-    // Only subjects that have teacher allocation
-    return subjects.filter((s) => {
-      const k = allocationKey({ classId, sectionId, subjectId: s._id });
-      return !!DEMO_ALLOCATIONS[k]?.teacherId;
-    });
-  }, [subjects, classId, sectionId]);
+    return subjects.filter((s) => allocations[s._id]?.teacherId);
+  }, [subjects, allocations]);
 
   const stats = useMemo(() => {
-    // Count filled cells for selected class+section only
-    let filled = 0;
-    for (const k of Object.keys(timetable)) {
-      const e = timetable[k];
-      if (e.classId === classId && e.sectionId === sectionId) filled++;
-    }
-    return { filled };
-  }, [timetable, classId, sectionId]);
+    return { filled: Object.keys(timetable).length };
+  }, [timetable]);
 
   const openEditor = (day, periodNo) => {
-    const cellKey = makeCellKey({ classId, sectionId, day, periodNo });
-    const existing = timetable[cellKey];
+    const key = makeCellKey({ day, periodNo });
+    const existing = timetable[key];
 
-    setActiveCell({ day, periodNo, cellKey });
+    setActiveCell({ day, periodNo, key });
 
-    if (existing) {
-      setSubjectId(existing.subjectId);
-      setTeacherId(existing.teacherId);
-    } else {
-      setSubjectId("");
-      setTeacherId("");
-    }
+    if (existing?.subjectId) setSubjectId(existing.subjectId);
+    else setSubjectId("");
 
     setEditorOpen(true);
   };
@@ -223,23 +151,7 @@ function AdTimeTable() {
     setEditorOpen(false);
     setActiveCell(null);
     setSubjectId("");
-    setTeacherId("");
   };
-
-  // Auto set teacher when subject changes (from allocation)
-  useEffect(() => {
-    if (!editorOpen) return;
-    if (!subjectId) {
-      setTeacherId("");
-      return;
-    }
-
-    const k = allocationKey({ classId, sectionId, subjectId });
-    const alloc = DEMO_ALLOCATIONS[k];
-
-    if (alloc?.teacherId) setTeacherId(alloc.teacherId);
-    else setTeacherId("");
-  }, [subjectId, classId, sectionId, editorOpen]);
 
   const handleSave = async () => {
     if (!activeCell) return;
@@ -249,79 +161,60 @@ function AdTimeTable() {
       return;
     }
 
-    const kAlloc = allocationKey({ classId, sectionId, subjectId });
-    const alloc = DEMO_ALLOCATIONS[kAlloc];
+    try {
+      setLoading(true);
 
-    if (!alloc?.teacherId) {
-      Swal.fire(
-        "No teacher allocated",
-        "This subject has no teacher allocation for this class-section.",
-        "error"
-      );
-      return;
-    }
+      const res = await saveTimeTableCell({
+        classId,
+        day: activeCell.day,
+        periodNo: activeCell.periodNo,
+        subjectId,
+      });
 
-    // Force teacherId from allocation
-    const finalTeacherId = alloc.teacherId;
+      const row = res.data;
 
-    // Teacher clash check
-    const clash = findTeacherClash({
-      timetable,
-      teacherId: finalTeacherId,
-      day: activeCell.day,
-      periodNo: activeCell.periodNo,
-      ignoreKey: activeCell.cellKey,
-    });
+      const key = makeCellKey({ day: row.day, periodNo: row.periodNo });
 
-    if (clash) {
-      const cName = getClassName(clash.classId);
-      const sName = getSectionName(clash.sectionId);
+      setTimetable((prev) => ({
+        ...prev,
+        [key]: {
+          day: row.day,
+          periodNo: row.periodNo,
+          subjectId: row.subjectId?._id,
+          subjectName: row.subjectId?.name || "N/A",
+          teacherId: row.teacherId?._id,
+          teacherName: row.teacherId?.user?.name || "N/A",
+        },
+      }));
 
       Swal.fire({
-        icon: "error",
-        title: "Teacher Clash!",
-        html: `
-          <div style="text-align:left">
-            <b>${getTeacher(finalTeacherId)?.name}</b> is already assigned at:
-            <br/>
-            <br/>
-            <b>${clash.day}</b> Period <b>${clash.periodNo}</b>
-            <br/>
-            <b>${cName} - ${sName}</b>
-          </div>
-        `,
+        icon: "success",
+        title: "Saved!",
+        timer: 900,
+        showConfirmButton: false,
       });
-      return;
+
+      closeEditor();
+    } catch (err) {
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to save",
+        "error",
+      );
+    } finally {
+      setLoading(false);
     }
-
-    const entry = {
-      classId,
-      sectionId,
-      day: activeCell.day,
-      periodNo: activeCell.periodNo,
-      subjectId,
-      teacherId: finalTeacherId,
-    };
-
-    setTimetable((prev) => ({
-      ...prev,
-      [activeCell.cellKey]: entry,
-    }));
-
-    Swal.fire({
-      icon: "success",
-      title: "Saved!",
-      timer: 1000,
-      showConfirmButton: false,
-    });
-
-    closeEditor();
   };
 
   const handleDelete = async () => {
     if (!activeCell) return;
 
-    const existing = timetable[activeCell.cellKey];
+    const key = makeCellKey({
+      day: activeCell.day,
+      periodNo: activeCell.periodNo,
+    });
+    const existing = timetable[key];
+
     if (!existing) {
       closeEditor();
       return;
@@ -337,59 +230,81 @@ function AdTimeTable() {
 
     if (!confirm.isConfirmed) return;
 
-    setTimetable((prev) => {
-      const copy = { ...prev };
-      delete copy[activeCell.cellKey];
-      return copy;
-    });
+    try {
+      setLoading(true);
 
-    Swal.fire({
-      icon: "success",
-      title: "Deleted!",
-      timer: 900,
-      showConfirmButton: false,
-    });
+      await deleteTimeTableCell(classId, activeCell.day, activeCell.periodNo);
 
-    closeEditor();
+      setTimetable((prev) => {
+        const copy = { ...prev };
+        delete copy[key];
+        return copy;
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        timer: 900,
+        showConfirmButton: false,
+      });
+
+      closeEditor();
+    } catch (err) {
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to delete",
+        "error",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClearWholeTimetable = async () => {
     const confirm = await Swal.fire({
       icon: "warning",
       title: "Clear timetable?",
-      text: `This will remove all periods for ${className} - ${sectionName}.`,
+      text: `This will remove all periods for Class ${className}.`,
       showCancelButton: true,
       confirmButtonText: "Yes, clear",
     });
 
     if (!confirm.isConfirmed) return;
 
-    setTimetable((prev) => {
-      const copy = { ...prev };
-      for (const key of Object.keys(copy)) {
-        const e = copy[key];
-        if (e.classId === classId && e.sectionId === sectionId) {
-          delete copy[key];
-        }
-      }
-      return copy;
-    });
+    try {
+      setLoading(true);
 
-    Swal.fire({
-      icon: "success",
-      title: "Cleared!",
-      timer: 900,
-      showConfirmButton: false,
-    });
+      await clearTimeTable(classId);
+
+      setTimetable({});
+
+      Swal.fire({
+        icon: "success",
+        title: "Cleared!",
+        timer: 900,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to clear",
+        "error",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderCell = (day, periodNo) => {
-    const cellKey = makeCellKey({ classId, sectionId, day, periodNo });
-    const entry = timetable[cellKey];
+    const key = makeCellKey({ day, periodNo });
+    const entry = timetable[key];
 
     if (!entry) {
       return (
-        <button className="ttCell empty" onClick={() => openEditor(day, periodNo)}>
+        <button
+          className="ttCell empty"
+          onClick={() => openEditor(day, periodNo)}
+        >
           <div className="ttEmptyText">
             <i className="bi bi-plus-circle"></i>
             <span>Add</span>
@@ -398,14 +313,14 @@ function AdTimeTable() {
       );
     }
 
-    const subject = getSubject(classId, entry.subjectId);
-    const teacher = getTeacher(entry.teacherId);
-
     return (
-      <button className="ttCell filled" onClick={() => openEditor(day, periodNo)}>
-        <div className="ttSub">{subject?.subjectName || "N/A"}</div>
+      <button
+        className="ttCell filled"
+        onClick={() => openEditor(day, periodNo)}
+      >
+        <div className="ttSub">{entry.subjectName}</div>
         <div className="ttTeacher">
-          <i className="bi bi-person-badge"></i> {teacher?.name || "N/A"}
+          <i className="bi bi-person-badge"></i> {entry.teacherName}
         </div>
       </button>
     );
@@ -418,16 +333,15 @@ function AdTimeTable() {
         <div>
           <h3 className="mb-1 fw-bold text-primary">Time Table Creation</h3>
           <p className="mb-0 text-muted">
-            Click any cell to assign subject. Teacher auto-fills from allocation.
+            Click any cell to assign subject. Teacher auto-fills from
+            allocation.
           </p>
         </div>
 
         <div className="ttStats">
           <div className="ttStatCard">
             <div className="ttStatLabel">Selected</div>
-            <div className="ttStatValue">
-              {className} - {sectionName}
-            </div>
+            <div className="ttStatValue">Class {className}</div>
           </div>
           <div className="ttStatCard">
             <div className="ttStatLabel">Filled Periods</div>
@@ -445,24 +359,14 @@ function AdTimeTable() {
         <div className="ttFilterLeft">
           <div className="ttSelectBox">
             <label>Class</label>
-            <select value={classId} onChange={(e) => setClassId(e.target.value)}>
-              {DEMO_CLASSES.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.className}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="ttSelectBox">
-            <label>Section</label>
             <select
-              value={sectionId}
-              onChange={(e) => setSectionId(e.target.value)}
+              value={classId}
+              onChange={(e) => setClassId(e.target.value)}
+              disabled={loading}
             >
-              {DEMO_SECTIONS.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.sectionName}
+              {classes.map((c) => (
+                <option key={c._id} value={c._id}>
+                  Class {c.className}
                 </option>
               ))}
             </select>
@@ -480,7 +384,11 @@ function AdTimeTable() {
         </div>
 
         <div className="ttFilterRight">
-          <button className="btn btn-outline-danger" onClick={handleClearWholeTimetable}>
+          <button
+            className="btn btn-outline-danger"
+            onClick={handleClearWholeTimetable}
+            disabled={loading}
+          >
             <i className="bi bi-trash3 me-1"></i> Clear Timetable
           </button>
         </div>
@@ -517,7 +425,12 @@ function AdTimeTable() {
         </table>
       </div>
 
-     
+      {/* LOADING OVERLAY */}
+      {loading && (
+        <div style={{ padding: 12 }} className="text-muted">
+          Loading...
+        </div>
+      )}
 
       {/* EDITOR MODAL */}
       {editorOpen && activeCell && (
@@ -527,7 +440,7 @@ function AdTimeTable() {
               <div>
                 <h5 className="mb-0 fw-bold">Edit Period</h5>
                 <div className="text-muted">
-                  {className} - {sectionName} • {activeCell.day} • Period{" "}
+                  Class {className} • {activeCell.day} • Period{" "}
                   {activeCell.periodNo}
                 </div>
               </div>
@@ -547,7 +460,7 @@ function AdTimeTable() {
                   <option value="">-- Select Subject --</option>
                   {allocatedSubjects.map((s) => (
                     <option key={s._id} value={s._id}>
-                      {s.subjectName}
+                      {s.name}
                     </option>
                   ))}
                 </select>
@@ -559,13 +472,12 @@ function AdTimeTable() {
               <div className="ttField">
                 <label>Teacher (Auto)</label>
                 <input
-                  value={teacherId ? getTeacher(teacherId)?.name : ""}
+                  value={
+                    subjectId ? allocations[subjectId]?.teacherName || "" : ""
+                  }
                   readOnly
                   placeholder="Auto from allocation..."
                 />
-                <small className="text-muted">
-                  Teacher is auto-selected from subject allocation.
-                </small>
               </div>
 
               <div className="ttHint">

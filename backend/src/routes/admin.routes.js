@@ -56,7 +56,45 @@ import {
   getSubjectsByClass
 } from "../controllers/subjectTeacher.controller.js";
 
+import {
+  getTimeTable,
+  saveTimeTableCell,
+  deleteTimeTableCell,
+  clearTimeTable,
+} from "../controllers/timetable.controller.js";
+
+
 const router = Router();
+/************************************************************* */
+
+router.post(
+  "/timetable/save",
+  verifyJWT,
+  authorizeRoles("admin"),
+  saveTimeTableCell
+);
+
+router.delete(
+  "/timetable/:classId/:day/:periodNo",
+  verifyJWT,
+  authorizeRoles("admin"),
+  deleteTimeTableCell
+);
+
+router.delete(
+  "/timetable/clear/:classId",
+  verifyJWT,
+  authorizeRoles("admin"),
+  clearTimeTable
+);
+
+router.get(
+  "/timetable/:classId/",
+  verifyJWT,
+  authorizeRoles("admin"),
+  getTimeTable
+);
+
 /*****************************************************************/
 router.get(
   "/subject-by-class/:classId",

@@ -18,8 +18,8 @@ import {
 import {
   getAllStudentProfilesByAdmin,
   getCompleteStudentProfileByAdmin,
-    getAllStudentsByAdmin,
-  getStudentByIdByAdmin
+  getAllStudentsByAdmin,
+  getStudentByIdByAdmin,
 } from "../controllers/studentProfile.controller.js";
 
 import {
@@ -42,14 +42,62 @@ import {
   addMoreCopiesAdmin,
   issueCopyToStudentAdmin,
   deleteBookAdmin,
-
   getReturnRequestsAdmin,
   acceptReturnAdmin,
   rejectReturnAdmin,
 } from "../controllers/libraryAdmin.controller.js";
 
-const router = Router();
+import {
+  allocateTeacherToSubject,
+  getAllocatedTeachers,
+  deleteTeacherSubjectAllocation,
+  getAllTeachersTimeTable,
+  getAllClassesSubjectTimeTable,
+  getSubjectsByClass
+} from "../controllers/subjectTeacher.controller.js";
 
+const router = Router();
+/*****************************************************************/
+router.get(
+  "/subject-by-class/:classId",
+verifyJWT,
+authorizeRoles("admin"),
+getSubjectsByClass
+);
+
+
+router.get(
+  "/all-teacher-time-table",
+  verifyJWT,
+  authorizeRoles("admin"),
+  getAllTeachersTimeTable,
+);
+router.get(
+  "/all-class-time-table",
+  verifyJWT,
+  authorizeRoles("admin"),
+  getAllClassesSubjectTimeTable,
+);
+router.post(
+  "/allocate-subject-teacher",
+  verifyJWT,
+  authorizeRoles("admin"),
+  allocateTeacherToSubject,
+);
+router.get(
+  "/allocatedclass/:classId",
+  verifyJWT,
+  authorizeRoles("admin"),
+  getAllocatedTeachers,
+);
+router.delete(
+  "/deletedClassSubject/:classId/:subjectId",
+  verifyJWT,
+  authorizeRoles("admin"),
+  deleteTeacherSubjectAllocation,
+);
+
+/******************************************************************** */
 router.get("/admin-profile", verifyJWT, adminProfile);
 
 router.post(
@@ -77,7 +125,6 @@ router.patch(
   updateGrievanceStatus,
 );
 
-
 // SUBJECT MASTER
 router.post("/subjects", createSubjectByAdmin);
 router.get("/subjects", getAllSubjectsByAdmin);
@@ -88,18 +135,16 @@ router.get("/classes-subjects", getAllClassesWithSubjectsByAdmin);
 router.put("/classes/:classId/subjects", allocateSubjectsToClassByAdmin);
 // -------------------------------------//
 
-
 router.get("/teachers", verifyJWT, getAllTeachersByAdmin);
 router.get("/teachers/:id", verifyJWT, getTeacherByIdByAdmin);
 
-router.get("/students", verifyJWT,getAllStudentsByAdmin);
-router.get("/students/:id", verifyJWT,getStudentByIdByAdmin);
-
+router.get("/students", verifyJWT, getAllStudentsByAdmin);
+router.get("/students/:id", verifyJWT, getStudentByIdByAdmin);
 
 // -----------------------------------------------//
 
-router.post("/addBook",verifyJWT,addBookByAdmin);
-router.get("/seeAllBooks",verifyJWT, getAllBooksAdmin);
+router.post("/addBook", verifyJWT, addBookByAdmin);
+router.get("/seeAllBooks", verifyJWT, getAllBooksAdmin);
 router.get("/book/:bookId/copies", verifyJWT, getCopiesOfBookAdmin);
 router.post("/book/:bookId/copies", verifyJWT, addMoreCopiesAdmin);
 router.put("/copy/:copyId/issue", verifyJWT, issueCopyToStudentAdmin);

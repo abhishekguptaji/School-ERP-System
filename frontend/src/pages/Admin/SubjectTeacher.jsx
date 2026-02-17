@@ -2,45 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import "./css/Attendence.css";
 
-const DEMO_CLASSES = [
-  { _id: "c1", className: "Class 6" },
-  { _id: "c2", className: "Class 7" },
-  { _id: "c3", className: "Class 8" },
-];
-
-const DEMO_SECTIONS = [
-  { _id: "s1", sectionName: "A" },
-  { _id: "s2", sectionName: "B" },
-];
-
-const DEMO_SUBJECTS_BY_CLASS = {
-  c1: [
-    { _id: "sub1", subjectName: "Maths" },
-    { _id: "sub2", subjectName: "English" },
-    { _id: "sub3", subjectName: "Science" },
-    { _id: "sub4", subjectName: "SST" },
-  ],
-  c2: [
-    { _id: "sub1", subjectName: "Maths" },
-    { _id: "sub2", subjectName: "English" },
-    { _id: "sub3", subjectName: "Science" },
-    { _id: "sub5", subjectName: "Computer" },
-  ],
-  c3: [
-    { _id: "sub1", subjectName: "Maths" },
-    { _id: "sub2", subjectName: "English" },
-    { _id: "sub3", subjectName: "Science" },
-    { _id: "sub4", subjectName: "SST" },
-    { _id: "sub6", subjectName: "Hindi" },
-  ],
-};
-
-const DEMO_TEACHERS = [
-  { _id: "t1", name: "Rahul Sharma", email: "rahul@school.com" },
-  { _id: "t2", name: "Neha Verma", email: "neha@school.com" },
-  { _id: "t3", name: "Amit Singh", email: "amit@school.com" },
-  { _id: "t4", name: "Pooja Gupta", email: "pooja@school.com" },
-];
+import {
+  allocateSubjectTeacher,
+  deleteClassSubjectAllocation,
+  getAllocatedClass,
+  getAllClassesSubjectTimeTable,
+  getAllTeacherforTimeTable,
+  getSubjectsByClass,
+} from "../../services/adminService.js";
 
 const PRIORITY_COLORS = [
   "bg-primary",
@@ -55,138 +24,220 @@ function badgeColor(index) {
   return PRIORITY_COLORS[index % PRIORITY_COLORS.length];
 }
 
- function SubjectTeacher() {
-  const [classId, setClassId] = useState("c3");
-  const [sectionId, setSectionId] = useState("s1");
+function SubjectTeacher() {
+  const [classes, setClasses] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [subjects, setSubjects] = useState([]);
 
-  // demo allocation state (this simulates DB)
-  // key: `${classId}_${sectionId}_${subjectId}` => { teacherId, weeklyPeriods }
-  const [allocations, setAllocations] = useState(() => ({
-    "c3_s1_sub1": { teacherId: "t1", weeklyPeriods: 6 }, // class 8 A maths
-    "c3_s1_sub2": { teacherId: "t2", weeklyPeriods: 5 }, // class 8 A eng
-    "c3_s2_sub1": { teacherId: "t3", weeklyPeriods: 6 }, // class 8 B maths
-  }));
+  const [classId, setClassId] = useState("");
 
-  // local UI states
+  // allocations map: subjectId => { teacherId, periodsPerWeek }
+  const [allocations, setAllocations] = useState({});
+
   const [search, setSearch] = useState("");
   const [expandedSubjectId, setExpandedSubjectId] = useState(null);
 
-  const subjects = useMemo(() => {
-    return DEMO_SUBJECTS_BY_CLASS[classId] || [];
+  const [loading, setLoading] = useState(false);
+
+  // ===============================
+  // Load classes + teachers (once)
+  // ===============================
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+
+        const [clsRes, teacherRes] = await Promise.all([
+          getAllClassesSubjectTimeTable(),
+          getAllTeacherforTimeTable(),
+        ]);
+
+        const cls = clsRes.data || [];
+        const t = teacherRes.data || [];
+
+        setClasses(cls);
+        setTeachers(t);
+
+        if (cls.length > 0) setClassId(cls[0]._id);
+      } catch (err) {
+        Swal.fire("Error", "Failed to load classes/teachers", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  // ===============================
+  // Load subjects + allocations
+  // ===============================
+  useEffect(() => {
+    if (!classId) return;
+
+    const load = async () => {
+      try {
+        setLoading(true);
+
+        // Subjects
+        const subRes = await getSubjectsByClass(classId);
+        const subs = subRes.data || [];
+        setSubjects(subs);
+        console.log(subs);
+
+        // Allocations
+        const allocRes = await getAllocatedClass(classId);
+        const list = allocRes.data || [];
+
+        // Convert list -> map
+        const map = {};
+        for (const row of list) {
+          map[row.subjectId?._id] = {
+            teacherId: row.teacherId?._id || "",
+            periodsPerWeek: row.periodsPerWeek || 0,
+          };
+        }
+
+        setAllocations(map);
+      } catch (err) {
+        setSubjects([]);
+        setAllocations({});
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
   }, [classId]);
+
+  const selectedClassName =
+    classes.find((c) => c._id === classId)?.className || "N/A";
 
   const filteredSubjects = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return subjects;
-    return subjects.filter((s) => s.subjectName.toLowerCase().includes(q));
+
+    return subjects.filter((s) =>
+      (s.subjectName || s.name || "").toLowerCase().includes(q)
+    );
   }, [subjects, search]);
 
-  const allocationList = useMemo(() => {
-    return subjects.map((sub) => {
-      const key = `${classId}_${sectionId}_${sub._id}`;
-      const row = allocations[key];
-      const teacher = row
-        ? DEMO_TEACHERS.find((t) => t._id === row.teacherId)
-        : null;
-
-      return {
-        key,
-        subjectId: sub._id,
-        subjectName: sub.subjectName,
-        teacherId: row?.teacherId || "",
-        teacherName: teacher?.name || "",
-        teacherEmail: teacher?.email || "",
-        weeklyPeriods: row?.weeklyPeriods ?? 0,
-      };
-    });
-  }, [subjects, allocations, classId, sectionId]);
-
   const allocatedCount = useMemo(() => {
-    return allocationList.filter((x) => x.teacherId).length;
-  }, [allocationList]);
+    return subjects.filter((s) => allocations[s._id]?.teacherId).length;
+  }, [subjects, allocations]);
 
-  const selectedClassName =
-    DEMO_CLASSES.find((c) => c._id === classId)?.className || "N/A";
-  const selectedSectionName =
-    DEMO_SECTIONS.find((s) => s._id === sectionId)?.sectionName || "N/A";
-
-  const handleAllocate = async ({ subjectId, teacherId, weeklyPeriods }) => {
+  // ===============================
+  // Allocate / Update
+  // ===============================
+  const handleAllocate = async ({ subjectId, teacherId, periodsPerWeek }) => {
     if (!teacherId) {
-      Swal.fire("Select teacher", "Please select a teacher first.", "warning");
+      Swal.fire("Select teacher", "Please select teacher", "warning");
       return;
     }
 
-    const key = `${classId}_${sectionId}_${subjectId}`;
+    const periods = Number(periodsPerWeek);
+    if (Number.isNaN(periods) || periods <= 0) {
+      Swal.fire("Invalid", "Weekly periods must be > 0", "warning");
+      return;
+    }
 
-    setAllocations((prev) => ({
-      ...prev,
-      [key]: {
+    try {
+      setLoading(true);
+
+      await allocateSubjectTeacher({
+        classId,
+        subjectId,
         teacherId,
-        weeklyPeriods: Number(weeklyPeriods || 0),
-      },
-    }));
+        periodsPerWeek: periods,
+      });
 
-    Swal.fire({
-      icon: "success",
-      title: "Allocated!",
-      text: "Teacher assigned to subject successfully.",
-      timer: 1200,
-      showConfirmButton: false,
-    });
+      Swal.fire({
+        icon: "success",
+        title: "Saved!",
+        timer: 900,
+        showConfirmButton: false,
+      });
+
+      // Update local state
+      setAllocations((prev) => ({
+        ...prev,
+        [subjectId]: { teacherId, periodsPerWeek: periods },
+      }));
+    } catch (err) {
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to save",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ===============================
+  // Delete
+  // ===============================
   const handleRemove = async ({ subjectId }) => {
     const confirm = await Swal.fire({
       icon: "question",
       title: "Remove allocation?",
-      text: "This will remove teacher from this subject.",
+      text: "Teacher + weekly periods will be removed.",
       showCancelButton: true,
-      confirmButtonText: "Yes, remove",
+      confirmButtonText: "Yes remove",
     });
 
     if (!confirm.isConfirmed) return;
 
-    const key = `${classId}_${sectionId}_${subjectId}`;
+    try {
+      setLoading(true);
 
-    setAllocations((prev) => {
-      const copy = { ...prev };
-      delete copy[key];
-      return copy;
-    });
+      await deleteClassSubjectAllocation(classId, subjectId);
 
-    Swal.fire({
-      icon: "success",
-      title: "Removed!",
-      timer: 1000,
-      showConfirmButton: false,
-    });
+      Swal.fire({
+        icon: "success",
+        title: "Removed!",
+        timer: 800,
+        showConfirmButton: false,
+      });
+
+      setAllocations((prev) => {
+        const copy = { ...prev };
+        delete copy[subjectId];
+        return copy;
+      });
+    } catch (err) {
+      Swal.fire(
+        "Error",
+        err?.response?.data?.message || "Failed to delete",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // reset expanded panel when class/section changes
   useEffect(() => {
     setExpandedSubjectId(null);
     setSearch("");
-  }, [classId, sectionId]);
+  }, [classId]);
 
   return (
     <div className="pageWrap">
-      {/* TOP HEADER */}
+      {/* HEADER */}
       <div className="erpHeader">
         <div>
           <h3 className="mb-1 fw-bold text-primary">
             Subject ↔ Teacher Allocation
           </h3>
           <p className="mb-0 text-muted">
-            Allocate teachers to subjects class & section wise (Demo UI).
+            Allocate teachers and weekly periods for timetable creation.
           </p>
         </div>
 
         <div className="headerStats">
           <div className="statCard">
             <div className="statLabel">Selected</div>
-            <div className="statValue">
-              {selectedClassName} - {selectedSectionName}
-            </div>
+            <div className="statValue">Class {selectedClassName}</div>
           </div>
           <div className="statCard">
             <div className="statLabel">Subjects</div>
@@ -199,7 +250,7 @@ function badgeColor(index) {
         </div>
       </div>
 
-      {/* FILTER BAR */}
+      {/* FILTER */}
       <div className="filterBar">
         <div className="filterLeft">
           <div className="selectBox">
@@ -207,24 +258,11 @@ function badgeColor(index) {
             <select
               value={classId}
               onChange={(e) => setClassId(e.target.value)}
+              disabled={loading}
             >
-              {DEMO_CLASSES.map((c) => (
+              {classes.map((c) => (
                 <option key={c._id} value={c._id}>
-                  {c.className}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="selectBox">
-            <label>Section</label>
-            <select
-              value={sectionId}
-              onChange={(e) => setSectionId(e.target.value)}
-            >
-              {DEMO_SECTIONS.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.sectionName}
+                  Class {c.className}
                 </option>
               ))}
             </select>
@@ -242,68 +280,58 @@ function badgeColor(index) {
             </div>
           </div>
         </div>
-
-        <div className="filterRight">
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => {
-              Swal.fire({
-                icon: "info",
-                title: "Demo Mode",
-                text: "This page is running with demo data. No backend required.",
-              });
-            }}
-          >
-            <i className="bi bi-info-circle me-1"></i> Demo Info
-          </button>
-        </div>
       </div>
 
       {/* MAIN GRID */}
       <div className="gridWrap">
-        {/* LEFT: SUBJECT LIST */}
+        {/* LEFT */}
         <div className="panel">
           <div className="panelHeader">
             <h5 className="mb-0 fw-bold">
               <i className="bi bi-journal-bookmark-fill me-2 text-primary"></i>
-              Allocated Subjects in {selectedClassName}
+              Subjects
             </h5>
             <span className="pill">{filteredSubjects.length} subjects</span>
           </div>
 
           <div className="panelBody">
-            {filteredSubjects.length === 0 ? (
+            {loading ? (
+              <div className="emptyState">
+                <div className="spinner-border text-primary"></div>
+                <p className="mb-0 fw-semibold mt-2">Loading...</p>
+              </div>
+            ) : filteredSubjects.length === 0 ? (
               <div className="emptyState">
                 <i className="bi bi-emoji-frown"></i>
                 <p className="mb-0 fw-semibold">No subjects found</p>
-                <small className="text-muted">
-                  Try searching with a different keyword.
-                </small>
               </div>
             ) : (
               filteredSubjects.map((sub, idx) => {
-                const key = `${classId}_${sectionId}_${sub._id}`;
-                const alloc = allocations[key];
-                const teacher = alloc
-                  ? DEMO_TEACHERS.find((t) => t._id === alloc.teacherId)
+                const subjectId = sub._id;
+                const alloc = allocations[subjectId];
+
+                const teacher = alloc?.teacherId
+                  ? teachers.find((t) => t._id === alloc.teacherId)
                   : null;
 
-                const isExpanded = expandedSubjectId === sub._id;
+                const isExpanded = expandedSubjectId === subjectId;
 
                 return (
                   <div
-                    key={sub._id}
+                    key={subjectId}
                     className={`subjectCard ${isExpanded ? "active" : ""}`}
                     onClick={() =>
                       setExpandedSubjectId((prev) =>
-                        prev === sub._id ? null : sub._id
+                        prev === subjectId ? null : subjectId
                       )
                     }
                   >
                     <div className="subjectTop">
                       <div className="subjectName">
                         <span className={`dot ${badgeColor(idx)}`}></span>
-                        <span className="fw-bold">{sub.subjectName}</span>
+                        <span className="fw-bold">
+                          {sub.subjectName || sub.name}
+                        </span>
                       </div>
 
                       {teacher ? (
@@ -320,36 +348,33 @@ function badgeColor(index) {
                     </div>
 
                     <div className="subjectMeta">
-                      {teacher ? (
-                        <div className="metaRow">
-                          <span className="metaLabel">Teacher:</span>
-                          <span className="metaValue">{teacher.name}</span>
-                        </div>
-                      ) : (
-                        <div className="metaRow">
-                          <span className="metaLabel">Teacher:</span>
-                          <span className="metaValue text-muted">
-                            Not assigned
-                          </span>
-                        </div>
-                      )}
-
                       <div className="metaRow">
-                        <span className="metaLabel">Weekly Periods:</span>
+                        <span className="metaLabel">Teacher:</span>
                         <span className="metaValue">
-                          {alloc?.weeklyPeriods ?? 0}
+                          {teacher ? teacher.user?.name : "Not assigned"}
                         </span>
                       </div>
+
+                      <div className="metaRow">
+                        <span className="metaLabel">Department:</span>
+                        <span className="metaValue">
+                          {teacher ? teacher.department : "-"}
+                        </span>
+                      </div>
+
+                      {/* <div className="metaRow">
+                        <span className="metaLabel">Weekly Periods:</span>
+                        <span className="metaValue">
+                          {alloc?.periodsPerWeek ?? 0}
+                        </span>
+                      </div> */}
                     </div>
 
-                    {/* EXPANDED EDIT PANEL */}
                     {isExpanded && (
                       <SubjectAllocateEditor
                         subject={sub}
-                        classId={classId}
-                        sectionId={sectionId}
-                        allocations={allocations}
-                        setAllocations={setAllocations}
+                        teachers={teachers}
+                        existing={alloc}
                         onAllocate={handleAllocate}
                         onRemove={handleRemove}
                       />
@@ -361,7 +386,7 @@ function badgeColor(index) {
           </div>
         </div>
 
-        {/* RIGHT: TABLE VIEW */}
+        {/* RIGHT */}
         <div className="panel">
           <div className="panelHeader">
             <h5 className="mb-0 fw-bold">
@@ -382,46 +407,54 @@ function badgeColor(index) {
                     <th style={{ width: "20%" }}>Action</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {allocationList.map((row) => {
-                    const hasTeacher = !!row.teacherId;
+                  {subjects.map((sub) => {
+                    const alloc = allocations[sub._id];
+                    const teacher = alloc?.teacherId
+                      ? teachers.find((t) => t._id === alloc.teacherId)
+                      : null;
+
                     return (
-                      <tr key={row.key}>
-                        <td className="fw-semibold">{row.subjectName}</td>
+                      <tr key={sub._id}>
+                        <td className="fw-semibold">
+                          {sub.subjectName || sub.name}
+                        </td>
+
                         <td>
-                          {hasTeacher ? (
+                          {teacher ? (
                             <div>
                               <div className="fw-semibold">
-                                {row.teacherName}
+                                {teacher.user?.name}
                               </div>
                               <small className="text-muted">
-                                {row.teacherEmail}
+                                {teacher.user?.email}
                               </small>
                             </div>
                           ) : (
                             <span className="text-muted">Not allocated</span>
                           )}
                         </td>
+
                         <td>
                           <span className="periodBadge">
-                            {row.weeklyPeriods}
+                            {alloc?.periodsPerWeek ?? 0}
                           </span>
                         </td>
+
                         <td>
                           <div className="d-flex gap-2">
                             <button
                               className="btn btn-sm btn-outline-primary"
-                              onClick={() => setExpandedSubjectId(row.subjectId)}
+                              onClick={() => setExpandedSubjectId(sub._id)}
                             >
                               <i className="bi bi-pencil-square me-1"></i> Edit
                             </button>
 
                             <button
                               className="btn btn-sm btn-outline-danger"
-                              disabled={!hasTeacher}
-                              onClick={() =>
-                                handleRemove({ subjectId: row.subjectId })
-                              }
+                              disabled={!alloc?.teacherId}
+                              onClick={() => handleRemove({ subjectId: sub._id })}
                             >
                               <i className="bi bi-trash3 me-1"></i> Remove
                             </button>
@@ -431,7 +464,7 @@ function badgeColor(index) {
                     );
                   })}
 
-                  {allocationList.length === 0 && (
+                  {subjects.length === 0 && (
                     <tr>
                       <td colSpan={4} className="text-center text-muted py-4">
                         No subjects found for this class.
@@ -447,8 +480,7 @@ function badgeColor(index) {
               <div>
                 <div className="fw-semibold">Tip</div>
                 <div className="text-muted">
-                  Click any subject card to allocate a teacher, or use the table
-                  edit button.
+                  Allocate teacher + weekly periods for each subject.
                 </div>
               </div>
             </div>
@@ -465,44 +497,27 @@ function badgeColor(index) {
   );
 }
 
-function SubjectAllocateEditor({
-  subject,
-  classId,
-  sectionId,
-  allocations,
-  onAllocate,
-  onRemove,
-}) {
-  const key = `${classId}_${sectionId}_${subject._id}`;
-  const existing = allocations[key];
-
+function SubjectAllocateEditor({ subject, teachers, existing, onAllocate, onRemove }) {
   const [teacherId, setTeacherId] = useState(existing?.teacherId || "");
-  const [weeklyPeriods, setWeeklyPeriods] = useState(
-    existing?.weeklyPeriods ?? 0
-  );
+  const [periodsPerWeek, setPeriodsPerWeek] = useState(existing?.periodsPerWeek ?? 0);
 
   useEffect(() => {
     setTeacherId(existing?.teacherId || "");
-    setWeeklyPeriods(existing?.weeklyPeriods ?? 0);
-  }, [existing?.teacherId, existing?.weeklyPeriods]);
+    setPeriodsPerWeek(existing?.periodsPerWeek ?? 0);
+  }, [existing?.teacherId, existing?.periodsPerWeek]);
 
-  const teacher = teacherId
-    ? DEMO_TEACHERS.find((t) => t._id === teacherId)
-    : null;
+  const teacher = teacherId ? teachers.find((t) => t._id === teacherId) : null;
 
   return (
     <div className="editorBox" onClick={(e) => e.stopPropagation()}>
       <div className="editorGrid">
         <div className="field">
           <label>Teacher</label>
-          <select
-            value={teacherId}
-            onChange={(e) => setTeacherId(e.target.value)}
-          >
+          <select value={teacherId} onChange={(e) => setTeacherId(e.target.value)}>
             <option value="">-- Select Teacher --</option>
-            {DEMO_TEACHERS.map((t) => (
+            {teachers.map((t) => (
               <option key={t._id} value={t._id}>
-                {t.name}
+                {t.user?.name} ({t.department})
               </option>
             ))}
           </select>
@@ -510,7 +525,7 @@ function SubjectAllocateEditor({
           {teacher && (
             <small className="text-muted">
               <i className="bi bi-envelope me-1"></i>
-              {teacher.email}
+              {teacher.user?.email}
             </small>
           )}
         </div>
@@ -519,12 +534,12 @@ function SubjectAllocateEditor({
           <label>Weekly Periods</label>
           <input
             type="number"
-            min="0"
-            value={weeklyPeriods}
-            onChange={(e) => setWeeklyPeriods(e.target.value)}
+            min="1"
+            value={periodsPerWeek}
+            onChange={(e) => setPeriodsPerWeek(e.target.value)}
             placeholder="0"
           />
-          <small className="text-muted">Optional</small>
+          <small className="text-muted">Required for timetable planning</small>
         </div>
       </div>
 
@@ -535,12 +550,12 @@ function SubjectAllocateEditor({
             onAllocate({
               subjectId: subject._id,
               teacherId,
-              weeklyPeriods,
+              periodsPerWeek,
             })
           }
         >
           <i className="bi bi-check2-circle me-1"></i>
-          Save Allocation
+          Save
         </button>
 
         <button

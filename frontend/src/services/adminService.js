@@ -66,8 +66,6 @@ export const getCompleteStudentProfileByAdmin = async (profileId) => {
   return res.data;
 };
 
-// ------------------------------------------------///
-
 export const createSubjectByAdmin = async (data) => {
   const res = await API.post("/admin/subjects", data);
   return res.data;
@@ -183,3 +181,38 @@ export const adminRejectReturn = async (requestId) => {
   const res = await API.put(`/admin/return-requests/${requestId}/reject`);
   return res.data;
 };
+
+// ****************************************************************************//
+
+export const allocateSubjectTeacher = async (payload) => {
+  const res = await API.post(`/admin/allocate-subject-teacher`, payload);
+  return res.data;
+};
+
+export const deleteClassSubjectAllocation = async (classId, subjectId) => {
+  const res = await API.delete(`/admin/deletedClassSubject/${classId}/${subjectId}`);
+  return res.data;
+};
+
+
+export const getAllocatedClass = async (classId) => {
+  const res = await API.get(`/admin/allocatedclass/${classId}`);
+  return res.data;
+};
+
+
+export const getAllClassesSubjectTimeTable = async()=>{
+  const res = await API.get("/admin/all-class-time-table");
+  return res.data;
+}
+
+export const getAllTeacherforTimeTable = async()=>{
+  const res = await API.get("/admin/all-teacher-time-table");
+  return res.data;
+}
+
+export const getSubjectsByClass = async(classId)=>{
+  const res =await API.get(`/admin/subject-by-class/${classId}`);
+  return res.data;
+}
+/********************************************************************************** */

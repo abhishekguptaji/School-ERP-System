@@ -280,6 +280,9 @@ export const adminGetAllInvoices = asyncHandler(async (req, res) => {
 
 
 export const adminGetDefaulters = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  if (!userId) throw new ApiError(401, "Unauthorized");
+
   const now = new Date();
 
   const { page = 1, limit = 50, className, search } = req.query;
@@ -298,16 +301,53 @@ export const adminGetDefaulters = asyncHandler(async (req, res) => {
     query.className = Number.isNaN(classNum) ? className : classNum;
   }
 
-  //  Optional: update overdue status
   await FeeInvoice.updateMany(query, { $set: { status: "OVERDUE" } });
 
-  let defaultersQuery = FeeInvoice.find(query)
-    .populate("studentId", "studentName rollNo className section admissionNumber")
+  const invoices = await FeeInvoice.find(query)
+    .populate("studentId", "name email") // ✅ User fields
     .sort({ dueDate: 1 })
     .skip(skip)
     .limit(limitNum);
 
-  const data = await defaultersQuery;
+  const userIds = invoices
+    .map((x) => x.studentId?._id)
+    .filter(Boolean);
+
+  const profiles = await StudentProfile.find({ user: { $in: userIds } }).select(
+    "userId admissionNumber rollNo  className"
+  );
+
+  const profileMap = new Map();
+  profiles.forEach((p) => profileMap.set(String(p.userId), p));
+
+  let defaulters = invoices.map((inv) => {
+    const uId = inv.studentId?._id ? String(inv.studentId._id) : null;
+
+    return {
+      ...inv.toObject(),
+      studentProfile: uId ? profileMap.get(uId) || null : null,
+    };
+  });
+
+  if (search) {
+    const s = String(search).toLowerCase().trim();
+
+    defaulters = defaulters.filter((inv) => {
+      const userName = inv?.studentId?.name || "";
+      const userEmail = inv?.studentId?.email || "";
+      const admission = inv?.studentProfile?.admissionNumber || "";
+      const roll = inv?.studentProfile?.rollNo || "";
+      const invoiceNo = inv?.invoiceNo || "";
+
+      return (
+        userName.toLowerCase().includes(s) ||
+        userEmail.toLowerCase().includes(s) ||
+        String(admission).toLowerCase().includes(s) ||
+        String(roll).toLowerCase().includes(s) ||
+        invoiceNo.toLowerCase().includes(s)
+      );
+    });
+  }
 
   const total = await FeeInvoice.countDocuments(query);
 
@@ -318,12 +358,14 @@ export const adminGetDefaulters = asyncHandler(async (req, res) => {
         total,
         page: pageNum,
         limit: limitNum,
-        defaulters: data,
+        defaulters,
       },
       "Defaulters list"
     )
   );
 });
+
+
 
 export const studentGetMyInvoices = asyncHandler(async (req, res) => {
   const userId = req.user?._id;

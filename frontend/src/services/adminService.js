@@ -240,3 +240,52 @@ export const clearTimeTable = async(classId) =>{
   return res.data;
 }
   
+// *******************************************
+
+export const adminSaveFeeStructure = async (data) => {
+  const res = await API.post(`/admin/structure`, data);
+  return res.data;
+};
+
+export const adminGetFeeStructures = async () => {
+  const res = await API.get(`/admin/structure`);
+  return res.data;
+};
+
+export const adminGenerateQuarterInvoices = async (data) => {
+  const res = await API.post("/admin/invoice/generate", data);
+  return res.data;
+};
+
+export const adminGetAllInvoices = () => {
+  const token = localStorage.getItem("token");
+
+  return API.get("/admin/invoice/all", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const adminGetDefaulters = async () => {
+  
+  const res = await API.get("/admin/invoice/defaulters");
+  return res.data;
+};
+
+
+
+export const adminCollectFee = (invoiceId, payload) => {
+  const token = localStorage.getItem("token");
+  return API.post(`/admin/invoice/${invoiceId}/collect`, payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const adminGetInvoicePayments = (invoiceId) => {
+  const token = localStorage.getItem("token");
+  const res =  API.get(`/admin/invoice/${invoiceId}/payments`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};

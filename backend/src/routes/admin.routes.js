@@ -63,6 +63,22 @@ import {
   clearTimeTable,
 } from "../controllers/timetable.controller.js";
 
+import {
+  upsertFeeStructure,
+  getFeeStructures,
+  getFeeStructureByClass,
+} from "../controllers/feeStructure.controller.js";
+
+import {
+  generateQuarterInvoices,
+  adminGetAllInvoices,
+  adminGetDefaulters,
+} from "../controllers/feeInvoice.controller.js";
+
+import {
+  collectFee,
+  adminGetPaymentsByInvoice,
+} from "../controllers/feePayment.controller.js";
 
 const router = Router();
 /************************************************************* */
@@ -192,5 +208,30 @@ router.delete("/book/:bookId", verifyJWT, deleteBookAdmin);
 router.get("/return-requests", verifyJWT, getReturnRequestsAdmin);
 router.put("/return-requests/:requestId/accept", verifyJWT, acceptReturnAdmin);
 router.put("/return-requests/:requestId/reject", verifyJWT, rejectReturnAdmin);
+
+
+
+
+// Admin Fee Structure
+router.post("/structure", verifyJWT, upsertFeeStructure);
+router.get("/structure", verifyJWT, getFeeStructures);
+router.get("/structure/:className/:academicYear", verifyJWT, getFeeStructureByClass);
+/********************************************************************** */
+
+// Admin Invoice
+router.post("/invoice/generate", verifyJWT, generateQuarterInvoices);
+router.get("/invoice/all", verifyJWT, adminGetAllInvoices); 
+router.get("/invoice/defaulters", verifyJWT, adminGetDefaulters);
+
+// Admin Fee Collection
+router.post("/invoice/:invoiceId/collect", verifyJWT, collectFee); //----
+router.get("/invoice/:invoiceId/payments", verifyJWT, adminGetPaymentsByInvoice);//---
+
+
+
+
+
+
+
 
 export default router;

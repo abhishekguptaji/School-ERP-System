@@ -24,7 +24,18 @@ import {
 
 import {getStudentNotice} from "../controllers/notice.controller.js";
 
+import {
+  studentGetMyInvoices,
+} from "../controllers/feeInvoice.controller.js";
+
+import {
+  studentGetMyReceipts,
+} from "../controllers/feePayment.controller.js";
+
 const router = Router();
+
+router.get("/invoice", verifyJWT, studentGetMyInvoices); 
+router.get("/receipts/:studentId", verifyJWT, studentGetMyReceipts);/**------------ */
 
 router.get("/student-profile", verifyJWT, getMyStudentProfile);
 

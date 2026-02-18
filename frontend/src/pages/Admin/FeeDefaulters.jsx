@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { adminGetDefaulters } from "../../services/adminService.js";
-
+import Swal from "sweetalert2";
 function formatMoney(amount) {
   return "₹" + Number(amount || 0).toLocaleString("en-IN");
 }
@@ -18,21 +18,22 @@ const fetchDefaulters = async (showLoader = true) => {
       });
     }
 
-    const res = await adminGetDefaulters(); // your API
+    const res = await adminGetDefaulters(); // returns res.data already
+    console.log(res);
 
-    if (!res.data?.success) {
-      throw new Error(res.data?.message || "Failed to load defaulters");
+    if (!res?.success) {
+      throw new Error(res?.message || "Failed to load defaulters");
     }
 
-    const list = res.data?.data?.defaulters || [];
-    setDefaulters(list);
+    const list = res?.data?.defaulters || [];
+    setData(list);
 
     if (showLoader) {
       Swal.close();
       Swal.fire({
         icon: "success",
         title: "Defaulters Loaded",
-        text: `Total: ${res.data?.data?.total || list.length}`,
+        text: `Total: ${res?.data?.total || list.length}`,
         timer: 1200,
         showConfirmButton: false,
       });

@@ -145,3 +145,20 @@ export const studentRequestReturn = async (data) => {
   const res = await API.post("/student/request-return");
   return res;
 };
+
+
+export const studentGetMyInvoices = async () => {
+  const token = localStorage.getItem("token");
+  const res = await API.get("/student/invoice", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data; 
+};
+
+export const studentGetMyReceipts = async(studentId) =>{
+  const res = await API.get(`/student/receipts/${studentId}`);
+  res.data;
+}

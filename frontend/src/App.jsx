@@ -25,7 +25,12 @@ import {
   Settings,
   AdminLibrary,
   NoticePanel,
-  FindTeacherAll
+  FindTeacherAll,
+
+  GenerateQuarterInvoices,
+  FeeStructure,
+  FeeCollection,
+  FeeDefaulters,
 } from "./AdminImports";
 
 /* ===== TEACHER ===== */
@@ -100,6 +105,14 @@ function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="library" element={<AdminLibrary />}/>
           <Route path="find-teacher-all" element={<FindTeacherAll />}/>
+
+          <Route path="fees/structure" element={<FeeStructure />} />
+          <Route path="fees/generate" element={<GenerateQuarterInvoices />} />
+          <Route path="fees/collection" element={<FeeCollection />} />
+          <Route path="fees/defaulters" element={<FeeDefaulters />} />
+
+
+
         </Route>
 
         {/* ================= TEACHER ================= */}

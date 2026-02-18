@@ -1,6 +1,7 @@
 import "./css/AdminNavbar.css";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { logoutUser } from "../../services/authService";
 
 function AdminNavbar() {
@@ -12,6 +13,14 @@ function AdminNavbar() {
     localStorage.removeItem("user");
     navigate("/", { replace: true });
   };
+
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+
+  // Auto close when route changes
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
@@ -63,23 +72,65 @@ function AdminNavbar() {
               </li>
 
               <li className="nav-item">
-                <Link className="nav-link" to="/admin/library">
-                  <i className="bi bi-book me-2"></i>
-                  Library
-                </Link>
-              </li>
-
-              <li className="nav-item">
                 <Link className="nav-link" to="/admin/grievance-profile">
                   <i className="bi bi-chat-left-text-fill me-2"></i>
                   Grievance Panel
                 </Link>
               </li>
-
+              {/* ************************************************************* */}
               <li className="nav-item">
+                <button
+                  className="nav-link btn w-100 text-start d-flex justify-content-between align-items-center"
+                  type="button"
+                  onClick={() => setOpen((p) => !p)}
+                  style={{ background: "transparent", border: "none" }}
+                >
+                  <span>
+                    <i className="bi bi-currency-rupee me-2"></i>
+                    Fees
+                  </span>
+
+                  <i className={`bi bi-chevron-${open ? "up" : "down"}`}></i>
+                </button>
+
+                {/* Dropdown menu */}
+                {open && (
+                  <div className="ps-4">
+                    <ul className="nav flex-column">
+                      <li className="nav-item">
+                        <Link className="nav-link" to="/admin/fees/structure">
+                          Fee Structure
+                        </Link>
+                      </li>
+
+                      <li className="nav-item">
+                        <Link
+                          className="nav-link"
+                          to="/admin/fees/generate"
+                        >
+                          Generate Invoices
+                        </Link>
+                      </li>
+
+                      <li className="nav-item">
+                        <Link className="nav-link" to="/admin/fees/collection">
+                          Fee Collection
+                        </Link>
+                      </li>
+
+                      <li className="nav-item">
+                        <Link className="nav-link" to="/admin/fees/defaulters">
+                          Defaulters
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </li>
+{/* *************************************************************************** */}
+             <li className="nav-item">
                 <Link className="nav-link" to="/admin/notices-panel">
                   <i className="bi bi-megaphone me-2"></i>
-
                   Notice Panel
                 </Link>
               </li>
@@ -107,12 +158,11 @@ function AdminNavbar() {
             <li className="nav-item">
               <Link className="nav-link" to="/admin/dashboard">
                 <i className="bi bi-speedometer2 me-2"></i>
-                Dashboard 
+                Dashboard
               </Link>
             </li>
 
             <li className="nav-item">
-              
               <Link className="nav-link" to="/admin/find-students-all">
                 <i className="bi bi-people-fill me-2"></i>
                 Find Students
@@ -146,11 +196,10 @@ function AdminNavbar() {
                 Time-Table
               </Link>
             </li>
-
             <li className="nav-item">
-              <Link className="nav-link" to="/admin/fees">
-                <i className="bi bi-cash-coin me-2"></i>
-                Fees
+              <Link className="nav-link" to="/admin/library">
+                <i className="bi bi-book me-2"></i>
+                Library
               </Link>
             </li>
 

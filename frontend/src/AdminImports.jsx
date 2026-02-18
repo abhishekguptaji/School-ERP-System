@@ -15,6 +15,12 @@ import Settings from "./pages/Admin/Reports";
 import AdminLibrary from "./pages/Admin/AdminLibrary";
 import NoticePanel from "./pages/Admin/NoticePanel";
 import FindTeacherAll from "./pages/Admin/FindTeacherAll";
+
+import GenerateQuarterInvoices from "./pages/Admin/GenerateQuarterInvoices";
+import FeeStructure from "./pages/Admin/FeeStructure";
+import FeeCollection from "./pages/Admin/FeeCollection";
+import FeeDefaulters from "./pages/Admin/FeeDefaulters";
+
 export {
   AdminLayout,
   AdminDashboard,
@@ -32,5 +38,11 @@ export {
   Settings,
   AdminLibrary,
   NoticePanel,
-  FindTeacherAll
+  FindTeacherAll,
+
+  GenerateQuarterInvoices,
+  FeeStructure,
+  FeeCollection,
+  FeeDefaulters,
+
 };

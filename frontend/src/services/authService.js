@@ -132,7 +132,7 @@ export const getStudentNotices = async () =>{
 
 
 export const studentGetAllBooks = async () => {
-  const res = await axios.get(`${API}/student/all`);
+  const res = await API.get(`${API}/student/all`);
   return res;
 };
 
@@ -162,3 +162,18 @@ export const studentGetMyReceipts = async(studentId) =>{
   const res = await API.get(`/student/receipts/${studentId}`);
   res.data;
 }
+
+
+
+export const studentApplyLeave = async (formDataOrJson) => {
+  const res = await API.post("/student/leave-appiled/myself", formDataOrJson);
+  return res.data;
+};
+
+
+export const getMyStudentLeaves = async (status = "") => {
+  const res = await API.get(
+    `/student/leave-appiled/myself/${status ? `?status=${status}` : ""}`
+  );
+  return res.data;
+};

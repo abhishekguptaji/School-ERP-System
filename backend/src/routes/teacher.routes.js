@@ -18,7 +18,17 @@ import {
 import {
   getTeacherProfileShort
 } from "../controllers/teacherDashboard.controller.js";
+
+import {
+  teacherGetPendingLeaves,
+  teacherActionOnLeave 
+} from "../controllers/studentleave.controller.js";
+
 const router = Router();
+
+router.get("/studentleave/pending", verifyJWT, teacherGetPendingLeaves);
+router.patch("/studentleave/action/:leaveId", verifyJWT, teacherActionOnLeave);
+
 
 router.post("/password-change", verifyJWT, passwordChangeTeacher);
 

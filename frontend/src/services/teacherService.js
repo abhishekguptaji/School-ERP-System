@@ -41,3 +41,17 @@ export const getTeacherNotices = async () =>{
   const res = await API.get("/teacher/get-notice");
   return res.data;
 }
+
+
+export const getTeacherPendingLeaves = async () => {
+  const res = await API.get("teacher/studentleave/pending");
+  return res.data;
+};
+
+export const teacherActionOnLeave = async (leaveId, payload) => {
+  const res = await API.patch(
+    `teacher/studentleave/action/${leaveId}`,
+    payload
+  );
+  return res.data;
+};

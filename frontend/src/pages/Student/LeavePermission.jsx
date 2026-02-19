@@ -1,6 +1,11 @@
-
 import { useEffect, useMemo, useState } from "react";
-// import { applyLeave, getMyLeaves } from "../api/leave.api";
+import Swal from "sweetalert2";
+import {
+  getMyStudentLeaves,
+  studentApplyLeave,
+} from "../../services/authService.js";
+
+const LEAVE_TYPES = ["SICK", "CASUAL", "EMERGENCY", "OTHER"];
 
 function LeavePermission() {
   const [loading, setLoading] = useState(false);
@@ -11,42 +16,76 @@ function LeavePermission() {
 
   const [filters, setFilters] = useState({
     search: "",
-    status: "All",
+    status: "ALL",
   });
 
   const [formData, setFormData] = useState({
-    title: "",
+    leaveType: "SICK",
     reason: "",
     fromDate: "",
     toDate: "",
   });
 
-  // ===================== UI HELPERS =====================
-  const statusBadge = (status) => {
-    if (status === "Approved") return "success";
-    if (status === "Rejected") return "danger";
-    return "warning"; // Pending
-  };
+  const [file, setFile] = useState(null);
 
   const formatDate = (d) => {
     if (!d) return "";
     return new Date(d).toISOString().slice(0, 10);
   };
 
+  const statusBadge = (finalStatus) => {
+    if (finalStatus === "APPROVED") return "success";
+    if (finalStatus === "REJECTED") return "danger";
+    return "warning";
+  };
+
+  const prettyStatus = (finalStatus) => {
+    if (finalStatus === "APPROVED") return "Approved";
+    if (finalStatus === "REJECTED") return "Rejected";
+    return "Pending";
+  };
+
+  const getProgressText = (l) => {
+    if (l.finalStatus === "APPROVED") return "Approved";
+    if (l.finalStatus === "REJECTED") return "Rejected";
+
+    if (l.teacherStatus === "PENDING") return "Waiting for Teacher";
+    if (l.teacherStatus === "FORWARD") return "Forwarded to Admin";
+    return "Pending";
+  };
+
+  // ===================== SWAL HELPERS =====================
+  const toastSuccess = (msg) => {
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: msg,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+  };
+
+  const popupError = (msg) => {
+    Swal.fire({
+      icon: "error",
+      title: "Oops!",
+      text: msg,
+      confirmButtonText: "OK",
+    });
+  };
+
   // ===================== FETCH LEAVES =====================
   const fetchLeaves = async () => {
     try {
       setFetching(true);
-      const res = await getMyLeaves();
-
-      // Expected format:
-      // res.data = [{...}, {...}]
-      // but if your backend returns directly array, handle both:
-      const list = res?.data || res || [];
+      const res = await getMyStudentLeaves();
+      const list = res?.data || [];
       setLeaves(list);
     } catch (err) {
       console.log(err);
-      alert(err?.response?.data?.message || "Failed to fetch leaves");
+      popupError(err?.response?.data?.message || "Failed to fetch leaves");
     } finally {
       setFetching(false);
     }
@@ -58,44 +97,76 @@ function LeavePermission() {
 
   // ===================== SUBMIT LEAVE =====================
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // small validation
+    if (!formData.leaveType) return popupError("Leave type is required");
+    if (!formData.reason?.trim()) return popupError("Reason is required");
+    if (!formData.fromDate) return popupError("From date is required");
+    if (!formData.toDate) return popupError("To date is required");
+
     if (new Date(formData.fromDate) > new Date(formData.toDate)) {
-      alert("From date cannot be greater than To date");
-      return;
+      return popupError("From date cannot be greater than To date");
     }
+
+    // optional file validation
+    if (file) {
+      const allowed = ["image/jpeg", "image/png", "application/pdf"];
+      if (!allowed.includes(file.type)) {
+        return popupError("Only JPG, PNG, PDF files are allowed");
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        return popupError("File size must be under 5MB");
+      }
+    }
+
+    const confirm = await Swal.fire({
+      icon: "question",
+      title: "Submit Leave Request?",
+      html: `
+        <div style="text-align:left">
+          <div><b>Type:</b> ${formData.leaveType}</div>
+          <div><b>From:</b> ${formData.fromDate}</div>
+          <div><b>To:</b> ${formData.toDate}</div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "Yes, Submit",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!confirm.isConfirmed) return;
 
     try {
       setLoading(true);
 
-      const payload = {
-        title: formData.title,
-        reason: formData.reason,
-        fromDate: formData.fromDate,
-        toDate: formData.toDate,
-      };
+      const fd = new FormData();
+      fd.append("leaveType", formData.leaveType);
+      fd.append("reason", formData.reason);
+      fd.append("fromDate", formData.fromDate);
+      fd.append("toDate", formData.toDate);
 
-      await applyLeave(payload);
+      if (file) fd.append("attachment", file);
 
-      alert("Leave applied successfully");
+      await studentApplyLeave(fd);
+
+      toastSuccess("Leave applied successfully");
 
       setFormData({
-        title: "",
+        leaveType: "SICK",
         reason: "",
         fromDate: "",
         toDate: "",
       });
 
-      // refresh list
+      setFile(null);
       fetchLeaves();
     } catch (err) {
       console.log(err);
-      alert(err?.response?.data?.message || "Leave apply failed");
+      popupError(err?.response?.data?.message || "Leave apply failed");
     } finally {
       setLoading(false);
     }
@@ -104,39 +175,55 @@ function LeavePermission() {
   // ===================== FILTERED LIST =====================
   const filteredLeaves = useMemo(() => {
     return leaves.filter((l) => {
-      const title = (l.title || "").toLowerCase();
-      const reason = (l.reason || "").toLowerCase();
-      const q = filters.search.toLowerCase();
+      const q = filters.search.toLowerCase().trim();
 
-      const matchSearch = title.includes(q) || reason.includes(q);
+      const matchSearch =
+        !q ||
+        (l.leaveType || "").toLowerCase().includes(q) ||
+        (l.reason || "").toLowerCase().includes(q);
 
       const matchStatus =
-        filters.status === "All" ? true : l.status === filters.status;
+        filters.status === "ALL" ? true : l.finalStatus === filters.status;
 
       return matchSearch && matchStatus;
     });
   }, [leaves, filters]);
 
+  // ===================== LIGHT THEME STYLES =====================
+  const GRADIENT = "linear-gradient(135deg,#0b0f19,#111827)";
+  const PAGE_BG = "#f5f7fb";
+  const CARD_BG = "#ffffff";
+  const SOFT_BG = "#f3f4f6";
+  const BORDER = "rgba(0,0,0,0.08)";
+  const TEXT_MUTED = "rgba(0,0,0,0.55)";
+
   return (
-    <div className="min-vh-100 bg-light py-4">
-      <div className="container" style={{ maxWidth: 1200 }}>
+    <div className="min-vh-100 " style={{ background: PAGE_BG }}>
+      <div className="container" style={{ maxWidth: 1250 }}>
         {/* HEADER */}
         <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
           <div>
-            <h3 className="fw-bold mb-1">
-              <i className="bi bi-calendar2-check-fill text-primary me-2"></i>
-              Leave Application
-            </h3>
-            <div className="text-muted">
-              Apply leave and track approval status
+            <div className="d-flex align-items-center gap-3">
+  
+
+              <div>
+                <h3 className="fw-bold mb-0">Leave Permission</h3>
+                <div className="small" style={{ color: TEXT_MUTED }}>
+                  Apply leave and track approvals (Teacher → Admin)
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="d-flex gap-2">
             <button
-              className="btn btn-outline-secondary rounded-3"
+              className="btn rounded-4 px-3"
               onClick={fetchLeaves}
               disabled={fetching}
+              style={{
+                background: CARD_BG,
+                border: `1px solid ${BORDER}`,
+              }}
             >
               <i className="bi bi-arrow-clockwise me-2"></i>
               {fetching ? "Refreshing..." : "Refresh"}
@@ -147,37 +234,66 @@ function LeavePermission() {
         <div className="row g-4">
           {/* APPLY LEAVE FORM */}
           <div className="col-lg-5">
-            <div className="card border-0 shadow-sm rounded-4">
-              <div className="card-body p-4">
-                <h5 className="fw-bold mb-3">
-                  <i className="bi bi-pencil-square text-primary me-2"></i>
+            <div
+              className="card border-0 rounded-4 shadow-sm overflow-hidden"
+              style={{
+                background: CARD_BG,
+                border: `1px solid ${BORDER}`,
+              }}
+            >
+              <div
+                className="p-4"
+                style={{
+                  background: GRADIENT,
+                  color: "white",
+                }}
+              >
+                <h5 className="fw-bold mb-1">
+                  <i className="bi bi-pencil-square me-2"></i>
                   Apply for Leave
                 </h5>
+                <div className="small" style={{ opacity: 0.9 }}>
+                  Fill the form carefully before submitting.
+                </div>
+              </div>
 
+              <div className="card-body p-4">
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">Title</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="title"
-                      value={formData.title}
+                    <label className="form-label fw-semibold">Leave Type</label>
+                    <select
+                      className="form-select rounded-4"
+                      name="leaveType"
+                      value={formData.leaveType}
                       onChange={handleChange}
-                      placeholder="e.g. Fever / Family Function"
                       required
-                    />
+                      style={{
+                        background: SOFT_BG,
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    >
+                      {LEAVE_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="mb-3">
                     <label className="form-label fw-semibold">Reason</label>
                     <textarea
-                      className="form-control"
-                      rows="3"
+                      className="form-control rounded-4"
+                      rows="4"
                       name="reason"
                       value={formData.reason}
                       onChange={handleChange}
                       placeholder="Write your reason..."
                       required
+                      style={{
+                        background: SOFT_BG,
+                        border: `1px solid ${BORDER}`,
+                      }}
                     />
                   </div>
 
@@ -188,11 +304,15 @@ function LeavePermission() {
                       </label>
                       <input
                         type="date"
-                        className="form-control"
+                        className="form-control rounded-4"
                         name="fromDate"
                         value={formData.fromDate}
                         onChange={handleChange}
                         required
+                        style={{
+                          background: SOFT_BG,
+                          border: `1px solid ${BORDER}`,
+                        }}
                       />
                     </div>
 
@@ -200,18 +320,47 @@ function LeavePermission() {
                       <label className="form-label fw-semibold">To Date</label>
                       <input
                         type="date"
-                        className="form-control"
+                        className="form-control rounded-4"
                         name="toDate"
                         value={formData.toDate}
                         onChange={handleChange}
                         required
+                        style={{
+                          background: SOFT_BG,
+                          border: `1px solid ${BORDER}`,
+                        }}
                       />
+                    </div>
+                  </div>
+
+                  {/* ATTACHMENT */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      Attachment (optional)
+                    </label>
+                    <input
+                      type="file"
+                      className="form-control rounded-4"
+                      accept=".jpg,.jpeg,.png,.pdf"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      style={{
+                        background: SOFT_BG,
+                        border: `1px solid ${BORDER}`,
+                      }}
+                    />
+                    <div className="small mt-1" style={{ color: TEXT_MUTED }}>
+                      Allowed: JPG, PNG, PDF (Max 5MB)
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="btn btn-primary w-100 rounded-3 py-2 fw-semibold"
+                    className="btn w-100 rounded-4 py-2 fw-semibold"
+                    style={{
+                      background: GRADIENT,
+                      color: "white",
+                      border: "none",
+                    }}
                     disabled={loading}
                   >
                     {loading ? (
@@ -228,9 +377,17 @@ function LeavePermission() {
                   </button>
                 </form>
 
-                <div className="alert alert-light border rounded-3 small mt-3 mb-0">
+                <div
+                  className="mt-3 p-3 rounded-4"
+                  style={{
+                    background: SOFT_BG,
+                    border: `1px solid ${BORDER}`,
+                    color: TEXT_MUTED,
+                  }}
+                >
                   <i className="bi bi-info-circle me-2"></i>
-                  Your leave request will be reviewed by the teacher/admin.
+                  Teacher will approve first. If required, teacher will forward it
+                  to admin.
                 </div>
               </div>
             </div>
@@ -238,7 +395,13 @@ function LeavePermission() {
 
           {/* LEAVE LIST */}
           <div className="col-lg-7">
-            <div className="card border-0 shadow-sm rounded-4">
+            <div
+              className="card border-0 shadow-sm rounded-4"
+              style={{
+                background: CARD_BG,
+                border: `1px solid ${BORDER}`,
+              }}
+            >
               <div className="card-body p-4">
                 <div className="d-flex align-items-start justify-content-between gap-3 flex-wrap">
                   <div>
@@ -246,7 +409,7 @@ function LeavePermission() {
                       <i className="bi bi-list-check text-primary me-2"></i>
                       My Leave Requests
                     </h5>
-                    <div className="text-muted small">
+                    <div className="small" style={{ color: TEXT_MUTED }}>
                       Total: <b>{leaves.length}</b> | Showing:{" "}
                       <b>{filteredLeaves.length}</b>
                     </div>
@@ -263,10 +426,10 @@ function LeavePermission() {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Search by title or reason..."
+                        placeholder="Search by leave type or reason..."
                         value={filters.search}
                         onChange={(e) =>
-                          setFilters({ ...filters, search: e.target.value })
+                          setFilters((p) => ({ ...p, search: e.target.value }))
                         }
                       />
                     </div>
@@ -277,13 +440,13 @@ function LeavePermission() {
                       className="form-select"
                       value={filters.status}
                       onChange={(e) =>
-                        setFilters({ ...filters, status: e.target.value })
+                        setFilters((p) => ({ ...p, status: e.target.value }))
                       }
                     >
-                      <option value="All">All Status</option>
-                      <option value="Pending">Pending</option>
-                      <option value="Approved">Approved</option>
-                      <option value="Rejected">Rejected</option>
+                      <option value="ALL">All Status</option>
+                      <option value="PENDING">Pending</option>
+                      <option value="APPROVED">Approved</option>
+                      <option value="REJECTED">Rejected</option>
                     </select>
                   </div>
                 </div>
@@ -299,24 +462,35 @@ function LeavePermission() {
                     <div className="d-flex flex-column gap-3">
                       {filteredLeaves.map((l) => (
                         <div
-                          key={l._id || l.id}
+                          key={l._id}
                           className="border rounded-4 p-3 bg-white"
                         >
                           <div className="d-flex align-items-start justify-content-between gap-3">
                             <div>
-                              <div className="fw-bold">{l.title}</div>
+                              <div className="fw-bold d-flex align-items-center gap-2">
+                                <span>{l.leaveType}</span>
+                                <span className="badge text-bg-light border text-dark rounded-pill">
+                                  {l.totalDays || 1} day(s)
+                                </span>
+                              </div>
+
                               <div className="text-muted small mt-1">
                                 <i className="bi bi-calendar-event me-2"></i>
                                 {formatDate(l.fromDate)} → {formatDate(l.toDate)}
+                              </div>
+
+                              <div className="text-muted small mt-1">
+                                <i className="bi bi-hourglass-split me-2"></i>
+                                {getProgressText(l)}
                               </div>
                             </div>
 
                             <span
                               className={`badge text-bg-${statusBadge(
-                                l.status || "Pending"
+                                l.finalStatus
                               )} rounded-pill`}
                             >
-                              {l.status || "Pending"}
+                              {prettyStatus(l.finalStatus)}
                             </span>
                           </div>
 
@@ -324,8 +498,8 @@ function LeavePermission() {
                             className="text-muted mt-2"
                             style={{ lineHeight: 1.6 }}
                           >
-                            {(l.reason || "").length > 120
-                              ? l.reason.slice(0, 120) + "..."
+                            {(l.reason || "").length > 140
+                              ? l.reason.slice(0, 140) + "..."
                               : l.reason}
                           </div>
 
@@ -334,7 +508,7 @@ function LeavePermission() {
                               className="btn btn-outline-primary btn-sm rounded-3"
                               onClick={() => setSelectedLeave(l)}
                             >
-                              View Details <i className="bi bi-eye ms-1"></i>
+                              View <i className="bi bi-eye ms-1"></i>
                             </button>
                           </div>
                         </div>
@@ -355,10 +529,10 @@ function LeavePermission() {
           style={{ display: "block", background: "rgba(0,0,0,0.6)" }}
         >
           <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content border-0 rounded-4">
+            <div className="modal-content border-0 rounded-4 overflow-hidden">
               <div className="modal-header border-0 pb-0">
                 <h5 className="modal-title fw-bold">
-                  {selectedLeave.title}
+                  {selectedLeave.leaveType} Leave
                 </h5>
                 <button
                   type="button"
@@ -377,10 +551,18 @@ function LeavePermission() {
 
                   <span
                     className={`badge text-bg-${statusBadge(
-                      selectedLeave.status || "Pending"
+                      selectedLeave.finalStatus
                     )} rounded-pill`}
                   >
-                    {selectedLeave.status || "Pending"}
+                    {prettyStatus(selectedLeave.finalStatus)}
+                  </span>
+
+                  <span className="badge text-bg-light border text-dark rounded-pill">
+                    Teacher: {selectedLeave.teacherStatus}
+                  </span>
+
+                  <span className="badge text-bg-light border text-dark rounded-pill">
+                    Admin: {selectedLeave.adminStatus}
                   </span>
                 </div>
 
@@ -391,23 +573,30 @@ function LeavePermission() {
                   </div>
                 </div>
 
-                {/* Admin response */}
                 <div className="mt-3 p-3 border rounded-4">
-                  <div className="fw-semibold mb-1">
+                  <div className="fw-semibold mb-2">
                     <i className="bi bi-reply-fill me-2"></i>
-                    Response
+                    Teacher Remark
                   </div>
 
-                  {selectedLeave.response ? (
-                    <div className="text-muted" style={{ lineHeight: 1.7 }}>
-                      {selectedLeave.response}
-                    </div>
-                  ) : (
-                    <div className="text-muted">
-                      No response yet. Please wait for approval.
-                    </div>
-                  )}
+                  <div className="text-muted" style={{ lineHeight: 1.7 }}>
+                    {selectedLeave.teacherRemark || "Not given"}
+                  </div>
                 </div>
+
+                {selectedLeave.attachment ? (
+                  <div className="mt-3">
+                    <a
+                      href={selectedLeave.attachment}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-outline-secondary rounded-4"
+                    >
+                      <i className="bi bi-paperclip me-2"></i>
+                      View Attachment
+                    </a>
+                  </div>
+                ) : null}
               </div>
 
               <div className="modal-footer border-0">

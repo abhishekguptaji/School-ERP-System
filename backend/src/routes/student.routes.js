@@ -32,7 +32,26 @@ import {
   studentGetMyReceipts,
 } from "../controllers/feePayment.controller.js";
 
+import {
+  applyStudentLeave,
+  getMyStudentLeaves
+} from "../controllers/studentleave.controller.js";
+
 const router = Router();
+
+router.post(
+  "/leave-appiled/myself",
+  verifyJWT,
+  upload.fields([
+    {
+      name: "attachment",
+      maxcount: 1,
+    },
+  ]),
+  applyStudentLeave,
+);
+router.get("/leave-appiled/myself", verifyJWT, getMyStudentLeaves);
+
 
 router.get("/invoice", verifyJWT, studentGetMyInvoices); 
 router.get("/receipts/:studentId", verifyJWT, studentGetMyReceipts);/**------------ */

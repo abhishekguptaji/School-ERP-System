@@ -1,380 +1,160 @@
-🎓 School ERP System
+# 🎓 School ERP System
 
-A Complete MERN Stack Based School Management Solution
+A **Full Stack School Enterprise Resource Planning (ERP) System** designed to digitally manage and automate academic and administrative operations in schools. The application supports **role-based access control** for Admin, Teacher, and Student users, allowing secure, scalable, and modular handling of school data and processes.:contentReference[oaicite:1]{index=1}
 
-The School ERP System is a full-stack web application designed to digitize and automate school administrative and academic processes. It provides role-based dashboards for Admin, Teachers, and Students, enabling centralized management of academic records, attendance, fees, timetable, library, and more.
+---
 
-📌 Table of Contents
+##  Project Overview
 
-Project Overview
+School ERP System is a web-based application that replaces manual school management processes with a modern digital platform. It centralizes and automates key operations such as:
 
-System Architecture
+✔ User management (Admin, Teacher, Student)  
+✔ Secure authentication and role-based authorization  
+✔ Academic data handling  
+✔ Modular frontend and backend architecture  
+✔ REST API driven backend  
+✔ Scalable and extendable structure
 
-Core Modules
+This system is ideal for academic institutions looking to reduce paperwork, improve efficiency, and maintain accurate records.:contentReference[oaicite:2]{index=2}
 
-Technology Stack
+---
 
-Folder Structure
+##  User Roles & Access
 
-Installation Guide
+| Role     | Capabilities |
+|----------|--------------|
+| **Admin**    | Manage students, teachers, classes, subjects, and system settings |
+| **Teacher**  | View assigned classes and students |
+| **Student**  | View personal academic and profile information |
 
-Environment Variables
+Each role has specific privileges enforced through server-side **JWT authentication** and middleware checks.:contentReference[oaicite:3]{index=3}
 
-API Overview
+---
 
-Authentication & Authorization
+##  Tech Stack
 
-Database Design
+**Frontend:** React (HTML, CSS, JavaScript UI)  
+**Backend:** Node.js, Express.js  
+**Database:** MongoDB  
+**API:** RESTful Endpoints  
+**Authentication:** JWT Token Authentication  
+**Architecture:** Client ⇄ Server ⇄ Database:contentReference
 
-Screenshots
+---
 
-Future Enhancements
-
-Contributing
-
-License
-
-📖 Project Overview
-
-Managing school operations manually is time-consuming and error-prone. This ERP system centralizes all major operations into a single platform:
-
-Student Information Management
-
-Teacher Management
-
-Attendance Tracking
-
-Fee & Invoice Management
-
-Timetable Management
-
-Library Management
-
-Assignment & Study Material Upload
-
-Role-Based Secure Access
-
-The system ensures:
-
-Data consistency
-
-Secure authentication
-
-Scalable backend architecture
-
-Responsive user interface
-
-🏗 System Architecture
-Frontend (React)
-        ↓
-REST API (Express.js)
-        ↓
-MongoDB Database
-
-Frontend communicates with backend using Axios
-
-Backend handles business logic & authentication
-
-MongoDB stores user, academic & transactional data
-
-JWT used for secure API access
-
-📦 Core Modules
-👨‍💼 Admin Panel
-
-Admin has complete system control:
-
-Add / Update / Delete:
-
-Students
-
-Teachers
-
-Classes
-
-Subjects
-
-Generate Fee Structures & Invoices
-
-Assign Teachers to Subjects
-
-Manage Timetable
-
-Library Book & Copy Management
-
-Monitor system data
-
-👨‍🏫 Teacher Panel
-
-Teachers can:
-
-View assigned classes
-
-Mark attendance
-
-Upload study materials
-
-Upload assignments
-
-Manage student academic records
-
-View timetable
-
-👩‍🎓 Student Panel
-
-Students can:
-
-View attendance records
-
-View fee invoices
-
-Download study materials
-
-Submit assignments
-
-View timetable
-
-View issued library books
-
-💰 Fee Management System
-
-Quarterly fee generation
-
-Academic year-based billing
-
-Due date tracking
-
-Invoice generation per class
-
-Payment status tracking
-
-📚 Library Management
-
-Book management
-
-Unique copy generation
-
-Issue & return tracking
-
-Student-wise issued book records
-
-🗓 Timetable Management
-
-Class-based scheduling
-
-Subject-teacher allocation
-
-Conflict prevention logic
-
-🛠 Technology Stack
-🔹 Frontend
-
-React.js
-
-Axios
-
-React Hooks
-
-Context API / Local Storage
-
-CSS / Bootstrap
-
-🔹 Backend
-
-Node.js
-
-Express.js
-
-Mongoose
-
-JWT Authentication
-
-Async/Await Error Handling
-
-🔹 Database
-
-MongoDB
-
-🔹 Dev Tools
-
-Nodemon
-
-Postman
-
-Git & GitHub
-
-📂 Folder Structure
+## 🗂 Folder Structure
 School-ERP-System/
-│
 ├── backend/
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── middlewares/
-│   │   ├── utils/
-│   │   └── app.js
-│   ├── package.json
-│   └── .env
-│
+│ ├── controllers/
+│ ├── models/
+│ ├── routes/
+│ ├── config/
+│ └── server.js
 ├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── context/
-│   │   └── App.js
-│   └── package.json
-│
+│ ├── components/
+│ ├── pages/
+│ ├── services/
+│ └── App.js
+├── .gitignore
+├── LICENSE
 └── README.md
-⚙ Installation Guide
-1️⃣ Clone Repository
+
+:contentReference[oaicite:5]{index=5}
+
+---
+
+## Features
+
+### 📌 Authentication
+- Secure login for all roles using JWT
+- Password hashing  
+- Role-based access control
+
+###  Admin Dashboard
+- Create, view, edit, delete users like students and Teacher
+- Grievance Panel handle for the students
+- Create Fee for the Students in the Quateraly basis  
+- Assign classes and subjects
+- Create Notice for the Students , Teacher and All.
+- Show the necessary details are in the like all student, teacher and attendece details and the failure of the students.   
+- Assign Fee For Classes and subjects,teachers notice.   
+
+### Teacher Panel
+- View assigned classes
+- See student lists and details.
+- Add Assignment and Study Material.
+- ClassTeacher uploaded for the students of their class.
+- ClassTeacher accepted the student Request for the leave if the leave is more than 1 to 2 days forward to the admin..
+- And Many more...................................................
+
+### 📌 Student Panel
+- Profile & academic info
+- Dashboard for class schedules
+
+> ⚠ Modules like attendance, timetable, fee management, and notifications are **planned for future enhancements** 
+
+---
+
+## 🛠 Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/abhishekguptaji/School-ERP-System.git
 cd School-ERP-System
-2️⃣ Backend Setup
 cd backend
 npm install
 
-Create a .env file inside backend:
+### Create a .env file with:
+PORT=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+MONGODB_URI=
+CORS_ORIGIN=
+ACCESS_TOKEN_SECRET=
+REFRESH_TOKEN_SECRET=
+ACCESS_TOKEN_EXPIRY=
+REFRESH_TOKEN_EXPIRY=
 
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-
-Start backend server:
-
+Start backend:
 npm run dev
 
-Server runs on:
-
-http://localhost:5000
-3️⃣ Frontend Setup
-cd frontend
+Frontend Setup:
+cd ../frontend
 npm install
-npm start
+npm run dev
 
-Frontend runs on:
+Open your browser at: At the give link---
 
-http://localhost:3000
-🔐 Authentication & Authorization
+API Reference (Examples)
+Method	Endpoint	Description
+POST	/api/auth/login	User login
+POST	/api/auth/register	Register user
+GET	/api/users	Get all users
+POST	/api/students	Create student
+POST	/api/teachers	Create teacher
 
-JWT Token based authentication
+Authentication is implemented using JWT tokens and appropriate protected routes.
 
-Role stored in token payload
+Future Enhancements
 
-Middleware verifies:
+The project is already modular and scalable — here are logical improvements:
 
-Token validity
+✔ Fee & Invoice System
+✔ Timetable Scheduler
+✔ Email & SMS Notifications
+✔ Cloud Deployment (AWS / Vercel / Render)
+✔ Responsive UI Updates
+✔ Documentation & API Versioning
 
-Role-based route access
+Contributing
+Contributions are welcome!
+Fork repository
+Create a new branch
+git checkout -b feature/your-feature-name
+git commit -m "Add new feature"
+git push origin feature/your-feature-name
 
-Roles:
-
-ADMIN
-
-TEACHER
-
-STUDENT
-
-Protected routes use middleware for security.
-
-🌐 API Overview
-
-Example API endpoints:
-
-Auth
-POST /api/v1/auth/login
-POST /api/v1/auth/register
-Student
-GET /api/v1/student/profile
-GET /api/v1/student/attendance
-Admin
-POST /api/v1/admin/create-student
-POST /api/v1/admin/generate-fee
-Library
-POST /api/v1/admin/book
-POST /api/v1/admin/copy/:id/issue
-🗄 Database Design
-
-Main Collections:
-
-Users
-
-Students
-
-Teachers
-
-Classes
-
-Subjects
-
-Attendance
-
-FeeStructure
-
-FeeInvoice
-
-LibraryBook
-
-LibraryBookCopy
-
-StudyMaterial
-
-Assignment
-
-Relational references handled using:
-
-mongoose.Schema.Types.ObjectId
-🚀 Future Enhancements
-
-Online fee payment gateway
-
-SMS / Email notifications
-
-Report generation (PDF export)
-
-Analytics dashboard
-
-Parent portal
-
-Multi-school support
-
-Deployment on AWS / Render / Vercel
-
-🤝 Contributing
-
-Fork the repository
-
-Create feature branch
-
-Commit changes
-
-Push branch
-
-Open Pull Request
-
-📄 License
-
-This project is licensed under the MIT License.
-
-👨‍💻 Author
-
-Abhishek Gupta
-B.Tech Student | Full Stack Developer
-GitHub: https://github.com/abhishekguptaji
-
-If you want, I can now:
-
-🔥 Make it more recruiter-friendly
-
-📈 Optimize it for GitHub portfolio impact
-
-🏢 Make it startup-level professional
-
-📊 Add architecture diagram image
-
-🐳 Add Docker deployment guide
-
-☁ Add production deployment steps
-
-Just tell me what level you want 🚀
+License
+This project is released under the MIT License — see the LICENSE file for details

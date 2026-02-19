@@ -289,3 +289,16 @@ export const adminGetInvoicePayments = (invoiceId) => {
   });
   return res.data;
 };
+
+export const adminGetForwardedLeaves = async () => {
+  const res = await API.get("/admin/studentleave/forwardLeave");
+  return res.data;
+};
+
+export const adminActionOnLeave = async (leaveId, payload) => {
+  const res = await API.patch(
+    `/admin/studentleave/action/${leaveId}`,
+    payload
+  );
+  return res.data;
+};

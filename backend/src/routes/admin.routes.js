@@ -80,8 +80,16 @@ import {
   adminGetPaymentsByInvoice,
 } from "../controllers/feePayment.controller.js";
 
+import {
+  adminGetForwardedLeaves,
+  adminActionOnLeave
+} from "../controllers/studentleave.controller.js";
+
 const router = Router();
 /************************************************************* */
+
+router.get("/studentleave/forwardLeave", verifyJWT, adminGetForwardedLeaves);
+router.patch("/studentleave/action/:leaveId", verifyJWT, adminActionOnLeave);
 
 router.post(
   "/timetable/save",

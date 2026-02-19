@@ -20,7 +20,7 @@ import GenerateQuarterInvoices from "./pages/Admin/GenerateQuarterInvoices";
 import FeeStructure from "./pages/Admin/FeeStructure";
 import FeeCollection from "./pages/Admin/FeeCollection";
 import FeeDefaulters from "./pages/Admin/FeeDefaulters";
-
+import AdLeavePermission from "./pages/Admin/AdLeavePermission";
 export {
   AdminLayout,
   AdminDashboard,
@@ -44,5 +44,7 @@ export {
   FeeStructure,
   FeeCollection,
   FeeDefaulters,
+
+  AdLeavePermission,
 
 };

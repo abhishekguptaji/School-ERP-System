@@ -134,6 +134,13 @@ function AdminNavbar() {
                   Notice Panel
                 </Link>
               </li>
+
+               <li className="nav-item">
+                <Link className="nav-link" to="/admin/leave-permission">
+                  <i class="bi bi-chat-dots-fill"></i>
+                  {/* Leave */}
+                </Link>
+              </li>
             </ul>
 
             {/* RIGHT SIDE */}

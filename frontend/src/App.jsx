@@ -31,6 +31,7 @@ import {
   FeeStructure,
   FeeCollection,
   FeeDefaulters,
+  AdLeavePermission
 } from "./AdminImports";
 
 /* ===== TEACHER ===== */
@@ -110,7 +111,7 @@ function App() {
           <Route path="fees/generate" element={<GenerateQuarterInvoices />} />
           <Route path="fees/collection" element={<FeeCollection />} />
           <Route path="fees/defaulters" element={<FeeDefaulters />} />
-
+          <Route path="leave-permission" element={<AdLeavePermission />}/>
 
 
         </Route>

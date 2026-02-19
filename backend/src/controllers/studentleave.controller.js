@@ -261,3 +261,78 @@ export const teacherActionOnLeave = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, leave, `Leave ${action} successfully`));
 });
+
+
+export const adminGetForwardedLeaves = asyncHandler(async (req, res) => {
+  if (!req.user._id) throw new ApiError(401, "Unauthorized hai");
+
+  const leaves = await StudentLeave.find({
+    teacherStatus: "FORWARD",
+    adminStatus: "PENDING",
+    finalStatus: "PENDING",
+    needsAdminApproval: true,
+  })
+    .populate("studentId", "name admissionNo className  rollNo")
+    .populate("teacherActionBy", "fullName email")
+    .sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, leaves, "Forwarded leaves fetched"));
+});
+
+export const adminActionOnLeave = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  const leaveId = req.params.leaveId;
+
+  if (!userId) throw new ApiError(401, "Unauthorized");
+
+  if (!mongoose.isValidObjectId(leaveId)) {
+    throw new ApiError(400, "Invalid leaveId");
+  }
+  const { action, adminRemark } = req.body;
+
+  if (!action) throw new ApiError(400, "action is required");
+
+  const validActions = ["APPROVE", "REJECT"];
+  if (!validActions.includes(action)) {
+    throw new ApiError(400, "Invalid action");
+  }
+  const leave = await StudentLeave.findOne({ _id: leaveId });
+  if (!leave) throw new ApiError(404, "Leave request not found");
+  if (
+    leave.teacherStatus !== "FORWARD" ||
+    leave.adminStatus !== "PENDING" ||
+    leave.finalStatus !== "PENDING"
+  ) {
+    throw new ApiError(400, "This leave is not pending for admin");
+  }
+
+  if (action === "APPROVE") {
+    leave.adminStatus = "APPROVED";
+    leave.adminRemark = adminRemark || "";
+    leave.adminActionBy = userId;
+    leave.adminActionAt = new Date();
+
+    leave.finalStatus = "APPROVED";
+    leave.approvedByRole = "ADMIN";
+  }
+
+  if (action === "REJECT") {
+    if (!adminRemark || !adminRemark.trim()) {
+      throw new ApiError(400, "adminRemark is required for rejection");
+    }
+
+    leave.adminStatus = "REJECTED";
+    leave.adminRemark = adminRemark;
+    leave.adminActionBy = userId;
+    leave.adminActionAt = new Date();
+
+    leave.finalStatus = "REJECTED";
+    leave.approvedByRole = "ADMIN";
+  }
+  await leave.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, leave, `Leave ${action} successfully`));
+});

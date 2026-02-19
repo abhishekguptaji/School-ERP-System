@@ -1,183 +1,380 @@
-# School-ERP-System
-The School ERP System is a web-based application designed to simplify and automate daily academic and administrative activities in schools.
-It provides secure role-based access and a centralized platform for managing users, classes, and academic data.
-🎯 Goal: Replace manual school management with a scalable digital solution.
+🎓 School ERP System
 
-👥 User Roles & Responsibilities
-🔐 Admin
-Manage Students & Teachers
-Assign classes and subjects
-Control system data
-Monitor overall school activity
+A Complete MERN Stack Based School Management Solution
 
-👨‍🏫 Teacher
+The School ERP System is a full-stack web application designed to digitize and automate school administrative and academic processes. It provides role-based dashboards for Admin, Teachers, and Students, enabling centralized management of academic records, attendance, fees, timetable, library, and more.
+
+📌 Table of Contents
+
+Project Overview
+
+System Architecture
+
+Core Modules
+
+Technology Stack
+
+Folder Structure
+
+Installation Guide
+
+Environment Variables
+
+API Overview
+
+Authentication & Authorization
+
+Database Design
+
+Screenshots
+
+Future Enhancements
+
+Contributing
+
+License
+
+📖 Project Overview
+
+Managing school operations manually is time-consuming and error-prone. This ERP system centralizes all major operations into a single platform:
+
+Student Information Management
+
+Teacher Management
+
+Attendance Tracking
+
+Fee & Invoice Management
+
+Timetable Management
+
+Library Management
+
+Assignment & Study Material Upload
+
+Role-Based Secure Access
+
+The system ensures:
+
+Data consistency
+
+Secure authentication
+
+Scalable backend architecture
+
+Responsive user interface
+
+🏗 System Architecture
+Frontend (React)
+        ↓
+REST API (Express.js)
+        ↓
+MongoDB Database
+
+Frontend communicates with backend using Axios
+
+Backend handles business logic & authentication
+
+MongoDB stores user, academic & transactional data
+
+JWT used for secure API access
+
+📦 Core Modules
+👨‍💼 Admin Panel
+
+Admin has complete system control:
+
+Add / Update / Delete:
+
+Students
+
+Teachers
+
+Classes
+
+Subjects
+
+Generate Fee Structures & Invoices
+
+Assign Teachers to Subjects
+
+Manage Timetable
+
+Library Book & Copy Management
+
+Monitor system data
+
+👨‍🏫 Teacher Panel
+
+Teachers can:
+
 View assigned classes
-Manage student attendance
-Access student academic details
 
-🎓 Student
-View personal profile
-Access class and academic information
+Mark attendance
 
-✨ Features
-✅ Role-based Authentication (Admin / Teacher / Student)
-✅ Secure Login & Authorization
-✅ Modular Frontend & Backend Architecture
-✅ Scalable Full-Stack Structure
-✅ Clean UI with reusable components
+Upload study materials
 
-🧠 Tech Stack
-Frontend
-HTML
-CSS
-JavaScript (React-ready structure)
+Upload assignments
 
-Backend
+Manage student academic records
+
+View timetable
+
+👩‍🎓 Student Panel
+
+Students can:
+
+View attendance records
+
+View fee invoices
+
+Download study materials
+
+Submit assignments
+
+View timetable
+
+View issued library books
+
+💰 Fee Management System
+
+Quarterly fee generation
+
+Academic year-based billing
+
+Due date tracking
+
+Invoice generation per class
+
+Payment status tracking
+
+📚 Library Management
+
+Book management
+
+Unique copy generation
+
+Issue & return tracking
+
+Student-wise issued book records
+
+🗓 Timetable Management
+
+Class-based scheduling
+
+Subject-teacher allocation
+
+Conflict prevention logic
+
+🛠 Technology Stack
+🔹 Frontend
+
+React.js
+
+Axios
+
+React Hooks
+
+Context API / Local Storage
+
+CSS / Bootstrap
+
+🔹 Backend
 
 Node.js
 
 Express.js
 
-REST APIs
+Mongoose
 
-Database
+JWT Authentication
 
-MongoDB (or compatible database)
+Async/Await Error Handling
 
-🏗️ Project Architecture
-Client (Frontend)
-      |
-      |  HTTP Requests (REST API)
-      ↓
-Server (Node.js + Express)
-      |
-      |  Database Queries
-      ↓
-Database (MongoDB)
+🔹 Database
 
-📁 Folder Structure
+MongoDB
+
+🔹 Dev Tools
+
+Nodemon
+
+Postman
+
+Git & GitHub
+
+📂 Folder Structure
 School-ERP-System/
 │
 ├── backend/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── config/
-│   └── server.js
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── middlewares/
+│   │   ├── utils/
+│   │   └── app.js
+│   ├── package.json
+│   └── .env
 │
 ├── frontend/
-│   ├── components/
-│   ├── pages/
-│   ├── services/
-│   └── App.js
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── context/
+│   │   └── App.js
+│   └── package.json
 │
-├── .gitignore
-├── LICENSE
 └── README.md
-
-🖼️ Screenshots (Add Yours)
-
-📸 Add screenshots here once UI is ready
-
-/screenshots
- ├── login.png
- ├── admin-dashboard.png
- ├── teacher-panel.png
- └── student-profile.png
-
-
-Example in README:
-
-![Admin Dashboard](screenshots/admin-dashboard.png)
-
-⚙️ Installation & Setup
-🔹 Prerequisites
-
-Node.js (v16+)
-
-npm or yarn
-
-MongoDB (local or cloud)
-
-🔹 Clone Repository
+⚙ Installation Guide
+1️⃣ Clone Repository
 git clone https://github.com/abhishekguptaji/School-ERP-System.git
 cd School-ERP-System
-
-🔹 Backend Setup
+2️⃣ Backend Setup
 cd backend
 npm install
 
-
-Create .env file:
+Create a .env file inside backend:
 
 PORT=5000
-MONGO_URI=your_database_url
+MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
-
 
 Start backend server:
 
-npm start
+npm run dev
 
-🔹 Frontend Setup
+Server runs on:
+
+http://localhost:5000
+3️⃣ Frontend Setup
 cd frontend
 npm install
 npm start
 
-
-Open browser at:
+Frontend runs on:
 
 http://localhost:3000
+🔐 Authentication & Authorization
 
-🔗 API Overview (Example)
-Method	Endpoint	Description
-POST	/api/auth/login	User login
-POST	/api/auth/register	User registration
-GET	/api/users	Get all users
-POST	/api/students	Create student
-POST	/api/teachers	Create teacher
-🔐 Security
+JWT Token based authentication
 
-Password hashing
+Role stored in token payload
 
-JWT-based authentication
+Middleware verifies:
 
-Role-based authorization
+Token validity
 
-Environment variable protection
+Role-based route access
 
-🛣️ Future Enhancements
+Roles:
 
-📊 Attendance & Result Management
+ADMIN
 
-💳 Fee Management System
+TEACHER
 
-📅 Timetable Generator
+STUDENT
 
-📩 Email & SMS Notifications
+Protected routes use middleware for security.
 
-📈 Admin Analytics Dashboard
+🌐 API Overview
 
-☁️ Cloud Deployment (AWS / Render / Vercel)
+Example API endpoints:
+
+Auth
+POST /api/v1/auth/login
+POST /api/v1/auth/register
+Student
+GET /api/v1/student/profile
+GET /api/v1/student/attendance
+Admin
+POST /api/v1/admin/create-student
+POST /api/v1/admin/generate-fee
+Library
+POST /api/v1/admin/book
+POST /api/v1/admin/copy/:id/issue
+🗄 Database Design
+
+Main Collections:
+
+Users
+
+Students
+
+Teachers
+
+Classes
+
+Subjects
+
+Attendance
+
+FeeStructure
+
+FeeInvoice
+
+LibraryBook
+
+LibraryBookCopy
+
+StudyMaterial
+
+Assignment
+
+Relational references handled using:
+
+mongoose.Schema.Types.ObjectId
+🚀 Future Enhancements
+
+Online fee payment gateway
+
+SMS / Email notifications
+
+Report generation (PDF export)
+
+Analytics dashboard
+
+Parent portal
+
+Multi-school support
+
+Deployment on AWS / Render / Vercel
 
 🤝 Contributing
 
-Contributions are welcome 🚀
+Fork the repository
 
-1. Fork the repository
-2. Create a new branch (feature/your-feature)
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
+Create feature branch
 
-📜 License
+Commit changes
+
+Push branch
+
+Open Pull Request
+
+📄 License
 
 This project is licensed under the MIT License.
-See the LICENSE file for details.
 
 👨‍💻 Author
 
 Abhishek Gupta
-🔗 GitHub: https://github.com/abhishekguptaji
+B.Tech Student | Full Stack Developer
+GitHub: https://github.com/abhishekguptaji
 
-⭐ If you like this project, don’t forget to star the repo!
+If you want, I can now:
+
+🔥 Make it more recruiter-friendly
+
+📈 Optimize it for GitHub portfolio impact
+
+🏢 Make it startup-level professional
+
+📊 Add architecture diagram image
+
+🐳 Add Docker deployment guide
+
+☁ Add production deployment steps
+
+Just tell me what level you want 🚀

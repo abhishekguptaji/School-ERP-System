@@ -127,7 +127,7 @@ npm run dev
 
 Open your browser at: At the give link---
 
-API Reference (Examples)
+### API Reference (Examples)
 Method	Endpoint	Description
 POST	/api/auth/login	User login
 POST	/api/auth/register	Register user

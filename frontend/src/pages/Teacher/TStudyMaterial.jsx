@@ -144,7 +144,7 @@ function TStudyMaterial() {
     <div className="container py-3 teacher-theme">
       {/* HEADER */}
       <div className="teacher-header mb-3">
-        <h3 className="fw-bold">Study Material Management</h3>
+        <h3 className="fw-bold">Study Material & Assignments Management</h3>
         <div className="small">Upload and manage class materials</div>
       </div>
 
@@ -153,7 +153,7 @@ function TStudyMaterial() {
         <div className="card-body">
           <h5 className="fw-bold mb-3 text-primary">
             <i className="bi bi-upload me-2"></i>
-            Upload Study Material
+            Upload Notes & Assignment
           </h5>
 
           <form onSubmit={handleUploadSubmit}>

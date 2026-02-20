@@ -100,12 +100,12 @@ function TeacherNavbar() {
             </Link>
 
             <Link className={`teacher-subLink ${isActive("/teacher/material") ? "active" : ""}`} to="/teacher/material">
-              <i className="bi bi-book me-2"></i> Study Material
+              <i className="bi bi-book me-2"></i> Study Material & Assignments
             </Link>
 
-            <Link className={`teacher-subLink ${isActive("/teacher/assignments") ? "active" : ""}`} to="/teacher/assignments">
+            {/* <Link className={`teacher-subLink ${isActive("/teacher/assignments") ? "active" : ""}`} to="/teacher/assignments">
               <i className="bi bi-journal-text me-2"></i> Assignments
-            </Link>
+            </Link> */}
 
             <Link className={`teacher-subLink ${isActive("/teacher/attendance/report") ? "active" : ""}`} to="/teacher/attendance/report">
               <i className="bi bi-file-earmark-text me-2"></i> Attendance Report

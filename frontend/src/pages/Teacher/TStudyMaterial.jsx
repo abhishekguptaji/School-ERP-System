@@ -1,70 +1,51 @@
-import { useMemo, useState } from "react";
+import {
+  getMyAllocations,
+  uploadStudyMaterial,
+  getMyStudyMaterials,
+  deleteStudyMaterial,
+} from "../../services/teacherService.js";
+
+import { useEffect, useMemo, useState } from "react";
+import Swal from "sweetalert2";
 import "./css/TStudyMaterial.css";
+
 function TStudyMaterial() {
-  const [materials, setMaterials] = useState([
-    {
-      id: 1,
-      title: "Compiler Design - Unit 1 Notes",
-      className: "B.Tech (Sem 5)",
-      subject: "Compiler Design",
-      type: "pdf",
-      fileName: "unit1-notes.pdf",
-      uploadedBy: "Mr. Sharma",
-      uploadedAt: "2026-02-10",
-      description: "Lexical analysis, tokens, regular expressions notes.",
-    },
-    {
-      id: 2,
-      title: "DBMS ER Diagram Examples",
-      className: "B.Tech (Sem 4)",
-      subject: "DBMS",
-      type: "image",
-      fileName: "er-diagram.png",
-      uploadedBy: "Ms. Priya",
-      uploadedAt: "2026-02-09",
-      description: "ER diagram samples for practice.",
-    },
-  ]);
+  const [materials, setMaterials] = useState([]);
+  const [allocations, setAllocations] = useState([]);
 
   const [uploadData, setUploadData] = useState({
     title: "",
-    className: "",
-    subject: "",
+    classId: "",
+    subjectId: "",
     description: "",
     file: null,
   });
 
   const [search, setSearch] = useState("");
-  const [filterClass, setFilterClass] = useState("All");
-  const [filterSubject, setFilterSubject] = useState("All");
-  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const classOptions = useMemo(() => {
-    const unique = Array.from(new Set(materials.map((m) => m.className)));
-    return ["All", ...unique];
-  }, [materials]);
+  useEffect(() => {
+    fetchMaterials();
+    fetchAllocations();
+  }, []);
 
-  const subjectOptions = useMemo(() => {
-    const unique = Array.from(new Set(materials.map((m) => m.subject)));
-    return ["All", ...unique];
-  }, [materials]);
+  const fetchMaterials = async () => {
+    try {
+      const res = await getMyStudyMaterials();
+      setMaterials(res.data.materials || []);
+    } catch (err) {
+      Swal.fire("Error", "Failed to fetch materials", "error");
+    }
+  };
 
-  const filteredMaterials = useMemo(() => {
-    return materials.filter((m) => {
-      const matchSearch =
-        m.title.toLowerCase().includes(search.toLowerCase()) ||
-        m.subject.toLowerCase().includes(search.toLowerCase()) ||
-        m.className.toLowerCase().includes(search.toLowerCase());
-
-      const matchClass =
-        filterClass === "All" ? true : m.className === filterClass;
-
-      const matchSubject =
-        filterSubject === "All" ? true : m.subject === filterSubject;
-
-      return matchSearch && matchClass && matchSubject;
-    });
-  }, [materials, search, filterClass, filterSubject]);
+  const fetchAllocations = async () => {
+    try {
+      const res = await getMyAllocations();
+      setAllocations(res.data || []);
+    } catch (err) {
+      Swal.fire("Error", "Failed to fetch allocations", "error");
+    }
+  };
 
   const handleUploadChange = (e) => {
     const { name, value, files } = e.target;
@@ -76,176 +57,179 @@ function TStudyMaterial() {
     }
   };
 
-  const handleUploadSubmit = (e) => {
+  const handleUploadSubmit = async (e) => {
     e.preventDefault();
 
     if (!uploadData.file) {
-      alert("Please select a PDF or Image file");
-      return;
+      return Swal.fire(
+        "File Required",
+        "Please select a file to upload.",
+        "warning"
+      );
     }
 
-    const fileType = uploadData.file.type.includes("pdf") ? "pdf" : "image";
+    const formData = new FormData();
+    formData.append("title", uploadData.title);
+    formData.append("classId", uploadData.classId);
+    formData.append("subjectId", uploadData.subjectId);
+    formData.append("description", uploadData.description);
+    formData.append("file", uploadData.file);
 
-    const newMaterial = {
-      id: Date.now(),
-      title: uploadData.title,
-      className: uploadData.className,
-      subject: uploadData.subject,
-      type: fileType,
-      fileName: uploadData.file.name,
-      uploadedBy: "You (Teacher)",
-      uploadedAt: new Date().toISOString().slice(0, 10),
-      description: uploadData.description || "No description",
-    };
+    try {
+      setLoading(true);
+      await uploadStudyMaterial(formData);
 
-    setMaterials([newMaterial, ...materials]);
+      Swal.fire({
+        icon: "success",
+        title: "Uploaded!",
+        text: "Study material uploaded successfully.",
+        timer: 1200,
+        showConfirmButton: false,
+      });
 
-    alert("Study material uploaded (demo)");
+      setUploadData({
+        title: "",
+        classId: "",
+        subjectId: "",
+        description: "",
+        file: null,
+      });
 
-    setUploadData({
-      title: "",
-      className: "",
-      subject: "",
-      description: "",
-      file: null,
+      fetchMaterials();
+    } catch (err) {
+      Swal.fire(
+        "Upload Failed",
+        err.response?.data?.message || "Upload failed",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Delete this material?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete",
     });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await deleteStudyMaterial(id);
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+
+      fetchMaterials();
+    } catch (err) {
+      Swal.fire("Error", "Delete failed", "error");
+    }
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm("Delete this material?")) return;
-    setMaterials(materials.filter((m) => m.id !== id));
-  };
-
-  const fileBadge = (type) => {
-    if (type === "pdf") return "danger";
-    if (type === "image") return "success";
-    return "secondary";
-  };
-
-  const fileIcon = (type) => {
-    if (type === "pdf") return "bi-file-earmark-pdf-fill";
-    if (type === "image") return "bi-image-fill";
-    return "bi-file-earmark";
-  };
-
-  const stats = useMemo(() => {
-    const total = materials.length;
-    const pdf = materials.filter((m) => m.type === "pdf").length;
-    const img = materials.filter((m) => m.type === "image").length;
-    return { total, pdf, img };
-  }, [materials]);
+  const filteredMaterials = useMemo(() => {
+    return materials.filter((m) =>
+      m.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [materials, search]);
 
   return (
-    <div className="container py-2">
-      {/* TOP HEADER */}
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-          <h3 className="mb-0 fw-bold text-dark">
-            Study Material
-          </h3>
-          
-        </div>
-
-        <button
-          className="btn btn-outline-dark btn-sm"
-          onClick={() => alert("Refresh (demo)")}
-        >
-          <i className="bi bi-arrow-clockwise me-1"></i>
-          Refresh
-        </button>
+    <div className="container py-3 teacher-theme">
+      {/* HEADER */}
+      <div className="teacher-header mb-3">
+        <h3 className="fw-bold">Study Material Management</h3>
+        <div className="small">Upload and manage class materials</div>
       </div>
 
       {/* UPLOAD CARD */}
-      <div className="erpProfileCard mt-3">
-        <div className="p-3 p-md-4">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-            <div>
-              <h5 className="fw-bold mb-0">
-                Upload New Material
-              </h5>
-              <div className="text-muted small">
-                PDF / JPG / PNG supported
-              </div>
-            </div>
-
-            <span className="badge bg-primary-subtle text-primary">
-              Teacher Panel
-            </span>
-          </div>
+      <div className="card shadow-sm border-0 mb-3">
+        <div className="card-body">
+          <h5 className="fw-bold mb-3 text-primary">
+            <i className="bi bi-upload me-2"></i>
+            Upload Study Material
+          </h5>
 
           <form onSubmit={handleUploadSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label fw-semibold">Title</label>
                 <input
                   type="text"
                   className="form-control"
                   name="title"
+                  placeholder="Title"
                   value={uploadData.title}
                   onChange={handleUploadChange}
-                  placeholder="e.g. Unit 1 Notes"
                   required
                 />
               </div>
 
               <div className="col-md-3">
-                <label className="form-label fw-semibold">Class</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="className"
-                  value={uploadData.className}
+                <select
+                  className="form-select"
+                  name="classId"
+                  value={uploadData.classId}
                   onChange={handleUploadChange}
-                  placeholder="e.g. B.Tech (Sem 5)"
                   required
-                />
+                >
+                  <option value="">Select Class</option>
+                  {allocations.map((a) => (
+                    <option key={a.classId._id} value={a.classId._id}>
+                      {a.classId.className}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="col-md-3">
-                <label className="form-label fw-semibold">Subject</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="subject"
-                  value={uploadData.subject}
+                <select
+                  className="form-select"
+                  name="subjectId"
+                  value={uploadData.subjectId}
                   onChange={handleUploadChange}
-                  placeholder="e.g. Compiler Design"
                   required
-                />
+                >
+                  <option value="">Select Subject</option>
+                  {allocations
+                    .filter((a) => a.classId._id === uploadData.classId)
+                    .map((a) => (
+                      <option key={a.subjectId._id} value={a.subjectId._id}>
+                        {a.subjectId.name}
+                      </option>
+                    ))}
+                </select>
               </div>
 
               <div className="col-12">
-                <label className="form-label fw-semibold">
-                  Description (Optional)
-                </label>
                 <textarea
                   className="form-control"
                   rows="2"
                   name="description"
+                  placeholder="Description"
                   value={uploadData.description}
                   onChange={handleUploadChange}
-                  placeholder="Short info about the material..."
                 />
               </div>
 
               <div className="col-md-8">
-                <label className="form-label fw-semibold">
-                  Upload PDF / Image
-                </label>
                 <input
                   type="file"
                   className="form-control"
                   name="file"
                   onChange={handleUploadChange}
-                  accept=".pdf,.jpg,.jpeg,.png"
                   required
                 />
               </div>
 
-              <div className="col-md-4 d-flex align-items-end">
+              <div className="col-md-4">
                 <button className="btn btn-primary w-100 fw-bold">
-                  <i className="bi bi-upload me-2"></i>
-                  Upload
+                  {loading ? "Uploading..." : "Upload"}
                 </button>
               </div>
             </div>
@@ -253,313 +237,74 @@ function TStudyMaterial() {
         </div>
       </div>
 
-      {/* FILTERS */}
-      <div className="erpProfileCard mt-3">
-        <div className="p-3 p-md-4">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-            <div>
-              <h5 className="fw-bold mb-0">
-                <i className="bi bi-funnel me-2 text-primary"></i>
-                Filter Materials
-              </h5>
-              <div className="text-muted small">
-                Search by title, class or subject.
-              </div>
-            </div>
-
-            <span className="text-muted small">
-              Showing <b>{filteredMaterials.length}</b> results
-            </span>
-          </div>
-
-          <div className="row g-3">
-            <div className="col-md-6">
-              <label className="form-label fw-semibold">Search</label>
-              <div className="input-group">
-                <span className="input-group-text bg-white">
-                  <i className="bi bi-search"></i>
-                </span>
-                <input
-                  className="form-control"
-                  placeholder="Search by title / class / subject..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">Class</label>
-              <select
-                className="form-select"
-                value={filterClass}
-                onChange={(e) => setFilterClass(e.target.value)}
-              >
-                {classOptions.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-md-3">
-              <label className="form-label fw-semibold">Subject</label>
-              <select
-                className="form-select"
-                value={filterSubject}
-                onChange={(e) => setFilterSubject(e.target.value)}
-              >
-                {subjectOptions.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
+      {/* SEARCH */}
+      <div className="mb-3">
+        <input
+          className="form-control"
+          placeholder="Search material..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
-      {/* MATERIALS LIST */}
-      <div className="erpProfileCard mt-3">
-        <div className="p-3 p-md-4">
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-            <div>
-              <h5 className="fw-bold mb-0">
-                <i className="bi bi-journal-text me-2 text-primary"></i>
-                Uploaded Materials
-              </h5>
-              <div className="text-muted small">
-                Manage uploaded files (demo).
-              </div>
+      {/* MATERIAL LIST */}
+      <div className="card shadow-sm border-0">
+        <div className="card-body">
+          {filteredMaterials.length === 0 ? (
+            <div className="text-center text-muted">
+              No materials found
             </div>
-          </div>
-
-          {/* TABLE (Desktop) */}
-          <div className="table-responsive d-none d-md-block">
-            <table className="table table-bordered align-middle mb-0">
-              <thead className="table-light">
+          ) : (
+            <table className="table align-middle">
+              <thead>
                 <tr>
-                  <th style={{ width: "35%" }}>Material</th>
-                  <th style={{ width: "14%" }}>Class</th>
-                  <th style={{ width: "14%" }}>Subject</th>
-                  <th style={{ width: "10%" }}>Type</th>
-                  <th style={{ width: "15%" }}>Uploaded</th>
-                  <th style={{ width: "12%" }}>Action</th>
+                  <th>Title</th>
+                  <th>Class</th>
+                  <th>Subject</th>
+                  <th>Date</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-
               <tbody>
                 {filteredMaterials.map((m) => (
-                  <tr key={m.id}>
+                  <tr key={m._id}>
                     <td>
-                      <div className="d-flex gap-3 align-items-start">
-                        <div
-                          className="rounded-3 d-flex align-items-center justify-content-center border bg-light"
-                          style={{ width: 46, height: 46 }}
-                        >
-                          <i
-                            className={`bi ${fileIcon(m.type)} fs-5 text-primary`}
-                          ></i>
-                        </div>
-
-                        <div>
-                          <div className="fw-bold">{m.title}</div>
-                          <div className="text-muted small">
-                            {m.fileName} • by <b>{m.uploadedBy}</b>
-                          </div>
-                          <div className="text-muted small">
-                            {m.description?.length > 90
-                              ? m.description.slice(0, 90) + "..."
-                              : m.description}
-                          </div>
-                        </div>
+                      <div className="fw-bold">{m.title}</div>
+                      <div className="text-muted small">
+                        {m.description || "No description"}
                       </div>
                     </td>
 
-                    <td className="fw-semibold">{m.className}</td>
-                    <td className="fw-semibold">{m.subject}</td>
-
-                    <td>
-                      <span
-                        className={`badge text-bg-${fileBadge(
-                          m.type
-                        )} rounded-pill`}
-                      >
-                        {m.type.toUpperCase()}
-                      </span>
-                    </td>
-
-                    <td>
-                      <div className="fw-semibold">{m.uploadedAt}</div>
-                    </td>
+                    <td>{m.classId?.className}</td>
+                    <td>{m.subjectId?.name}</td>
+                    <td>{new Date(m.createdAt).toLocaleDateString()}</td>
 
                     <td>
                       <div className="d-flex gap-2">
-                        <button
+                        <a
+                          href={m.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="btn btn-sm btn-outline-primary"
-                          onClick={() => setSelectedMaterial(m)}
                         >
-                          <i className="bi bi-eye me-1"></i>
                           View
-                        </button>
+                        </a>
 
                         <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDelete(m.id)}
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDelete(m._id)}
                         >
-                          <i className="bi bi-trash me-1"></i>
                           Delete
                         </button>
                       </div>
                     </td>
                   </tr>
                 ))}
-
-                {filteredMaterials.length === 0 && (
-                  <tr>
-                    <td colSpan="6" className="text-center text-muted py-4">
-                      No materials found.
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
-          </div>
-
-          {/* MOBILE CARDS */}
-          <div className="d-md-none">
-            {filteredMaterials.length === 0 ? (
-              <div className="text-center text-muted py-4">
-                No materials found.
-              </div>
-            ) : (
-              <div className="row g-3">
-                {filteredMaterials.map((m) => (
-                  <div className="col-12" key={m.id}>
-                    <div className="erpMobileCard">
-                      <div className="d-flex justify-content-between gap-2">
-                        <div>
-                          <div className="fw-bold">{m.title}</div>
-                          <div className="text-muted small">
-                            {m.className} • {m.subject}
-                          </div>
-                        </div>
-
-                        <span
-                          className={`badge text-bg-${fileBadge(
-                            m.type
-                          )} rounded-pill h-fit`}
-                        >
-                          {m.type.toUpperCase()}
-                        </span>
-                      </div>
-
-                      <div className="text-muted small mt-2">
-                        {m.description?.length > 110
-                          ? m.description.slice(0, 110) + "..."
-                          : m.description}
-                      </div>
-
-                      <div className="text-muted small mt-2">
-                        Uploaded: <b>{m.uploadedAt}</b>
-                      </div>
-
-                      <div className="d-flex gap-2 mt-3">
-                        <button
-                          className="btn btn-sm btn-outline-primary w-50"
-                          onClick={() => setSelectedMaterial(m)}
-                        >
-                          <i className="bi bi-eye me-1"></i>
-                          View
-                        </button>
-
-                        <button
-                          className="btn btn-sm btn-outline-danger w-50"
-                          onClick={() => handleDelete(m.id)}
-                        >
-                          <i className="bi bi-trash me-1"></i>
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
-
-      {/* MODAL */}
-      {selectedMaterial && (
-        <div
-          className="modal fade show"
-          style={{ display: "block", background: "rgba(0,0,0,0.6)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content border-0 rounded-4">
-              <div className="modal-header border-0 pb-0">
-                <div>
-                  <h5 className="modal-title fw-bold mb-0">
-                    {selectedMaterial.title}
-                  </h5>
-                  <div className="text-muted small">
-                    {selectedMaterial.className} • {selectedMaterial.subject}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setSelectedMaterial(null)}
-                ></button>
-              </div>
-
-              <div className="modal-body pt-2">
-                <div className="p-3 bg-light rounded-4">
-                  <div className="fw-semibold mb-1">Description</div>
-                  <div className="text-muted">
-                    {selectedMaterial.description}
-                  </div>
-                </div>
-
-                <div className="p-3 border rounded-4 mt-3">
-                  <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div>
-                      <div className="fw-semibold">
-                        File: {selectedMaterial.fileName}
-                      </div>
-                      <div className="text-muted small">
-                        Uploaded: <b>{selectedMaterial.uploadedAt}</b> by{" "}
-                        <b>{selectedMaterial.uploadedBy}</b>
-                      </div>
-                    </div>
-
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => alert("Download (demo)")}
-                    >
-                      <i className="bi bi-download me-2"></i>
-                      Download
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="modal-footer border-0">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setSelectedMaterial(null)}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

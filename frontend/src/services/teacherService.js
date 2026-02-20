@@ -61,3 +61,30 @@ export const getMyTimeTableTeacher = async ()=>{
   const res = await API.get("/teacher/teacher-time-table");
   return res.data;
 }
+
+/********************************************************* */
+
+export const getMyAllocations = async ()=>{
+  const res = await API.get("/teacher/get-allocated-classSubject");
+  return res.data;
+}
+
+export const getMyStudyMaterials = async ()=>{
+  const res = await API.get("/teacher/see-study-material");
+  return res.data;
+}
+
+export const deleteStudyMaterial = async (id)=>{
+  const res = await API.delete(`/teacher/delete-study-material/${id}`);
+  return res.data;
+}
+
+export const uploadStudyMaterial = async (payload) => {
+  const res = await API.post(
+    "teacher/add-study-material",
+    payload
+  );
+  return res.data;
+};
+
+/*********************************************** */

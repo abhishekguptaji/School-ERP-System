@@ -2,75 +2,160 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import StudyMaterial from "../models/studyMaterial.model.js";
+import TeacherProfile from "../models/teacherProfile.model.js";
+import TimeTable from "../models/timeTable.model.js";
 
-export const uploadStudyMaterialTeacher = asyncHandler(async (req, res) => {
-  if (!req.user?._id) throw new ApiError(401, "Unauthorized User");
-  if (req.user?.role !== "teacher")
-    throw new ApiError(403, "Only teacher can upload");
+export const getMyAllocations = asyncHandler(async (req, res) => {
+  const teacher = await TeacherProfile.findOne({ user: req.user._id });
 
-  const { title, className, subject, description} = req.body;
+  if (!teacher) {
+    throw new ApiError(404, "Teacher profile not found");
+  }
 
-  if (!title || !className || !subject) {
-    throw new ApiError(400, "title, className, subject are required");
+  const allocations = await TimeTable.find({
+    teacherId: teacher._id,
+  })
+    .populate("classId", "className")
+    .populate("subjectId", "name");
+
+  const uniqueAllocations = [];
+  const map = new Set();
+
+  allocations.forEach((item) => {
+    const key = `${item.classId._id}-${item.subjectId._id}`;
+    if (!map.has(key)) {
+      map.add(key);
+      uniqueAllocations.push({
+        classId: item.classId,
+        subjectId: item.subjectId,
+      });
+    }
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, uniqueAllocations, "Allocations fetched successfully"));
+});
+
+export const uploadStudyMaterial = asyncHandler(async (req, res) => {
+  const { title, classId, subjectId, description } = req.body;
+
+  if (!title || !classId || !subjectId) {
+    throw new ApiError(400, "Title, Class and Subject are required");
+  }
+
+  const teacher = await TeacherProfile.findOne({ user: req.user._id });
+
+  if (!teacher) {
+    throw new ApiError(404, "Teacher profile not found");
+  }
+
+  const isAllocated = await TimeTable.findOne({
+    teacherId: teacher._id,
+    classId,
+    subjectId,
+  });
+
+  if (!isAllocated) {
+    throw new ApiError(
+      403,
+      "You are not assigned to this subject for this class"
+    );
   }
 
   if (!req.file) {
-    throw new ApiError(400, "File is required (pdf/image)");
+    throw new ApiError(400, "File is required");
   }
 
-  // File info from multer
-  const fileName = req.file.originalname;
-  const fileUrl = `/uploads/study-material/${req.file.filename}`;
+  const uploadResult = await uploadOnCloudinary(req.file.path);
+
+  if (!uploadResult) {
+    throw new ApiError(500, "File upload failed");
+  }
+
+  const fileExtension = req.file.mimetype.split("/")[1];
 
   const material = await StudyMaterial.create({
     uploader: req.user._id,
-    title: title.trim(),
-    className: className.trim(),
-    subject: subject.trim(),
-    description: description?.trim() || "",
-   
+    title,
+    classId,
+    subjectId,
+    description,
+    fileType: fileExtension,
+    fileName: req.file.originalname,
+    fileUrl: uploadResult.secure_url,
   });
 
   return res
     .status(201)
-    .json(new ApiResponse(201, material, "Study material uploaded"));
+    .json(new ApiResponse(201, material, "Study material uploaded successfully"));
 });
 
-/**
- * TEACHER: Get my uploaded materials
- */
-export const getMyStudyMaterialsTeacher = asyncHandler(async (req, res) => {
-  if (!req.user?._id) throw new ApiError(401, "Unauthorized User");
-  if (req.user?.role !== "teacher")
-    throw new ApiError(403, "Only teacher can access");
+export const getMyStudyMaterials = asyncHandler(async (req, res) => {
+  const { classId, subjectId, search, page = 1, limit = 10 } = req.query;
 
-  const materials = await StudyMaterial.find({
+  if (!req.user?._id) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const query = {
     uploader: req.user._id,
     isActive: true,
-  })
-    .sort({ createdAt: -1 })
-    .lean();
+  };
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, materials, "My materials fetched"));
+  // 🔎 Filter by class
+  if (classId) {
+    query.classId = classId;
+  }
+
+  // 🔎 Filter by subject
+  if (subjectId) {
+    query.subjectId = subjectId;
+  }
+
+  // 🔎 Search by title (case-insensitive)
+  if (search) {
+    query.title = { $regex: search, $options: "i" };
+  }
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const materials = await StudyMaterial.find(query)
+    .populate("classId", "className")
+    .populate("subjectId", "name")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
+
+  const total = await StudyMaterial.countDocuments(query);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        total,
+        page: Number(page),
+        pages: Math.ceil(total / limit),
+        count: materials.length,
+        materials,
+      },
+      "Study materials fetched successfully"
+    )
+  );
 });
 
-/**
- * TEACHER: Delete material (soft delete)
- */
-export const deleteStudyMaterialTeacher = asyncHandler(async (req, res) => {
-  if (!req.user?._id) throw new ApiError(401, "Unauthorized User");
-  if (req.user?.role !== "teacher")
-    throw new ApiError(403, "Only teacher can delete");
+export const deleteStudyMaterial = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-  const materialId = req.params.materialId;
+  const material = await StudyMaterial.findById(id);
 
-  const material = await StudyMaterial.findById(materialId);
-  if (!material) throw new ApiError(404, "Material not found");
+  if (!material) {
+    throw new ApiError(404, "Study material not found");
+  }
 
-  if (String(material.uploader) !== String(req.user._id)) {
-    throw new ApiError(403, "You can delete only your materials");
+  if (material.uploader.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You can only delete your own materials");
   }
 
   material.isActive = false;
@@ -78,64 +163,5 @@ export const deleteStudyMaterialTeacher = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Material deleted"));
-});
-
-/**
- * STUDENT: Get study materials
- * Filters: className, subject, search
- */
-export const getStudyMaterialsStudent = asyncHandler(async (req, res) => {
-  if (!req.user?._id) throw new ApiError(401, "Unauthorized User");
-  if (req.user?.role !== "student")
-    throw new ApiError(403, "Only students can access");
-
-  const { className, subject, search } = req.query;
-
-  const query = { isActive: true };
-
-  // If your student has className in profile, you can force it:
-  // query.className = req.user.className
-
-  if (className && className !== "All") query.className = className;
-  if (subject && subject !== "All") query.subject = subject;
-
-  if (search) {
-    query.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { subject: { $regex: search, $options: "i" } },
-      { className: { $regex: search, $options: "i" } },
-    ];
-  }
-
-  const materials = await StudyMaterial.find(query)
-    .populate("uploader", "fullName role")
-    .sort({ createdAt: -1 })
-    .lean();
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, materials, "Study materials fetched"));
-});
-
-/**
- * COMMON: Get single material details (teacher/student)
- */
-export const getSingleStudyMaterial = asyncHandler(async (req, res) => {
-  if (!req.user?._id) throw new ApiError(401, "Unauthorized User");
-
-  const materialId = req.params.materialId;
-
-  const material = await StudyMaterial.findById(materialId).populate(
-    "uploader",
-    "fullName role"
-  );
-
-  if (!material || !material.isActive) {
-    throw new ApiError(404, "Material not found");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, material, "Material fetched"));
+    .json(new ApiResponse(200, null, "Study material deleted successfully"));
 });

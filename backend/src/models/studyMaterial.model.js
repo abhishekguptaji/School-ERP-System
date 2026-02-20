@@ -8,7 +8,7 @@ const studyMaterialSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-                          
+
     title: {
       type: String,
       required: true,
@@ -16,17 +16,17 @@ const studyMaterialSchema = new mongoose.Schema(
       index: true,
     },
 
-    className: {
-      type: String,
+    classId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
       required: true,
-      trim: true,
       index: true,
     },
 
-    subject: {
-      type: String,
+    subjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
       required: true,
-      trim: true,
       index: true,
     },
 
@@ -38,7 +38,7 @@ const studyMaterialSchema = new mongoose.Schema(
 
     fileType: {
       type: String,
-      enum: ["pdf", "image", "doc", "ppt", "other"],
+      enum: ["pdf", "png", "doc", "ppt", "other","jpeg"],
       default: "pdf",
       index: true,
     },
@@ -64,8 +64,11 @@ const studyMaterialSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// helpful search index
-studyMaterialSchema.index({ title: 1, subject: 1, className: 1 });
+studyMaterialSchema.index({
+  classId: 1,
+  subjectId: 1,
+  createdAt: -1,
+});
 
 const StudyMaterial = mongoose.model("StudyMaterial", studyMaterialSchema);
 export default StudyMaterial;

@@ -1,183 +1,160 @@
-# School-ERP-System
-The School ERP System is a web-based application designed to simplify and automate daily academic and administrative activities in schools.
-It provides secure role-based access and a centralized platform for managing users, classes, and academic data.
-🎯 Goal: Replace manual school management with a scalable digital solution.
+# 🎓 School ERP System
 
-👥 User Roles & Responsibilities
-🔐 Admin
-Manage Students & Teachers
-Assign classes and subjects
-Control system data
-Monitor overall school activity
+A **Full Stack School Enterprise Resource Planning (ERP) System** designed to digitally manage and automate academic and administrative operations in schools. The application supports **role-based access control** for Admin, Teacher, and Student users, allowing secure, scalable, and modular handling of school data and processes.:contentReference[oaicite:1]{index=1}
 
-👨‍🏫 Teacher
-View assigned classes
-Manage student attendance
-Access student academic details
+---
 
-🎓 Student
-View personal profile
-Access class and academic information
+##  Project Overview
 
-✨ Features
-✅ Role-based Authentication (Admin / Teacher / Student)
-✅ Secure Login & Authorization
-✅ Modular Frontend & Backend Architecture
-✅ Scalable Full-Stack Structure
-✅ Clean UI with reusable components
+School ERP System is a web-based application that replaces manual school management processes with a modern digital platform. It centralizes and automates key operations such as:
 
-🧠 Tech Stack
-Frontend
-HTML
-CSS
-JavaScript (React-ready structure)
+✔ User management (Admin, Teacher, Student)  
+✔ Secure authentication and role-based authorization  
+✔ Academic data handling  
+✔ Modular frontend and backend architecture  
+✔ REST API driven backend  
+✔ Scalable and extendable structure
 
-Backend
+This system is ideal for academic institutions looking to reduce paperwork, improve efficiency, and maintain accurate records.:contentReference[oaicite:2]{index=2}
 
-Node.js
+---
 
-Express.js
+##  User Roles & Access
 
-REST APIs
+| Role     | Capabilities |
+|----------|--------------|
+| **Admin**    | Manage students, teachers, classes, subjects, and system settings |
+| **Teacher**  | View assigned classes and students |
+| **Student**  | View personal academic and profile information |
 
-Database
+Each role has specific privileges enforced through server-side **JWT authentication** and middleware checks.:contentReference[oaicite:3]{index=3}
 
-MongoDB (or compatible database)
+---
 
-🏗️ Project Architecture
-Client (Frontend)
-      |
-      |  HTTP Requests (REST API)
-      ↓
-Server (Node.js + Express)
-      |
-      |  Database Queries
-      ↓
-Database (MongoDB)
+##  Tech Stack
 
-📁 Folder Structure
+**Frontend:** React (HTML, CSS, JavaScript UI)  
+**Backend:** Node.js, Express.js  
+**Database:** MongoDB  
+**API:** RESTful Endpoints  
+**Authentication:** JWT Token Authentication  
+**Architecture:** Client ⇄ Server ⇄ Database:contentReference
+
+---
+
+## 🗂 Folder Structure
 School-ERP-System/
-│
 ├── backend/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── config/
-│   └── server.js
-│
+│ ├── controllers/
+│ ├── models/
+│ ├── routes/
+│ ├── config/
+│ └── server.js
 ├── frontend/
-│   ├── components/
-│   ├── pages/
-│   ├── services/
-│   └── App.js
-│
+│ ├── components/
+│ ├── pages/
+│ ├── services/
+│ └── App.js
 ├── .gitignore
 ├── LICENSE
 └── README.md
 
-🖼️ Screenshots (Add Yours)
+:contentReference[oaicite:5]{index=5}
 
-📸 Add screenshots here once UI is ready
+---
 
-/screenshots
- ├── login.png
- ├── admin-dashboard.png
- ├── teacher-panel.png
- └── student-profile.png
+## Features
 
+### 📌 Authentication
+- Secure login for all roles using JWT
+- Password hashing  
+- Role-based access control
 
-Example in README:
+###  Admin Dashboard
+- Create, view, edit, delete users like students and Teacher
+- Grievance Panel handle for the students
+- Create Fee for the Students in the Quateraly basis  
+- Assign classes and subjects
+- Create Notice for the Students , Teacher and All.
+- Show the necessary details are in the like all student, teacher and attendece details and the failure of the students.   
+- Assign Fee For Classes and subjects,teachers notice.   
 
-![Admin Dashboard](screenshots/admin-dashboard.png)
+### Teacher Panel
+- View assigned classes
+- See student lists and details.
+- Add Assignment and Study Material.
+- ClassTeacher uploaded for the students of their class.
+- ClassTeacher accepted the student Request for the leave if the leave is more than 1 to 2 days forward to the admin..
+- And Many more...................................................
 
-⚙️ Installation & Setup
-🔹 Prerequisites
+### 📌 Student Panel
+- Profile & academic info
+- Dashboard for class schedules
 
-Node.js (v16+)
+> ⚠ Modules like attendance, timetable, fee management, and notifications are **planned for future enhancements** 
 
-npm or yarn
+---
 
-MongoDB (local or cloud)
+## 🛠 Installation & Setup
 
-🔹 Clone Repository
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/abhishekguptaji/School-ERP-System.git
 cd School-ERP-System
-
-🔹 Backend Setup
 cd backend
 npm install
 
+### Create a .env file with:
+PORT=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+MONGODB_URI=
+CORS_ORIGIN=
+ACCESS_TOKEN_SECRET=
+REFRESH_TOKEN_SECRET=
+ACCESS_TOKEN_EXPIRY=
+REFRESH_TOKEN_EXPIRY=
 
-Create .env file:
+Start backend:
+npm run dev
 
-PORT=5000
-MONGO_URI=your_database_url
-JWT_SECRET=your_secret_key
-
-
-Start backend server:
-
-npm start
-
-🔹 Frontend Setup
-cd frontend
+Frontend Setup:
+cd ../frontend
 npm install
-npm start
+npm run dev
 
+Open your browser at: At the give link---
 
-Open browser at:
-
-http://localhost:3000
-
-🔗 API Overview (Example)
+### API Reference (Examples)
 Method	Endpoint	Description
 POST	/api/auth/login	User login
-POST	/api/auth/register	User registration
+POST	/api/auth/register	Register user
 GET	/api/users	Get all users
 POST	/api/students	Create student
 POST	/api/teachers	Create teacher
-🔐 Security
 
-Password hashing
+Authentication is implemented using JWT tokens and appropriate protected routes.
 
-JWT-based authentication
+Future Enhancements
 
-Role-based authorization
+The project is already modular and scalable — here are logical improvements:
 
-Environment variable protection
+✔ Fee & Invoice System
+✔ Timetable Scheduler
+✔ Email & SMS Notifications
+✔ Cloud Deployment (AWS / Vercel / Render)
+✔ Responsive UI Updates
+✔ Documentation & API Versioning
 
-🛣️ Future Enhancements
+Contributing
+Contributions are welcome!
+Fork repository
+Create a new branch
+git checkout -b feature/your-feature-name
+git commit -m "Add new feature"
+git push origin feature/your-feature-name
 
-📊 Attendance & Result Management
-
-💳 Fee Management System
-
-📅 Timetable Generator
-
-📩 Email & SMS Notifications
-
-📈 Admin Analytics Dashboard
-
-☁️ Cloud Deployment (AWS / Render / Vercel)
-
-🤝 Contributing
-
-Contributions are welcome 🚀
-
-1. Fork the repository
-2. Create a new branch (feature/your-feature)
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
-
-📜 License
-
-This project is licensed under the MIT License.
-See the LICENSE file for details.
-
-👨‍💻 Author
-
-Abhishek Gupta
-🔗 GitHub: https://github.com/abhishekguptaji
-
-⭐ If you like this project, don’t forget to star the repo!
+License
+This project is released under the MIT License — see the LICENSE file for details

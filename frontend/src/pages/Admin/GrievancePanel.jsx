@@ -40,7 +40,8 @@ function GrievancePanel() {
   const fetchTeachers = async () => {
   try {
     const res = await getAllTeachersForAssign();
-    setTeachers(res?.data || []);
+    console.log("Teachers API Response:", res.data);
+    setTeachers(res?.data?.teachers || []);
   } catch (error) {
     Swal.fire("Error", error?.response?.data?.message || "Failed", "error");
   }
@@ -144,7 +145,7 @@ const handleAssignTeacher = async () => {
     const res = await assignTeacherToGrievance(active._id, {
       teacherId: selectedTeacher,
     });
-
+    console.log(res.data);
     setActive(res?.data);
     fetchGrievances(pagination.page);
 
@@ -537,7 +538,7 @@ const handleAssignTeacher = async () => {
 
                     <div className="small text-muted mb-2">
                       <b>Created By:</b>{" "}
-                      {active?.createdBy?.fullName || "N/A"}
+                      {active?.createdBy?.name || "N/A"}
                       <br />
                       <b>Email:</b> {active?.createdBy?.email || "N/A"}
                       <br />
@@ -558,7 +559,7 @@ const handleAssignTeacher = async () => {
 
                     <div className="small text-muted mb-2">
                       <b>Assigned To:</b>{" "}
-                      {active?.assignedTo?.fullName || "Not assigned"}
+                      {active?.assignedTo?.name || "Not assigned"}
                       <br />
                       {active?.assignedAt && (
                         <>
@@ -586,7 +587,7 @@ const handleAssignTeacher = async () => {
 
                       {teachers.map((t) => (
                         <option key={t._id} value={t._id}>
-                          {t.fullName} ({t.email})
+                          {t.user.name} ({t.user.email})
                         </option>
                       ))}
                     </select>

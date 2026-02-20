@@ -36,8 +36,13 @@ import {
   applyStudentLeave,
   getMyStudentLeaves
 } from "../controllers/studentleave.controller.js";
+import {
+  getMyClassTimeTableStudent
+} from "../controllers/timetable.controller.js";
 
 const router = Router();
+
+router.get("/timetable-student",verifyJWT,getMyClassTimeTableStudent);
 
 router.post(
   "/leave-appiled/myself",

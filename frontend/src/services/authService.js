@@ -177,3 +177,8 @@ export const getMyStudentLeaves = async (status = "") => {
   );
   return res.data;
 };
+
+export const getMyClassTimeTableStudent = async ()=>{
+  const res = await API.get("/student/timetable-student");
+  return res.data;
+}

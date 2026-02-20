@@ -124,8 +124,8 @@ const getAllGrievanceByAdmin = asyncHandler(async(req,res)=>{
 
   const grievances = await GrievancePanel.find(filter)
     .populate("createdBy", "name email role studentId teacherId")
-    .populate("assignedTo", "fullName email role")
-    .populate("replies.sender", "fullName email role")
+    .populate("assignedTo", "name email role")
+    .populate("replies.sender", "name email role")
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);

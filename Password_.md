@@ -84,7 +84,7 @@
 
 { 
 
-&nbsp; "name": "Vikas Kumar",
+&nbsp; "name": "Vikas Kumar", computer 5
 
 &nbsp; "email": "vikas.kumar@gmail.com",
 
@@ -98,7 +98,7 @@
 
 { 
 
-&nbsp; "name": "Alok Tiwari",
+&nbsp; "name": "Alok Tiwari", 4, hindi
 
 &nbsp; "email": "alok.tiwari@gmail.com",
 
@@ -112,7 +112,7 @@
 
 { 
 
-&nbsp; "name": "Amitabh Kumar",
+&nbsp; "name": "Amitabh Kumar", 3 ,Science
 
 &nbsp; "email": "amitabhkumar@gmail.com",
 
@@ -126,15 +126,15 @@
 
 { 
 
-&nbsp; "name": "Rajit Sikka",
+&nbsp; "name": "Rajit Sikka", 2,english , 
 
 &nbsp; "email": "rajit.sikka@gmail.com",
 
 &nbsp; "password": "RajitSikka@12345",
 
 &nbsp; "role": "teacher"
-
-}
+ 
+}  
 
 #### &nbsp; --:: Student Login Credential::--
 

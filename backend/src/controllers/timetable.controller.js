@@ -1,6 +1,7 @@
 import TimeTable from "../models/timeTable.model.js";
 import SubjectTeacher from "../models/subjectTeacher.model.js";
 import Class from "../models/class.model.js";
+import TeacherProfile from "../models/teacherProfile.model.js";
 import SubjectPeriodPlan from "../models/subjectPeriod.models.js";
 import StudentPorfile from "../models/studentProfile.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -161,3 +162,32 @@ export const getMyClassTimeTableStudent = asyncHandler(async (req, res) => {
     timetable,
   });
 });
+
+
+export const getMyTimeTableTeacher = asyncHandler(async (req, res) => {
+    if (!req.user?._id) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized access",
+    });
+  } 
+  const teacher = await TeacherProfile.findOne({ user: req.user._id });
+    if (!teacher) {
+      return res.status(404).json({
+        success: false,
+        message: "Teacher profile not found",
+      });
+    }
+    const timetable = await TimeTable.find({
+      teacherId: teacher._id,
+    })
+      .populate("classId", "className")
+      .populate("subjectId", "name")
+      .sort({ day: 1, periodNo: 1 });
+    
+    res.status(200).json({
+      success: true,
+      timetable,
+    });
+  } 
+);

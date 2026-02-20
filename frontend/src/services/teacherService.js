@@ -55,3 +55,9 @@ export const teacherActionOnLeave = async (leaveId, payload) => {
   );
   return res.data;
 };
+
+
+export const getMyTimeTableTeacher = async ()=>{
+  const res = await API.get("/teacher/teacher-time-table");
+  return res.data;
+}

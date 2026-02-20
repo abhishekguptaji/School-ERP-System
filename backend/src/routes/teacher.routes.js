@@ -24,7 +24,13 @@ import {
   teacherActionOnLeave 
 } from "../controllers/studentleave.controller.js";
 
+import {
+  getMyTimeTableTeacher
+} from "../controllers/timetable.controller.js";
+
 const router = Router();
+
+router.get("/teacher-time-table",verifyJWT, getMyTimeTableTeacher);
 
 router.get("/studentleave/pending", verifyJWT, teacherGetPendingLeaves);
 router.patch("/studentleave/action/:leaveId", verifyJWT, teacherActionOnLeave);

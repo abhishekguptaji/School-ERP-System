@@ -40,7 +40,13 @@ import {
   getMyClassTimeTableStudent
 } from "../controllers/timetable.controller.js";
 
+import {
+  getMyAttendance
+} from "../controllers/attendence.controller.js";
+
 const router = Router();
+
+router.get("/seen-attendence-daily",verifyJWT,getMyAttendance);
 
 router.get("/timetable-student",verifyJWT,getMyClassTimeTableStudent);
 

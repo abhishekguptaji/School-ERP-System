@@ -115,3 +115,38 @@ export const markAttendance = asyncHandler(async (req, res) => {
   });
 });
 
+export const getMyAttendance = asyncHandler(async (req, res) => {
+  const studentProfile = await StudentProfile.findOne({
+    user: req.user._id,
+  });
+
+  if (!studentProfile) {
+    throw new ApiError(404, "Student profile not found");
+  }
+
+  const attendance = await Attendance.find({
+    "students.student": studentProfile._id,
+  }).sort({ date: -1 });
+
+  const formatted = attendance.map((record) => {
+    const studentRecord = record.students.find(
+      (s) => s.student.toString() === studentProfile._id.toString()
+    );
+
+    return {
+      date: record.date.toISOString().split("T")[0], // ✅ Only YYYY-MM-DD
+      status: studentRecord?.status || "Not Marked",
+    };
+  });
+
+  const presentDays = formatted.filter(d => d.status === "Present").length;
+  const percentage = ((presentDays / formatted.length) * 100).toFixed(2);
+
+  res.status(200).json({
+    success: true,
+    totalDays: formatted.length,
+    presentDays,
+    attendancePercentage: percentage + "%",
+    data: formatted,
+  });
+});

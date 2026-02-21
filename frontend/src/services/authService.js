@@ -182,3 +182,8 @@ export const getMyClassTimeTableStudent = async ()=>{
   const res = await API.get("/student/timetable-student");
   return res.data;
 }
+
+export const getMyAttendance = async () =>{
+  const res = await API.get("/student/seen-attendence-daily");
+   return res.data;
+}

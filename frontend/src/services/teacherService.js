@@ -90,6 +90,17 @@ export const uploadStudyMaterial = async (payload) => {
 /*********************************************** */
 
 export const getMyStudentInTeacherPanel = async() =>{
-  const res = await API.get("/teacher/get-students-profile",getMyStudentInTeacherPanel);
+  const res = await API.get("/teacher/get-students-profile");
   return res.data;
+}
+
+
+export const getMyStudentByClasses = async() =>{
+  const res = await API.get("/teacher/get-classTeacherOf");
+  return res.data;
+}
+
+export const markAttendance = async(data) => {
+ const res = await API.post("teacher/set-daily-attendence", data);
+ return res.data;
 }

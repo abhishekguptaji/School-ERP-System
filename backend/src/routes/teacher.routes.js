@@ -20,6 +20,9 @@ import {
 
 import { getMyTimeTableTeacher } from "../controllers/timetable.controller.js";
 
+import {getMyStudentByClasses,
+  markAttendance} from "../controllers/attendence.controller.js";
+
 import { 
   getMyAllocations,
   uploadStudyMaterial,
@@ -30,7 +33,11 @@ import {
 import {
   getMyStudentInTeacherPanel
 } from "../controllers/teacherStudent.controller.js";
+
 const router = Router();
+
+router.get("/get-classTeacherOf",verifyJWT,getMyStudentByClasses);
+router.post("/set-daily-attendence",verifyJWT, markAttendance)
 
 router.get("/get-students-profile",verifyJWT,getMyStudentInTeacherPanel);
 

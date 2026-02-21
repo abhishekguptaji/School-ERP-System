@@ -1,146 +1,51 @@
-import Attendance from "../models/attendence.model.js";
-import StudentProfile from "../models/studentProfile.model.js";
+import asyncHandler from "express-async-handler";
+import Attendance from "../models/attendance.model.js";
+import Class from "../models/class.model.js";
+import ApiError from "../utils/ApiError.js";
 
-const markAttendance = async (req, res) => {
-  try {
-    const { classId, subjectId, date, students } = req.body;
+export const createOrUpdateAttendance = asyncHandler(async (req, res) => {
+  const teacherId = req.user?._id;
+  const { classId, date, students } = req.body;
 
-    if (!classId || !subjectId || !date || !students?.length) {
-      return res.status(400).json({
-        success: false,
-        message: "Required fields missing",
-      });
-    }
+  if (!teacherId) throw new ApiError(401, "Unauthorized");
+  if (!classId || !date || !students)
+    throw new ApiError(400, "Missing required fields");
 
-    const exists = await Attendance.findOne({
-      class: classId,
-      subject: subjectId,
-      date: new Date(date),
-    });
+  const attendanceDate = new Date(date);
+  attendanceDate.setHours(0, 0, 0, 0);
 
-    if (exists) {
-      return res.status(409).json({
-        success: false,
-        message: "Attendance already marked for this date",
-      });
-    }
+  const classData = await Class.findById(classId);
+  if (!classData) throw new ApiError(404, "Class not found");
 
-    const attendance = await Attendance.create({
-      class: classId,
-      subject: subjectId,
-      teacher: req.user.profileId,
-      date,
+  if (classData.classTeacher?.toString() !== teacherId.toString()) {
+    throw new ApiError(403, "Only class teacher can mark attendance");
+  }
+
+  const existing = await Attendance.findOne({
+    classId,
+    date: attendanceDate,
+  });
+
+  if (existing && existing.isFinalized) {
+    throw new ApiError(400, "Attendance already finalized");
+  }
+
+  const attendance = await Attendance.findOneAndUpdate(
+    { classId, date: attendanceDate },
+    {
+      classId,
+      classTeacherOf: teacherId,
+      date: attendanceDate,
       students,
-    });
+    },
+    { new: true, upsert: true }
+  );
 
-    res.status(201).json({
-      success: true,
-      message: "Attendance marked successfully",
-      data: attendance,
-    });
-  } catch (error) {
-    console.error("Mark Attendance Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
+  res.status(200).json({
+    success: true,
+    message: "Attendance saved successfully",
+    data: attendance,
+  });
+});
 
-const getMyAttendance = async (req, res) => {
-  try {
-    const studentId = req.user.profileId;
 
-    const attendance = await Attendance.find({
-      "students.student": studentId,
-    })
-      .populate("subject", "name")
-      .populate("class")
-      .sort({ date: -1 });
-
-    const formatted = attendance.map((a) => {
-      const record = a.students.find((s) => s.student.toString() === studentId);
-      return {
-        date: a.date,
-        subject: a.subject,
-        status: record.status,
-      };
-    });
-
-    res.status(200).json({
-      success: true,
-      data: formatted,
-    });
-  } catch (error) {
-    console.error("Get Student Attendance Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-const getClassAttendance = async (req, res) => {
-  try {
-    const { classId, subjectId, from, to } = req.query;
-
-    const query = {};
-    if (classId) query.class = classId;
-    if (subjectId) query.subject = subjectId;
-    if (from && to) query.date = { $gte: new Date(from), $lte: new Date(to) };
-
-    const attendance = await Attendance.find(query)
-      .populate("class")
-      .populate("subject")
-      .populate("teacher", "user")
-      .sort({ date: -1 });
-
-    res.status(200).json({
-      success: true,
-      data: attendance,
-    });
-  } catch (error) {
-    console.error("Get Class Attendance Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-const finalizeAttendance = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const attendance = await Attendance.findByIdAndUpdate(
-      id,
-      { isFinalized: true },
-      { new: true },
-    );
-
-    if (!attendance) {
-      return res.status(404).json({
-        success: false,
-        message: "Attendance not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Attendance finalized",
-    });
-  } catch (error) {
-    console.error("Finalize Attendance Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
-
-export {
-  markAttendance,
-  getMyAttendance,
-  getClassAttendance,
-  finalizeAttendance,
-};

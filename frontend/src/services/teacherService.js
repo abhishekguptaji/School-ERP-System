@@ -88,3 +88,8 @@ export const uploadStudyMaterial = async (payload) => {
 };
 
 /*********************************************** */
+
+export const getMyStudentInTeacherPanel = async() =>{
+  const res = await API.get("/teacher/get-students-profile",getMyStudentInTeacherPanel);
+  return res.data;
+}

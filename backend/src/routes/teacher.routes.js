@@ -27,7 +27,12 @@ import {
   deleteStudyMaterial
 } from "../controllers/studyMaterial.controller.js";
 
+import {
+  getMyStudentInTeacherPanel
+} from "../controllers/teacherStudent.controller.js";
 const router = Router();
+
+router.get("/get-students-profile",verifyJWT,getMyStudentInTeacherPanel);
 
 router.get("/get-allocated-classSubject", verifyJWT, getMyAllocations);
 router.post(

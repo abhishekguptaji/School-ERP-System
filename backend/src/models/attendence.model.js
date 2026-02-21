@@ -19,21 +19,14 @@ const attendanceStudentSchema = new mongoose.Schema(
 
 const attendanceSchema = new mongoose.Schema(
   {
-    class: {
+    classId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
       required: true,
       index: true,
     },
 
-    subject: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Subject",
-      required: true,
-      index: true,
-    },
-
-    teacher: {
+    classTeacherOf: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "TeacherProfile",
       required: true,
@@ -45,19 +38,23 @@ const attendanceSchema = new mongoose.Schema(
       index: true,
     },
 
-    students: [attendanceStudentSchema],
+    students: {
+      type: [attendanceStudentSchema],
+      required: true,
+      validate: v => Array.isArray(v) && v.length > 0,
+    },
 
     isFinalized: {
       type: Boolean,
-      default: false, // once finalized cannot edit
+      default: false,
     },
   },
   { timestamps: true, versionKey: false }
 );
 
-/* Prevent duplicate attendance */
+
 attendanceSchema.index(
-  { class: 1, subject: 1, date: 1 },
+  { classId: 1, date: 1 },
   { unique: true }
 );
 

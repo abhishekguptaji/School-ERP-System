@@ -44,7 +44,12 @@ import {
   getMyAttendance
 } from "../controllers/attendence.controller.js";
 
+import {
+  studentgetStudyMaterial
+} from "../controllers/studyMaterial.controller.js";
+
 const router = Router();
+router.get("/get-study-material",verifyJWT, studentgetStudyMaterial);
 
 router.get("/seen-attendence-daily",verifyJWT,getMyAttendance);
 

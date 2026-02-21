@@ -187,3 +187,8 @@ export const getMyAttendance = async () =>{
   const res = await API.get("/student/seen-attendence-daily");
    return res.data;
 }
+
+export const studentgetStudyMaterial = async () =>{
+  const res = await API.get("/student/get-study-material");
+   return res.data;
+}

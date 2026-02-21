@@ -4,7 +4,10 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import StudyMaterial from "../models/studyMaterial.model.js";
 import TeacherProfile from "../models/teacherProfile.model.js";
+import StudentProfile from "../models/studentProfile.model.js";
+import Class from "../models/class.model.js";
 import TimeTable from "../models/timeTable.model.js";
+
 
 export const getMyAllocations = asyncHandler(async (req, res) => {
   const teacher = await TeacherProfile.findOne({ user: req.user._id });
@@ -104,17 +107,14 @@ export const getMyStudyMaterials = asyncHandler(async (req, res) => {
     isActive: true,
   };
 
-  // 🔎 Filter by class
   if (classId) {
     query.classId = classId;
   }
 
-  // 🔎 Filter by subject
   if (subjectId) {
     query.subjectId = subjectId;
   }
 
-  // 🔎 Search by title (case-insensitive)
   if (search) {
     query.title = { $regex: search, $options: "i" };
   }
@@ -164,4 +164,29 @@ export const deleteStudyMaterial = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Study material deleted successfully"));
+});
+
+export const studentgetStudyMaterial = asyncHandler(async (req, res) => {
+
+  const student = await StudentProfile.findOne({ user: req.user._id });
+
+  if (!student) {
+    throw new ApiError(404, "Student profile not found");
+  }
+  
+  const stId = await Class.findOne({className : student.className}).select("_id");
+  // console.log(stId);
+  // console.log(student)
+  const materials = await StudyMaterial.find({
+    classId: stId
+  })
+  .populate("subjectId", "name")
+  .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    message: "Study materials fetched successfully",
+    data: materials
+  });
+
 });

@@ -1,40 +1,40 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { studentgetStudyMaterial } from "../../services/authService.js";
 
 function StudyMaterial() {
-  const [materials] = useState([
-    {
-      id: 1,
-      title: "Compiler Design - Unit 1 Notes",
-      className: "B.Tech (Sem 5)",
-      subject: "Compiler Design",
-      type: "pdf",
-      fileName: "unit1-notes.pdf",
-      uploadedBy: "Mr. Sharma",
-      uploadedAt: "2026-02-10",
-      description: "Lexical analysis, tokens, regular expressions notes.",
-    },
-    {
-      id: 2,
-      title: "DBMS ER Diagram Examples",
-      className: "B.Tech (Sem 4)",
-      subject: "DBMS",
-      type: "image",
-      fileName: "er-diagram.png",
-      uploadedBy: "Ms. Priya",
-      uploadedAt: "2026-02-09",
-      description: "ER diagram samples for practice.",
-    },
-  ]);
-
+  const [materials, setMaterials] = useState([]);
   const [search, setSearch] = useState("");
-  const [filterClass, setFilterClass] = useState("All");
   const [filterSubject, setFilterSubject] = useState("All");
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const classOptions = useMemo(() => {
-    const unique = Array.from(new Set(materials.map((m) => m.className)));
-    return ["All", ...unique];
-  }, [materials]);
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
+
+  const fetchMaterials = async () => {
+    try {
+      const res = await studentgetStudyMaterial();
+      const apiData = res.data || [];
+
+      const formatted = apiData.map((m) => ({
+        id: m._id,
+        title: m.title,
+        subject: m.subjectId?.name || "N/A",
+        description: m.description,
+        type: m.fileType,
+        fileName: m.fileName,
+        fileUrl: m.fileUrl,
+        uploadedAt: m.createdAt.split("T")[0],
+      }));
+
+      setMaterials(formatted);
+    } catch (err) {
+      console.error("Error fetching materials", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const subjectOptions = useMemo(() => {
     const unique = Array.from(new Set(materials.map((m) => m.subject)));
@@ -45,95 +45,68 @@ function StudyMaterial() {
     return materials.filter((m) => {
       const matchSearch =
         m.title.toLowerCase().includes(search.toLowerCase()) ||
-        m.subject.toLowerCase().includes(search.toLowerCase()) ||
-        m.className.toLowerCase().includes(search.toLowerCase());
-
-      const matchClass =
-        filterClass === "All" ? true : m.className === filterClass;
+        m.subject.toLowerCase().includes(search.toLowerCase());
 
       const matchSubject =
         filterSubject === "All" ? true : m.subject === filterSubject;
 
-      return matchSearch && matchClass && matchSubject;
+      return matchSearch && matchSubject;
     });
-  }, [materials, search, filterClass, filterSubject]);
-
-  const fileBadge = (type) => {
-    if (type === "pdf") return "danger";
-    if (type === "image") return "success";
-    return "secondary";
-  };
+  }, [materials, search, filterSubject]);
 
   const fileIcon = (type) => {
-    if (type === "pdf") return "bi-file-earmark-pdf-fill";
-    if (type === "image") return "bi-image-fill";
-    return "bi-file-earmark";
+    if (type === "pdf") return "bi-file-earmark-pdf-fill text-danger";
+    if (type === "jpeg" || type === "jpg" || type === "png")
+      return "bi-image-fill text-success";
+    return "bi-file-earmark text-secondary";
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-vh-100 bg-light py-4">
-      <div className="container" style={{ maxWidth: 1200 }}>
+    <div className="min-vh-100 bg-light">
+      <div className="container px-4">
+
         {/* HEADER */}
-        <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+        <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h3 className="fw-bold mb-1">
-              <i className="bi bi-journal-bookmark-fill text-primary me-2"></i>
+            <h4 className="fw-bold mb-1">
               Study Materials
-            </h3>
-            <div className="text-muted">
-              Download PDF and Images uploaded by teachers
-            </div>
+            </h4>
+            <small className="text-muted">
+              Download materials uploaded by teachers
+            </small>
           </div>
         </div>
 
         {/* FILTERS */}
-        <div className="card border-0 shadow-sm rounded-4 mb-4">
-          <div className="card-body p-3 p-md-4">
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">Search</label>
-                <div className="input-group">
-                  <span className="input-group-text bg-white">
-                    <i className="bi bi-search"></i>
-                  </span>
-                  <input
-                    className="form-control"
-                    placeholder="Search by title / class / subject..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
-              </div>
+        <div className="card shadow-sm border-0 rounded-3 mb-4 p-3">
+          <div className="row g-3">
+            <div className="col-md-8">
+              <input
+                className="form-control"
+                placeholder="Search by title or subject..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
 
-              <div className="col-md-3">
-                <label className="form-label fw-semibold">Class</label>
-                <select
-                  className="form-select"
-                  value={filterClass}
-                  onChange={(e) => setFilterClass(e.target.value)}
-                >
-                  {classOptions.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="col-md-3">
-                <label className="form-label fw-semibold">Subject</label>
-                <select
-                  className="form-select"
-                  value={filterSubject}
-                  onChange={(e) => setFilterSubject(e.target.value)}
-                >
-                  {subjectOptions.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="col-md-4">
+              <select
+                className="form-select"
+                value={filterSubject}
+                onChange={(e) => setFilterSubject(e.target.value)}
+              >
+                {subjectOptions.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -141,58 +114,49 @@ function StudyMaterial() {
         {/* MATERIAL LIST */}
         <div className="row g-4">
           {filteredMaterials.length === 0 ? (
-            <div className="col-12">
-              <div className="alert alert-info rounded-4 border">
-                <i className="bi bi-info-circle me-2"></i>
-                No study materials found.
-              </div>
+            <div className="text-center text-muted py-4">
+              No study materials found.
             </div>
           ) : (
             filteredMaterials.map((m) => (
               <div key={m.id} className="col-md-6 col-lg-4">
-                <div className="card border-0 shadow-sm rounded-4 h-100">
-                  <div className="card-body p-4">
-                    <div className="d-flex justify-content-between gap-3">
-                      <div className="d-flex gap-3">
-                        <div
-                          className="rounded-3 d-flex align-items-center justify-content-center bg-light border"
-                          style={{ width: 52, height: 52 }}
-                        >
-                          <i className={`bi ${fileIcon(m.type)} fs-4 text-primary`} />
-                        </div>
+                <div className="card shadow-sm border-0 rounded-3 h-100 p-3">
 
-                        <div>
-                          <h6 className="fw-bold mb-1">{m.title}</h6>
-                          <div className="text-muted small">{m.className}</div>
-                          <div className="text-muted small">{m.subject}</div>
-                        </div>
+                  <div className="d-flex align-items-start gap-3">
+                    <i className={`bi ${fileIcon(m.type)} fs-2`} />
+
+                    <div>
+                      <h6 className="fw-bold mb-1">{m.title}</h6>
+                      <div className="text-muted small">{m.subject}</div>
+                      <div className="text-muted small">
+                        Uploaded: {m.uploadedAt}
                       </div>
-
                     </div>
+                  </div>
 
-                    <p className="text-muted mt-3 mb-0">
-                      {m.description.length > 90
-                        ? m.description.slice(0, 90) + "..."
-                        : m.description}
-                    </p>
+                  <p className="text-muted small mt-3">
+                    {m.description.length > 80
+                      ? m.description.slice(0, 80) + "..."
+                      : m.description}
+                  </p>
 
-                    <div className="d-flex justify-content-between align-items-center mt-4">
-                      <button
-                        className="btn btn-outline-primary rounded-3"
-                        onClick={() => setSelectedMaterial(m)}
-                      >
-                        View <i className="bi bi-eye ms-1"></i>
-                      </button>
+                  <div className="mt-auto d-flex justify-content-between">
+                    <button
+                      className="btn btn-outline-primary btn-sm"
+                      onClick={() => setSelectedMaterial(m)}
+                    >
+                      View
+                    </button>
 
-                      <button className="btn btn-primary rounded-3">
-                        <i className="bi bi-download me-2"></i>
-                        Download
-                      </button>
-                    </div>
-
-                    <div className="text-muted small mt-3">
-                      Uploaded: <b>{m.uploadedAt}</b> • By <b>{m.uploadedBy}</b>
-                    </div>
+                    <a
+                      href={m.fileUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-primary btn-sm"
+                    >
+                      <i className="bi bi-download me-1"></i>
+                      Download
+                    </a>
                   </div>
                 </div>
               </div>
@@ -205,46 +169,29 @@ function StudyMaterial() {
       {selectedMaterial && (
         <div
           className="modal fade show"
-          style={{ display: "block", background: "rgba(0,0,0,0.6)" }}
+          style={{ display: "block", background: "rgba(0,0,0,0.5)" }}
         >
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content border-0 rounded-4">
-              <div className="modal-header border-0 pb-0">
-                <h5 className="modal-title fw-bold">
-                  {selectedMaterial.title}
-                </h5>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content rounded-3 border-0">
+              <div className="modal-header border-0">
+                <h6 className="fw-bold">{selectedMaterial.title}</h6>
                 <button
-                  type="button"
                   className="btn-close"
                   onClick={() => setSelectedMaterial(null)}
                 ></button>
               </div>
 
-              <div className="modal-body pt-2">
-                <div className="p-3 bg-light rounded-4 mb-3">
-                  <div className="fw-semibold mb-1">Description</div>
-                  <div className="text-muted">{selectedMaterial.description}</div>
-                </div>
+              <div className="modal-body">
+                <p>{selectedMaterial.description}</p>
 
-                <div className="p-3 border rounded-4">
-                  <div className="fw-semibold mb-2">
-                    File: {selectedMaterial.fileName}
-                  </div>
-
-                  <button className="btn btn-primary rounded-3">
-                    <i className="bi bi-download me-2"></i>
-                    Download
-                  </button>
-                </div>
-              </div>
-
-              <div className="modal-footer border-0">
-                <button
-                  className="btn btn-secondary rounded-3"
-                  onClick={() => setSelectedMaterial(null)}
+                <a
+                  href={selectedMaterial.fileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary btn-sm"
                 >
-                  Close
-                </button>
+                  Download File
+                </a>
               </div>
             </div>
           </div>
@@ -254,4 +201,4 @@ function StudyMaterial() {
   );
 }
 
-export default   StudyMaterial;
+export default StudyMaterial;
